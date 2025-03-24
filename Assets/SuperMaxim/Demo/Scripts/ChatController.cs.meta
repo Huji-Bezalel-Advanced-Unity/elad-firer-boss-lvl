@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 1dbf2f00f741c48cf8a0dfeea8aaf177
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 160353
+  packageName: Pub-Sub Messenger
+  packageVersion: 1.0.1
+  assetPath: Assets/SuperMaxim/Demo/Scripts/ChatController.cs
+  uploadId: 449845

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d04ff75f5d896435491dd5a4879269d3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 160353
+  packageName: Pub-Sub Messenger
+  packageVersion: 1.0.1
+  assetPath: Assets/SuperMaxim/Demo/ScriptableObjects/MultiThreadingToggle.asset
+  uploadId: 449845

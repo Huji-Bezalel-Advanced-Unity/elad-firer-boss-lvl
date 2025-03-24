@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 23fdb5f72c76a4764beab75f98fa9a1a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 160353
+  packageName: Pub-Sub Messenger
+  packageVersion: 1.0.1
+  assetPath: Assets/SuperMaxim/Demo/Prefabs/ChatPanelPrefab.prefab
+  uploadId: 449845
