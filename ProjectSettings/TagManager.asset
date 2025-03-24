@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Lights
   - 
   - 
   - 
@@ -41,3 +41,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Player
+    uniqueID: 2269094629
+    locked: 0
+  - name: Arena
+    uniqueID: 4157277007
+    locked: 0
+  - name: Lightning
+    uniqueID: 204038021
+    locked: 0
+  - name: Weapon
+    uniqueID: 1088954327
+    locked: 0
+  - name: Boss
+    uniqueID: 3186741949
+    locked: 0
+  m_RenderingLayers:
+  - Default
