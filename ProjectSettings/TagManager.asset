@@ -8,13 +8,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Camera
   - Water
   - UI
   - Lights
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Bullets
   - 
   - 
   - 
@@ -41,6 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Camera
+    uniqueID: 2143295507
+    locked: 0
   - name: Player
     uniqueID: 2269094629
     locked: 0
@@ -55,6 +58,9 @@ TagManager:
     locked: 0
   - name: Boss
     uniqueID: 3186741949
+    locked: 0
+  - name: UI
+    uniqueID: 3363654729
     locked: 0
   m_RenderingLayers:
   - Default
