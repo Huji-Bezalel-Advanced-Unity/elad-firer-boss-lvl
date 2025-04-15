@@ -21,7 +21,7 @@ namespace _LB.GamePlay.Player.Scripts.States
 
         public override void Exit()
         {
-            Attacker.StopNormalAttack();
+            Attacker.StopAttack();
         }
     }
 }
