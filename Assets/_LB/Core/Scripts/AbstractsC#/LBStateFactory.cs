@@ -1,21 +1,23 @@
 using System.Collections.Generic;
 
-namespace _LB.Core.Scripts.Abstracts
+namespace _LB.Core.Scripts.AbstractsC_
 {
     public abstract class LBStateFactory
     {
         protected readonly LBAnimator Animator;
         protected readonly LBData Data;
         protected readonly LBMovement Movement;
+        protected readonly LBAttacker Attacker;
     
         private readonly Dictionary<string, LBState> _stateCache = new();
         protected const string Normal = "Normal";
 
-        protected LBStateFactory(LBAnimator animator, LBData data, LBMovement movement)
+        protected LBStateFactory(LBAnimator animator, LBData data, LBMovement movement,LBAttacker attacker)
         {
             Animator = animator;
             Data = data;
             Movement = movement;
+            Attacker = attacker;
         }
         public abstract LBState CreateNormalState();
 
