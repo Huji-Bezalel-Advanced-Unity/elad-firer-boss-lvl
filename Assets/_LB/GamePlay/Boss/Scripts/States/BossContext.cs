@@ -4,7 +4,7 @@ namespace _LB.GamePlay.Boss.Scripts.States
 {
     public class BossContext: LBContext
     {
-        public BossContext(LBAnimator animator, LBMovement movement, LBData data) : base(animator, movement, data)
+        public BossContext(LBAnimator animator, LBMovement movement, LBData data, LBStateFactory stateFactory) : base(animator, movement, data, stateFactory)
         {
         }
     }

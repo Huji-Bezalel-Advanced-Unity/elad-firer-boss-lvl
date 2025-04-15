@@ -1,3 +1,4 @@
+using _LB.Core.Scripts.Interfaces;
 using UnityEngine;
 
 namespace _LB.Core.Scripts.Abstracts
@@ -6,9 +7,12 @@ namespace _LB.Core.Scripts.Abstracts
     {
         protected Animator animator;
 
-        protected LBAnimator(Animator animator)
+        protected ILBStats Stats;
+
+        protected LBAnimator(Animator animator, ILBStats stats)
         {
             this.animator = animator;
+            Stats = stats;
         }
     }
 }

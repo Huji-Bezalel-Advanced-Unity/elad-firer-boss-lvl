@@ -9,10 +9,16 @@ namespace _LB.GamePlay.Boss.Scripts
     {
         void Start()
         {
-            Movement = new BossMovement(rb2D);
-            Data = new BossData(entityCollider);
-            Animator = new BossAnimator(animator);
-            Context = new BossContext(Animator, Movement, Data);
+            Movement = new BossMovement(rb2D,Stats);
+            Data = new BossData(entityCollider,Stats);
+            Animator = new BossAnimator(animator,Stats);
+            StateFactory = new BossStatesFactory(Animator, Data,Movement);
+            Context = new BossContext(Animator, Movement, Data,StateFactory);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
         }
     }
 }

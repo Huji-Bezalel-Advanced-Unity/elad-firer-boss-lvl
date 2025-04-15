@@ -2,9 +2,9 @@ using _LB.Core.Scripts.Abstracts;
 
 namespace _LB.GamePlay.Boss.Scripts.States
 {
-    public class BossNormalState: LBState
+    public class BossSpecialAttack2State : LBState
     {
-        public BossNormalState(LBAnimator animator, LBMovement movement, LBData data) : base(animator, movement, data)
+        public BossSpecialAttack2State(LBAnimator animator, LBMovement movement, LBData data) : base(animator, movement, data)
         {
         }
 
