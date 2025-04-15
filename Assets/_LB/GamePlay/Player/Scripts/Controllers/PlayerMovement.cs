@@ -1,4 +1,5 @@
-using _LB.Core.Scripts.Abstracts;
+using _LB.Core.Scripts.AbstractsC_;
+using _LB.Core.Scripts.AbstractsScriptable;
 using _LB.Core.Scripts.Interfaces;
 using UnityEngine;
 
@@ -9,10 +10,10 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
         private const float Acceleration = 100f;
         private const float MovementThreshold = 0.05f;
 
-        public PlayerMovement(Rigidbody2D rb, ILBStats stats) : base(rb, stats)
+        public PlayerMovement(Rigidbody2D rb, LBStats stats) : base(rb, stats)
         {
             // Set drag to simulate natural slow-down when no input is given
-            Rigidbody.linearDamping = 4f;
+           
 
             // Optional: Set mass for better control over force-based movement
             Rigidbody.mass = 1f;

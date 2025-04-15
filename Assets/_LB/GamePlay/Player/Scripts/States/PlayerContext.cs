@@ -1,4 +1,4 @@
-using _LB.Core.Scripts.Abstracts;
+using _LB.Core.Scripts.AbstractsC_;
 
 namespace _LB.GamePlay.Player.Scripts.States
 {

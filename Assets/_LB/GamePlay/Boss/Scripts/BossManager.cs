@@ -1,7 +1,7 @@
-using _LB.Core.Scripts.BaseMono;
+using _LB.Core.Scripts.AbstractsMono;
 using _LB.GamePlay.Boss.Scripts.Controllers;
 using _LB.GamePlay.Boss.Scripts.States;
-using UnityEngine;
+
 
 namespace _LB.GamePlay.Boss.Scripts
 {
@@ -9,10 +9,11 @@ namespace _LB.GamePlay.Boss.Scripts
     {
         void Start()
         {
+            Attacker = new BossAttacker(projectilePool, Stats,targetTransform,transform);
             Movement = new BossMovement(rb2D,Stats);
             Data = new BossData(entityCollider,Stats);
             Animator = new BossAnimator(animator,Stats);
-            StateFactory = new BossStatesFactory(Animator, Data,Movement);
+            StateFactory = new BossStatesFactory(Animator, Data,Movement,Attacker);
             Context = new BossContext(Animator, Movement, Data,StateFactory);
         }
 

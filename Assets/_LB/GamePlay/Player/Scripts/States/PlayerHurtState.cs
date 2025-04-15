@@ -1,10 +1,10 @@
-using _LB.Core.Scripts.Abstracts;
+using _LB.Core.Scripts.AbstractsC_;
 
 namespace _LB.GamePlay.Player.Scripts.States
 {
     public sealed class PlayerHurtState: LBState
     {
-        public PlayerHurtState(LBAnimator animator, LBMovement movement, LBData data) : base(animator, movement, data)
+        public PlayerHurtState(LBAnimator animator, LBMovement movement, LBData data, LBAttacker attacker) : base(animator, movement, data, attacker)
         {
         }
 

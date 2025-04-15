@@ -1,4 +1,4 @@
-using _LB.Core.Scripts.BaseMono;
+using _LB.Core.Scripts.AbstractsMono;
 using _LB.GamePlay.Boss.Scripts.States;
 using _LB.GamePlay.Player.Scripts.Controllers;
 using _LB.GamePlay.Player.Scripts.States;
@@ -8,12 +8,14 @@ namespace _LB.GamePlay.Player.Scripts
 {
     public sealed class PlayerManager: LBBaseEntity
     {
+        
         void Start()
         {
+            Attacker = new PlayerAttacker(projectilePool, Stats,targetTransform,transform);
             Movement = new PlayerMovement(rb2D,Stats);
             Data = new PlayerData(entityCollider,Stats);
             Animator = new PlayerAnimator(animator,Stats);
-            StateFactory = new PlayerStatesFactory(Animator, Data,Movement);
+            StateFactory = new PlayerStatesFactory(Animator, Data,Movement,Attacker);
             Context = new PlayerContext(Animator, Movement, Data,StateFactory);
         }
         

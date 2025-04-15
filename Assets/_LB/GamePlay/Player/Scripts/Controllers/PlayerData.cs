@@ -1,4 +1,5 @@
-using _LB.Core.Scripts.Abstracts;
+using _LB.Core.Scripts.AbstractsC_;
+using _LB.Core.Scripts.AbstractsScriptable;
 using _LB.Core.Scripts.Interfaces;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
 {
     public class PlayerData: LBData
     {
-        public PlayerData(Collider2D collider, ILBStats stats) : base(collider, stats)
+        public PlayerData(Collider2D collider, LBStats stats) : base(collider, stats)
         {
         }
     }

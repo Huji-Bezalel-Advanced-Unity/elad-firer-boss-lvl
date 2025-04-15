@@ -1,16 +1,16 @@
-using _LB.Core.Scripts.Abstracts;
+using _LB.Core.Scripts.AbstractsC_;
 
 namespace _LB.GamePlay.Player.Scripts.States
 {
     public sealed class PlayerNormalState: LBState
     {
-        public PlayerNormalState(LBAnimator animator, LBMovement movement, LBData data) : base(animator, movement, data)
+        public PlayerNormalState(LBAnimator animator, LBMovement movement, LBData data, LBAttacker attacker) : base(animator, movement, data, attacker)
         {
         }
 
         public override void Enter()
         {
-            
+            Attacker.NormalAttack();
         }
 
         public override string Update()
@@ -21,7 +21,7 @@ namespace _LB.GamePlay.Player.Scripts.States
 
         public override void Exit()
         {
-            
+            Attacker.StopNormalAttack();
         }
     }
 }
