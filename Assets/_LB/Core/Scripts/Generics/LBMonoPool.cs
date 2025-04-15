@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using _LB.Core.Scripts.BaseMono;
+using _LB.Core.Scripts.AbstractsMono;
 using UnityEngine;
 using _LB.Core.Scripts.Interfaces;
 
 namespace _LB.Core.Scripts.Generics
 {
-    public class LBMonoPool<T> : LBMonoSingleton<LBMonoPool<T>> where T : LBBaseMono, ILBPoolable
+    public class LBMonoPool<T> : LBBaseMono where T : LBBaseMono, ILBPoolable
     {
         [SerializeField] private int initialSize = 10;
         [SerializeField] private T prefab;

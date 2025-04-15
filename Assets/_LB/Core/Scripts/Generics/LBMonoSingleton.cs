@@ -1,4 +1,4 @@
-using _LB.Core.Scripts.BaseMono;
+using _LB.Core.Scripts.AbstractsMono;
 using UnityEngine;
 
 namespace _LB.Core.Scripts.Generics
