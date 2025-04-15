@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace _LB.Core.Scripts.BaseMono
+namespace _LB.Core.Scripts.AbstractsMono
 {
-    public class LBBaseMono : MonoBehaviour
+    public abstract class LBBaseMono : MonoBehaviour
     {
         
     }
