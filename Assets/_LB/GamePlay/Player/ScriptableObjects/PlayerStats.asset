@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 1000
   movementThreshold: 0.05
-  projectileSpeed: 1
+  projectileSpeed: 10
   projectileBuffer: 1
   projectileSpawnRate: 0.2
