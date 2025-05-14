@@ -2,23 +2,35 @@ using System.Collections;
 using _LB.Core.Scripts.AbstractsC_;
 using _LB.Core.Scripts.AbstractsScriptable;
 using _LB.GamePlay.Player.Scripts.Weapon;
+using Core.Input_System;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace _LB.GamePlay.Player.Scripts.Controllers
 {
     public sealed class PlayerAttacker: LBAttacker
     {
         private readonly BulletMonoPool _projectilePool;
+        private readonly InputSystem_Actions _inputSystem;
+        private bool _attack;
 
 
         public PlayerAttacker(BulletMonoPool projectilePool, LBStats stats, Transform target, Transform entityTransform, LBData entityData) : base(stats, target,entityTransform,entityData)
         {
             _projectilePool = projectilePool;
+            _inputSystem = InputSystemBuffer.Instance.InputSystem;
+            _inputSystem.Player.Attack.performed += OnAttackPerformed;
         }
-        
-        public override void NormalAttack(float projectileSpawnRate)
+
+        private void OnAttackPerformed(InputAction.CallbackContext obj)
         {
+            _attack = true;
+        }
+
+        public override void NormalAttack()
+        {
+            if (!_attack) return;
             var target = GetClosestTarget();
                         if (target != null)
                         {
@@ -31,6 +43,7 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
                                 this
                             );
                         }
+            _attack = false;
         }
 
         

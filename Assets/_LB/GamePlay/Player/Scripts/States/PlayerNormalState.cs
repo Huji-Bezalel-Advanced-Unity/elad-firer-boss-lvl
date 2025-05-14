@@ -12,11 +12,11 @@ namespace _LB.GamePlay.Player.Scripts.States
 
         public override void Enter()
         {
-            Attacker.NormalAttack();
         }
 
         public override string Update()
         {
+            Attacker.NormalAttack();
             Movement.UpdateMovement();
             return "Normal";
         }

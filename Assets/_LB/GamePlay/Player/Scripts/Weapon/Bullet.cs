@@ -28,6 +28,7 @@ namespace _LB.GamePlay.Player.Scripts.Weapon
 
         public void OnTriggerEnter2D(Collider2D other)
         {
+            Debug.Log("Triggered by: " + other.name);
             transform.position = new Vector2(-100, -100);
             _attacker.ReturnToPool(this);
         }
