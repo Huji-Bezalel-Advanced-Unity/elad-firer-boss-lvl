@@ -1,10 +1,11 @@
 using _LB.Core.Scripts.AbstractsC_;
+using _LB.Core.Scripts.AbstractsScriptable;
 
 namespace _LB.GamePlay.Boss.Scripts.States
 {
     public class BossSpecialAttack2State : LBState
     {
-        public BossSpecialAttack2State(LBAnimator animator, LBMovement movement, LBData data, LBAttacker attacker) : base(animator, movement, data, attacker)
+        public BossSpecialAttack2State(LBAnimator animator, LBMovement movement, LBData data, LBAttacker attacker, LBStats stats) : base(animator, movement, data, attacker, stats)
         {
         }
 

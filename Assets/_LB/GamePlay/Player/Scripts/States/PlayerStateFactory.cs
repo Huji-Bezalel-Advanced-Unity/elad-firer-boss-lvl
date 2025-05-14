@@ -1,4 +1,5 @@
 using _LB.Core.Scripts.AbstractsC_;
+using _LB.Core.Scripts.AbstractsScriptable;
 
 namespace _LB.GamePlay.Player.Scripts.States
 {
@@ -9,13 +10,13 @@ namespace _LB.GamePlay.Player.Scripts.States
         private const string Die = "Die";
 
 
-        public PlayerStatesFactory(LBAnimator animator, LBData data, LBMovement movement, LBAttacker attacker) : base(animator, data, movement, attacker)
+        public PlayerStatesFactory(LBAnimator animator, LBData data, LBMovement movement, LBAttacker attacker, LBStats stats) : base(animator, data, movement, attacker, stats)
         {
         }
 
         public override LBState CreateNormalState()
         {
-            return new PlayerNormalState(Animator, Movement, Data,Attacker);
+            return new PlayerNormalState(Animator, Movement, Data,Attacker,Stats);
         }
 
         protected override LBState CreateState(string stateId)
@@ -23,9 +24,9 @@ namespace _LB.GamePlay.Player.Scripts.States
             return stateId switch
             {
                 Normal => CreateNormalState(),
-                SpecialAttack => new PlayerSpecialAttackState(Animator, Movement, Data,Attacker),
-                Hurt => new PlayerHurtState(Animator, Movement, Data,Attacker),
-                Die => new PlayerDieState(Animator, Movement, Data,Attacker),
+                SpecialAttack => new PlayerSpecialAttackState(Animator, Movement, Data,Attacker,Stats),
+                Hurt => new PlayerHurtState(Animator, Movement, Data,Attacker,Stats),
+                Die => new PlayerDieState(Animator, Movement, Data,Attacker,Stats),
                 _ => throw new System.ArgumentException($"Unknown stateId: {stateId}")
             };
         }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _LB.Core.Scripts.AbstractsScriptable;
 
 namespace _LB.Core.Scripts.AbstractsC_
 {
@@ -8,16 +9,18 @@ namespace _LB.Core.Scripts.AbstractsC_
         protected readonly LBData Data;
         protected readonly LBMovement Movement;
         protected readonly LBAttacker Attacker;
-    
+        protected readonly LBStats Stats;
+
         private readonly Dictionary<string, LBState> _stateCache = new();
         protected const string Normal = "Normal";
 
-        protected LBStateFactory(LBAnimator animator, LBData data, LBMovement movement,LBAttacker attacker)
+        protected LBStateFactory(LBAnimator animator, LBData data, LBMovement movement,LBAttacker attacker, LBStats stats)
         {
             Animator = animator;
             Data = data;
             Movement = movement;
             Attacker = attacker;
+            Stats = stats;
         }
         public abstract LBState CreateNormalState();
 

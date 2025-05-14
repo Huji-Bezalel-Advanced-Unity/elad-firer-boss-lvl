@@ -1,38 +1,44 @@
+using System.Collections;
 using _LB.Core.Scripts.AbstractsC_;
-using _LB.Core.Scripts.AbstractsMono;
 using _LB.Core.Scripts.AbstractsScriptable;
-using _LB.Core.Scripts.Generics;
-using _LB.Core.Scripts.Interfaces;
+using _LB.GamePlay.Player.Scripts.Weapon;
+using DG.Tweening;
 using UnityEngine;
 
 namespace _LB.GamePlay.Player.Scripts.Controllers
 {
-    public class PlayerAttacker: LBAttacker
+    public sealed class PlayerAttacker: LBAttacker
     {
-        public PlayerAttacker(LBMonoPool<LBBaseProjectile> projectilePool, LBStats stats, Transform target, Transform entityTransform) : base(projectilePool, stats, target,entityTransform)
-        {
-        }
+        private readonly BulletMonoPool _projectilePool;
 
-        public override void NormalAttack()
-        {
-            Transform closestTarget = GetClosestTarget();
-            if (closestTarget == null) return;
 
-            LBBaseProjectile projectile = ProjectilePool.Get();
-            projectile.Activate(
-                closestTarget.position,
-                EntityTransform.position,
-                Stats.ProjectileSpeed,
-                Stats.ProjectileBuffer,
-                ProjectilePool
-            );
-        }
-
-        public override void StopAttack()
+        public PlayerAttacker(BulletMonoPool projectilePool, LBStats stats, Transform target, Transform entityTransform, LBData entityData) : base(stats, target,entityTransform,entityData)
         {
-            throw new System.NotImplementedException();
+            _projectilePool = projectilePool;
         }
         
+        public override void NormalAttack(float projectileSpawnRate)
+        {
+            var target = GetClosestTarget();
+                        if (target != null)
+                        {
+                            var proj = _projectilePool.Get();
+                            proj.Activate(
+                                target.position,
+                                EntityTransform.position,
+                                Stats.ProjectileSpeed,
+                                Stats.ProjectileBuffer,
+                                this
+                            );
+                        }
+        }
+
+        
+        public void ReturnToPool(Bullet bullet)
+        {
+            _projectilePool.Return(bullet);
+        }
+
         private Transform GetClosestTarget()
         {
             Transform closest = null;

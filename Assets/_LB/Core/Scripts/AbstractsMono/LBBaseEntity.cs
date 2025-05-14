@@ -21,7 +21,6 @@ namespace _LB.Core.Scripts.AbstractsMono
         [SerializeField] protected LBStats Stats;
         
         [Header("Attacker")]
-        [SerializeField] protected LBMonoPool<LBBaseProjectile> projectilePool;
         [SerializeField] protected Transform targetTransform;
         
         

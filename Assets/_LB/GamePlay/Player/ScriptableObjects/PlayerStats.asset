@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c282b4cf91b4dff94809c365d01c36f, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  acceleration: 1000
+  movementThreshold: 0.05
+  projectileSpeed: 1
+  projectileBuffer: 1
+  projectileSpawnRate: 0.2

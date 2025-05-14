@@ -5,7 +5,8 @@ namespace _LB.Core.Scripts.AbstractsScriptable
     public abstract class LBStats: ScriptableObject
     {
         [Header("MovementStats")]
-        [SerializeField] private float moveSpeed;
+        [SerializeField] private float acceleration;
+        [SerializeField] private float movementThreshold;
         
         [Header("AttackerStats")]
         [SerializeField] private float projectileSpeed;
@@ -13,7 +14,8 @@ namespace _LB.Core.Scripts.AbstractsScriptable
         [SerializeField] private float projectileSpawnRate;
 
 
-        public float MoveSpeed => moveSpeed;
+        public float Accelartion => acceleration;
+        public float MovementThreshold => movementThreshold;
         public float ProjectileSpeed => projectileSpeed;
         public float ProjectileBuffer => projectileBuffer;
         public float ProjectileSpawnRate => projectileSpawnRate;

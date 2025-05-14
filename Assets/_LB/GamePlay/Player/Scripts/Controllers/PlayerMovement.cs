@@ -1,39 +1,49 @@
 using _LB.Core.Scripts.AbstractsC_;
 using _LB.Core.Scripts.AbstractsScriptable;
-using _LB.Core.Scripts.Interfaces;
+using Core.Input_System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace _LB.GamePlay.Player.Scripts.Controllers
 {
     public sealed class PlayerMovement : LBMovement
     {
-        private const float Acceleration = 100f;
-        private const float MovementThreshold = 0.05f;
+        private readonly InputSystem_Actions _inputSystem;
+        private Vector2 _moveInput = Vector2.zero;
+
+        
 
         public PlayerMovement(Rigidbody2D rb, LBStats stats) : base(rb, stats)
         {
-            // Set drag to simulate natural slow-down when no input is given
-           
-
-            // Optional: Set mass for better control over force-based movement
             Rigidbody.mass = 1f;
+            
+            _inputSystem = InputSystemBuffer.Instance.InputSystem;
+            
+            _inputSystem.Player.Move.performed += OnMovePerformed;
+            _inputSystem.Player.Move.canceled  += OnMoveCanceled;
+        }
+
+        private void OnMovePerformed(InputAction.CallbackContext ctx)
+        {
+            // ReadVector2 gives you the full 2D stick/keyboard composite
+            _moveInput = ctx.ReadValue<Vector2>();
+        }
+
+        private void OnMoveCanceled(InputAction.CallbackContext ctx)
+        {
+            // Zero out when the user lets go
+            _moveInput = Vector2.zero;
         }
 
         public override void UpdateMovement()
         {
-            // Get smooth analog input (-1 to 1)
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            Vector2 input = new Vector2(horizontal, vertical);
-
-            if (input.sqrMagnitude < MovementThreshold)
+            if (_moveInput.sqrMagnitude < Stats.MovementThreshold * Stats.MovementThreshold)
                 return;
 
-            Direction = input.normalized;
-
-            // Apply continuous force based on direction and acceleration
-            Rigidbody.AddForce(Direction * Acceleration * Time.deltaTime, ForceMode2D.Force);
+            Direction = _moveInput.normalized;
+            Rigidbody.AddForce(Direction * (Stats.Accelartion * Time.deltaTime), ForceMode2D.Force);
         }
-    }
+        
+}
+
 }

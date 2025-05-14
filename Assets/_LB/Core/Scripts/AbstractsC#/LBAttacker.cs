@@ -9,17 +9,17 @@ namespace _LB.Core.Scripts.AbstractsC_
 {
     public abstract class LBAttacker
     {
-        protected LBMonoPool<LBBaseProjectile> ProjectilePool;
         protected LBStats Stats;
         protected List<Transform> TargetTransform = new List<Transform>();
         protected Transform EntityTransform;
-        
-        public LBAttacker(LBMonoPool<LBBaseProjectile> projectilePool, LBStats stats, Transform target,
-            Transform entityTransform)
+        protected readonly LBData _entityData;
+
+        public LBAttacker(LBStats stats, Transform target,
+            Transform entityTransform, LBData entityData)
         {
             EntityTransform = entityTransform;
+            _entityData = entityData;
             TargetTransform.Add(target);
-            ProjectilePool = projectilePool;
             Stats = stats;
         }
 
@@ -29,7 +29,9 @@ namespace _LB.Core.Scripts.AbstractsC_
         }
 
         public abstract void NormalAttack();
+        
 
-        public abstract void StopAttack();
+
+
     }
 }

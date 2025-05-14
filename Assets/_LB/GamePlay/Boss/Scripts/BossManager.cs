@@ -9,11 +9,11 @@ namespace _LB.GamePlay.Boss.Scripts
     {
         void Start()
         {
-            Attacker = new BossAttacker(projectilePool, Stats,targetTransform,transform);
             Movement = new BossMovement(rb2D,Stats);
             Data = new BossData(entityCollider,Stats);
+            Attacker = new BossAttacker(Stats,targetTransform,transform,Data);
             Animator = new BossAnimator(animator,Stats);
-            StateFactory = new BossStatesFactory(Animator, Data,Movement,Attacker);
+            StateFactory = new BossStatesFactory(Animator, Data,Movement,Attacker,Stats);
             Context = new BossContext(Animator, Movement, Data,StateFactory);
         }
 

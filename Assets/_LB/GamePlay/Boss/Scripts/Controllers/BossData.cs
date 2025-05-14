@@ -10,5 +10,7 @@ namespace _LB.GamePlay.Boss.Scripts.Controllers
         public BossData(Collider2D collider, LBStats stats) : base(collider, stats)
         {
         }
+
+        
     }
 }

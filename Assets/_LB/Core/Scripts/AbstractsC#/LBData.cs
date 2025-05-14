@@ -13,5 +13,7 @@ namespace _LB.Core.Scripts.AbstractsC_
             MainCollider = collider;
             Stats = stats;
         } 
+        
+       
     }
 }

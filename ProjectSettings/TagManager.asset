@@ -15,7 +15,7 @@ TagManager:
   - Player
   - Enemy
   - Bullets
-  - 
+  - Border
   - 
   - 
   - 
@@ -44,11 +44,11 @@ TagManager:
   - name: Camera
     uniqueID: 2143295507
     locked: 0
-  - name: Player
-    uniqueID: 2269094629
-    locked: 0
   - name: Arena
     uniqueID: 4157277007
+    locked: 0
+  - name: Player
+    uniqueID: 2269094629
     locked: 0
   - name: Lightning
     uniqueID: 204038021
