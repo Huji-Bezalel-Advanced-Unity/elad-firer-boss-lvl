@@ -27,17 +27,20 @@ namespace _LB.GamePlay.Boss.Scripts
         [SerializeField] private List<Transform> transformTargets = new List<Transform>();
         void Start()
         {
-            Movement = new BossMovement(rb2D,Stats);
-            Data = new BossData(entityCollider,Stats);
-            Attacker = new BossAttacker(Stats,targetTransform,transform,transformTargets);
-            Animator = new BossAnimator(animator,Stats,transformTargets);
-            StateFactory = new BossStatesFactory(Animator, Data,Movement,Attacker,Stats);
-            Context = new BossContext(Animator, Movement, Data,StateFactory);
+            // Movement = new BossMovement(rb2D,Stats);
+            // Data = new BossData(entityCollider,Stats);
+            // Attacker = new BossAttacker(Stats,targetTransform,transform,transformTargets);
+            // Animator = new BossAnimator(animator,Stats,transformTargets);
+            // StateFactory = new BossStatesFactory(Animator, Data,Movement,Attacker,Stats);
+            // Context = new BossContext(Animator, Movement, Data,StateFactory);
         }
 
         protected override void Update()
         {
-            base.Update();
+        }
+
+        public override void GotHit(int i)
+        {
         }
     }
 }

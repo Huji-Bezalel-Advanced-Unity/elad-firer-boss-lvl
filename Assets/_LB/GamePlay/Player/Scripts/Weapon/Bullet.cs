@@ -1,3 +1,4 @@
+using System;
 using _LB.Core.Scripts.AbstractsC_;
 using _LB.Core.Scripts.AbstractsMono;
 using _LB.Core.Scripts.AbstractsScriptable;
@@ -13,7 +14,14 @@ namespace _LB.GamePlay.Player.Scripts.Weapon
     {
         
         private PlayerAttacker _attacker;
-        
+        [SerializeField] private GameObject explosionPrefab;
+        private Transform _explosionsFather;
+
+        public void Start()
+        {
+            _explosionsFather = GameObject.Find("Explosions")?.transform;
+        }
+
         public void Activate(Vector2 target, Vector2 startPosition, float speed,float buffer, PlayerAttacker attacker)
         {
             _attacker = attacker;
@@ -30,10 +38,14 @@ namespace _LB.GamePlay.Player.Scripts.Weapon
         public void OnTriggerEnter2D(Collider2D other)
         {
             Debug.Log("Triggered by: " + other.name);
+            var target = other.GetComponentInParent<LBBaseEntity>();
+            if (target != null)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity,_explosionsFather);
+                target.GotHit(10);
+            }
             transform.position = new Vector2(-100, -100);
             _attacker.ReturnToPool(this);
-            var target = other.GetComponent<LBBaseEntity>();
-            if(target != null) target.GotHit(10);
         }
         
     }

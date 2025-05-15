@@ -49,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb2D: {fileID: 4365506225562149737}
   collider: {fileID: 7413449213545852809}
+  explosionPrefab: {fileID: 100002, guid: cafecd3fc3b761c45bb1553f35cf5c96, type: 3}
+  explosionsFather: {fileID: 2864633726252641728, guid: 48df0ccdcf9e449fba5b88cedd5f7ff2, type: 3}
 --- !u!50 &4365506225562149737
 Rigidbody2D:
   serializedVersion: 5
