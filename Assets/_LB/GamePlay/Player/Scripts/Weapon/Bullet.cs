@@ -3,6 +3,7 @@ using _LB.Core.Scripts.AbstractsMono;
 using _LB.Core.Scripts.AbstractsScriptable;
 using _LB.Core.Scripts.Generics;
 using _LB.GamePlay.Player.Scripts.Controllers;
+using DG.Tweening;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
@@ -31,6 +32,8 @@ namespace _LB.GamePlay.Player.Scripts.Weapon
             Debug.Log("Triggered by: " + other.name);
             transform.position = new Vector2(-100, -100);
             _attacker.ReturnToPool(this);
+            var target = other.GetComponent<LBBaseEntity>();
+            if(target != null) target.GotHit(10);
         }
         
     }

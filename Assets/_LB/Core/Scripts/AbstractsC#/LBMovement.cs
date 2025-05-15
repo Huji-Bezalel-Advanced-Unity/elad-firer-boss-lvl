@@ -10,6 +10,8 @@ namespace _LB.Core.Scripts.AbstractsC_
         protected Rigidbody2D Rigidbody;
         protected LBStats Stats;
         
+        public bool IsMoving { get; protected set; } 
+        
         protected LBMovement(Rigidbody2D rb, LBStats stats)
         {
             Rigidbody = rb;

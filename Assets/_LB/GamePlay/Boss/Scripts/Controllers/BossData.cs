@@ -11,6 +11,10 @@ namespace _LB.GamePlay.Boss.Scripts.Controllers
         {
         }
 
-        
+
+        public override void GotHit(float i)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

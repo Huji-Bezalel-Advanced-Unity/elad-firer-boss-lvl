@@ -719,6 +719,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1449068707 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5781988761508159831, guid: e656ef677287c4fa78293016e4af69ff, type: 3}
+  m_PrefabInstance: {fileID: 6855394652135500599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1464547895
 GameObject:
   m_ObjectHideFlags: 0
@@ -1587,6 +1592,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1000228998705998763, guid: e656ef677287c4fa78293016e4af69ff, type: 3}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070341541104641832, guid: e656ef677287c4fa78293016e4af69ff, type: 3}
+      propertyPath: flame
+      value: 
+      objectReference: {fileID: 1449068707}
+    - target: {fileID: 1070341541104641832, guid: e656ef677287c4fa78293016e4af69ff, type: 3}
+      propertyPath: stats
+      value: 
+      objectReference: {fileID: 11400000, guid: eacecea241cde44a39bdd4d3b73b40fb, type: 2}
     - target: {fileID: 1070341541104641832, guid: e656ef677287c4fa78293016e4af69ff, type: 3}
       propertyPath: projectilePool
       value: 
@@ -1599,6 +1616,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2895557525504922757, guid: e656ef677287c4fa78293016e4af69ff, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bc0ef3f87170540478f2881574a9e22c, type: 2}
     - target: {fileID: 5845429932993959178, guid: e656ef677287c4fa78293016e4af69ff, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.949

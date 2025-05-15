@@ -125,8 +125,8 @@ MonoBehaviour:
   entityCollider: {fileID: 5342544053134141897}
   animator: {fileID: 2895557525504922757}
   Stats: {fileID: 11400000, guid: eacecea241cde44a39bdd4d3b73b40fb, type: 2}
-  projectilePool: {fileID: 0}
   targetTransform: {fileID: 0}
+  projectilePool: {fileID: 0}
 --- !u!95 &2895557525504922757
 Animator:
   serializedVersion: 7

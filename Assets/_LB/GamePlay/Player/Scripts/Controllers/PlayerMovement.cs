@@ -10,7 +10,7 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
     {
         private readonly InputSystem_Actions _inputSystem;
         private Vector2 _moveInput = Vector2.zero;
-
+        
         
 
         public PlayerMovement(Rigidbody2D rb, LBStats stats) : base(rb, stats)
@@ -37,9 +37,14 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
 
         public override void UpdateMovement()
         {
+            if (_moveInput == Vector2.zero)
+            {
+                IsMoving = false;
+                return;
+            }
+            IsMoving = true;
             if (_moveInput.sqrMagnitude < Stats.MovementThreshold * Stats.MovementThreshold)
                 return;
-
             Direction = _moveInput.normalized;
             Rigidbody.AddForce(Direction * (Stats.Accelartion * Time.deltaTime), ForceMode2D.Force);
         }

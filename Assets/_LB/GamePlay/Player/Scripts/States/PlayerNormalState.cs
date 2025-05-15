@@ -18,6 +18,8 @@ namespace _LB.GamePlay.Player.Scripts.States
         {
             Attacker.NormalAttack();
             Movement.UpdateMovement();
+            Animator.RotateTowardsNearestTarget();
+            Animator.UpdateMovementAnimations(Movement.IsMoving);
             return "Normal";
         }
 

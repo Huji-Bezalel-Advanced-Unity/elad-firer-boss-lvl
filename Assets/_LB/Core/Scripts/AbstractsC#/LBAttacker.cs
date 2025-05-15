@@ -10,15 +10,14 @@ namespace _LB.Core.Scripts.AbstractsC_
     public abstract class LBAttacker
     {
         protected LBStats Stats;
-        protected List<Transform> TargetTransform = new List<Transform>();
+        protected List<Transform> TargetTransform;
         protected Transform EntityTransform;
-        protected readonly LBData _entityData;
 
-        public LBAttacker(LBStats stats, Transform target,
-            Transform entityTransform, LBData entityData)
+        protected LBAttacker(LBStats stats, Transform target,
+            Transform entityTransform, List<Transform> targetTransform)
         {
             EntityTransform = entityTransform;
-            _entityData = entityData;
+            TargetTransform = targetTransform;
             TargetTransform.Add(target);
             Stats = stats;
         }

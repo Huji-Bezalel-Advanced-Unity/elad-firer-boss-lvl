@@ -1,6 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
 using _LB.Core.Scripts.AbstractsC_;
 using _LB.Core.Scripts.AbstractsScriptable;
+using _LB.Core.Scripts.Utils;
 using _LB.GamePlay.Player.Scripts.Weapon;
 using Core.Input_System;
 using DG.Tweening;
@@ -16,7 +18,7 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
         private bool _attack;
 
 
-        public PlayerAttacker(BulletMonoPool projectilePool, LBStats stats, Transform target, Transform entityTransform, LBData entityData) : base(stats, target,entityTransform,entityData)
+        public PlayerAttacker(LBStats stats, Transform target, Transform entityTransform, BulletMonoPool projectilePool, List<Transform> targetTransforms) : base(stats, target, entityTransform,targetTransforms)
         {
             _projectilePool = projectilePool;
             _inputSystem = InputSystemBuffer.Instance.InputSystem;
@@ -31,7 +33,7 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
         public override void NormalAttack()
         {
             if (!_attack) return;
-            var target = GetClosestTarget();
+            var target = UsedAlgorithms.GetClosestTarget(TargetTransform, EntityTransform);
                         if (target != null)
                         {
                             var proj = _projectilePool.Get();
@@ -52,24 +54,6 @@ namespace _LB.GamePlay.Player.Scripts.Controllers
             _projectilePool.Return(bullet);
         }
 
-        private Transform GetClosestTarget()
-        {
-            Transform closest = null;
-            float shortestDistance = float.MaxValue;
-
-            foreach (Transform target in TargetTransform)
-            {
-                if (target == null) continue;
-
-                float distance = Vector2.Distance(EntityTransform.position, target.position);
-                if (distance < shortestDistance)
-                {
-                    shortestDistance = distance;
-                    closest = target;
-                }
-            }
-
-            return closest;
-        }
+        
     }
 }

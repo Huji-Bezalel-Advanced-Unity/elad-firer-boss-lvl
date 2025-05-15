@@ -12,8 +12,9 @@ namespace _LB.Core.Scripts.AbstractsC_
         {
             MainCollider = collider;
             Stats = stats;
-        } 
-        
-       
+        }
+
+
+        public abstract void GotHit(float i);
     }
 }

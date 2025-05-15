@@ -8,22 +8,6 @@ namespace _LB.Core.Scripts.AbstractsMono
 {
     public abstract class LBBaseEntity: LBBaseMono
     {
-        [Header("Movement")]
-        [SerializeField] protected Rigidbody2D rb2D;
-        
-        [Header("Data")]
-        [SerializeField] protected Collider2D entityCollider;
-        
-        [Header("Animations")]
-        [SerializeField] protected Animator animator;
-
-        [Header("Stats")] 
-        [SerializeField] protected LBStats Stats;
-        
-        [Header("Attacker")]
-        [SerializeField] protected Transform targetTransform;
-        
-        
         protected LBMovement Movement;
         protected LBAttacker Attacker;
         protected LBData Data;
@@ -35,7 +19,12 @@ namespace _LB.Core.Scripts.AbstractsMono
         {
             Context.UpdateState();
         }
-        
+
+        public virtual void GotHit(int i)
+        {
+            Data.GotHit(i);
+        }
+
     }
 
    

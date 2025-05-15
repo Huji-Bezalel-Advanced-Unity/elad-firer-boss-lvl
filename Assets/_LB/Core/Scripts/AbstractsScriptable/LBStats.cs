@@ -12,13 +12,21 @@ namespace _LB.Core.Scripts.AbstractsScriptable
         [SerializeField] private float projectileSpeed;
         [SerializeField] private float projectileBuffer;
         [SerializeField] private float projectileSpawnRate;
-
-
+        
+        
+        [Header("DataStats")]
+        [SerializeField] private float health;
+        
+        [Header("AnimationStats")]
+        [SerializeField] private float rotationSpeed;
+        
+        
+        public float RotationSpeed => rotationSpeed;
         public float Accelartion => acceleration;
         public float MovementThreshold => movementThreshold;
         public float ProjectileSpeed => projectileSpeed;
         public float ProjectileBuffer => projectileBuffer;
         public float ProjectileSpawnRate => projectileSpawnRate;
-        
+        public float Health => health;
     }
 }
