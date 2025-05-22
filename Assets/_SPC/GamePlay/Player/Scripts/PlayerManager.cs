@@ -1,8 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using _LB.Core.Scripts.Interfaces;
-using _LB.Core.Scripts.Utils;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.GamePlay.Player.Scripts.Controllers;
+using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
@@ -21,9 +22,12 @@ namespace _SPC.GamePlay.Player.Scripts
         [Header("Animations")]
         [SerializeField] private Animator animator;
         [SerializeField] private GameObject flame;
+        [SerializeField] private SpriteRenderer spriteRenderer;
+
 
         [Header("Stats")] 
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private GameLogger  playerLogger;
         
         [Header("Attacker")]
         [SerializeField] private Transform targetTransform;
@@ -34,8 +38,8 @@ namespace _SPC.GamePlay.Player.Scripts
 
         void Start()
         {
-            _movement = new PlayerMovement(rb2D,stats);
-            _attacker = new PlayerAttacker(stats,targetTransform,transform, projectilePool,transformTargets);
+            _movement = new PlayerMovement(rb2D,stats,playerLogger);
+            _attacker = new PlayerAttacker(stats,targetTransform,transform, projectilePool,transformTargets,playerLogger);
         }
         
         
@@ -73,7 +77,25 @@ namespace _SPC.GamePlay.Player.Scripts
             // Make the sprite's "up" face the target
             transform.up = -dir;
         }
+
+
+        public void GotHit(Vector3 projectileTransform)
+        {
+            if (_flashCoroutine != null)
+                StopCoroutine(_flashCoroutine);
+
+            _flashCoroutine = StartCoroutine(FlashRed());
+        }
         
-        
+        private Coroutine _flashCoroutine;
+
+        private IEnumerator FlashRed()
+        {
+            Color originalColor = spriteRenderer.color;
+            spriteRenderer.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            spriteRenderer.color = originalColor;
+            _flashCoroutine = null;
+        }
     }
 }

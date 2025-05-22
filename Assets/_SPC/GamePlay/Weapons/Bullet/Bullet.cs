@@ -1,7 +1,9 @@
 using _LB.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.GamePlay.Player.Scripts.Controllers;
+using _SPC.GamePlay.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _SPC.GamePlay.Weapons.Bullet
 {
@@ -11,6 +13,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
         private PlayerAttacker _attacker;
         [SerializeField] private GameObject explosionPrefab;
         [SerializeField] private Rigidbody2D rb2D;
+        [SerializeField] private GameLogger bulletLogger;
         private Transform _explosionsFather;
 
         public void Start()
@@ -33,15 +36,17 @@ namespace _SPC.GamePlay.Weapons.Bullet
 
         public void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log("Triggered by: " + other.name);
+            bulletLogger?.Log("Triggered by: " + other.name);
             var target = other.GetComponentInParent<IHitable>();
             if (target != null)
             {
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity,_explosionsFather);
+                target.GotHit(transform.position);
+                bulletLogger?.Log("Bullet Hit: " + target);
             }
             transform.position = new Vector2(-100, -100);
             _attacker.ReturnToPool(this);
         }
+        
 
 
         public void Reset()

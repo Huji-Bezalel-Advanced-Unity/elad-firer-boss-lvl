@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _SPC.Core.Scripts.Generics
 {
-    public class SpcMonoPool<T> : LBBaseMono.LBBaseMono where T : LBBaseMono.LBBaseMono, IPoolable
+    public class SPCMonoPool<T> : LBBaseMono.LBBaseMono where T : LBBaseMono.LBBaseMono, IPoolable
     {
         [SerializeField] private int initialSize = 10;
         [SerializeField] private T prefab;

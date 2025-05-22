@@ -8,29 +8,22 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
     {
         
         [Header("MovementStats")]
-        [SerializeField] private float acceleration;
-        [SerializeField] private float movementThreshold;
+        public float Acceleration;
+        public float MovementThreshold;
         
         [Header("AttackerStats")]
-        [SerializeField] private float projectileSpeed;
-        [SerializeField] private float projectileBuffer;
-        [SerializeField] private float projectileSpawnRate;
+        public float ProjectileSpeed;
+        public float ProjectileBuffer;
+        public float ProjectileSpawnRate;
         
         
         [Header("DataStats")]
-        [SerializeField] private float health;
+        public float Health;
         
         [Header("AnimationStats")]
-        [SerializeField] private float rotationSpeed;
+        public float RotationSpeed;
         
         
-        public float RotationSpeed => rotationSpeed;
-        public float Accelartion => acceleration;
-        public float MovementThreshold => movementThreshold;
-        public float ProjectileSpeed => projectileSpeed;
-        public float ProjectileBuffer => projectileBuffer;
-        public float ProjectileSpawnRate => projectileSpawnRate;
-        public float Health => health;
         
     }
 }

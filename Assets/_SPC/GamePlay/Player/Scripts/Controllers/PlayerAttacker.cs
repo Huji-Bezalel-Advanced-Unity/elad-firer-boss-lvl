@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using _LB.Core.Scripts.Utils;
 using _SPC.Core.Scripts.InputSystem;
+using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,16 +14,19 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         private bool _attack;
         private PlayerStats Stats;
         private List<Transform> _targetTransforms;
+        private readonly GameLogger _playerLogger;
         private Transform _playerTransform;
 
 
-        public PlayerAttacker(PlayerStats stats, Transform target, Transform playerTransform, BulletMonoPool projectilePool, List<Transform> targetTransforms) 
+        public PlayerAttacker(PlayerStats stats, Transform target, Transform playerTransform,
+            BulletMonoPool projectilePool, List<Transform> targetTransforms, GameLogger playerLogger) 
         {
             _projectilePool = projectilePool;
             _inputSystem = InputSystemBuffer.Instance.InputSystem;
             _inputSystem.Player.Attack.performed += OnAttackPerformed;
             _playerTransform = playerTransform;
             _targetTransforms = targetTransforms;
+            _playerLogger = playerLogger;
             _targetTransforms.Add(target);
             Stats = stats;
         }

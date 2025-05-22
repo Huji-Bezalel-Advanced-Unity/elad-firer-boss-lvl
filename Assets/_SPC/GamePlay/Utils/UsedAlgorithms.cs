@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _LB.Core.Scripts.Utils
+namespace _SPC.GamePlay.Utils
 {
     public static class UsedAlgorithms
     {
