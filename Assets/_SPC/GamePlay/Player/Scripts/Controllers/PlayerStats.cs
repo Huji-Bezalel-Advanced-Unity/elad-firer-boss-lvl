@@ -12,9 +12,9 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         public float MovementThreshold;
         
         [Header("AttackerStats")]
-        public float ProjectileSpeed;
-        public float ProjectileBuffer;
-        public float ProjectileSpawnRate;
+        [SerializeField] [Range(5f,40f)] public float ProjectileSpeed;
+        [SerializeField] [Range(0f,10f)] public float ProjectileBuffer;
+        [SerializeField] [Range(0.1f,3f)] public float ProjectileSpawnRate;
         
         
         [Header("DataStats")]

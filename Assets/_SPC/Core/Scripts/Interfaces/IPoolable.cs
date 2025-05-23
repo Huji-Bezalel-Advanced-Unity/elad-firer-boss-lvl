@@ -1,4 +1,4 @@
-namespace _LB.Core.Scripts.Interfaces
+namespace _SPC.Core.Scripts.Interfaces
 {
     public interface IPoolable
     {

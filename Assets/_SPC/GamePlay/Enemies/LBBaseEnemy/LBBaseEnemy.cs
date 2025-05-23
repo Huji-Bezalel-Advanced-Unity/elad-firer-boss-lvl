@@ -1,16 +1,24 @@
 using System;
-using _LB.Core.Scripts.Interfaces;
+using System.Collections.Generic;
+using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
+using _SPC.GamePlay.Utils;
+using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace _SPC.GamePlay.Enemies.LBBaseEnemy
 {
-    public abstract class LBBaseEnemy: LBBaseMono, IHitable
+    public abstract class LBBaseEnemy: SPCBaseMono, IHitable
     {
-        [SerializeField] private GameObject explosionPrefab;
-        [SerializeField] private Transform _explosionsFather;
-
+        [Header("Attacker")]
+        [SerializeField] protected GameObject explosionPrefab;
+        [SerializeField] protected Transform _explosionsFather;
+        [SerializeField] protected BulletMonoPool bulletPool;
+        [SerializeField] protected List<Transform> transformTargets = new List<Transform>();
+        [SerializeField] protected Transform targetTransform;
+        [SerializeField] protected GameLogger  enemyLogger;
+        
         public void GotHit(Vector3 projectileTransform)
         {
             Instantiate(explosionPrefab, projectileTransform, Quaternion.identity,_explosionsFather);

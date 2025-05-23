@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using _LB.Core.Scripts.Interfaces;
+using _SPC.Core.Scripts.Interfaces;
 using UnityEngine;
 
 namespace _SPC.Core.Scripts.Generics
 {
-    public class SPCMonoPool<T> : LBBaseMono.LBBaseMono where T : LBBaseMono.LBBaseMono, IPoolable
+    public class SPCMonoPool<T> : LBBaseMono.SPCBaseMono where T : LBBaseMono.SPCBaseMono, IPoolable
     {
         [SerializeField] private int initialSize = 10;
         [SerializeField] private T prefab;

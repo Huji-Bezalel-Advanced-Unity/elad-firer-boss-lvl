@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using _LB.Core.Scripts.Interfaces;
+using _SPC.Core.Scripts.Abstracts;
+using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.GamePlay.Player.Scripts.Controllers;
 using _SPC.GamePlay.Utils;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Player.Scripts
 {
-    public sealed class PlayerManager: LBBaseMono, IHitable
+    public sealed class PlayerManager: SPCBaseMono, IHitable
     {
         private static readonly int Flame = Animator.StringToHash("Flame");
 
@@ -31,7 +32,7 @@ namespace _SPC.GamePlay.Player.Scripts
         
         [Header("Attacker")]
         [SerializeField] private Transform targetTransform;
-        [SerializeField] private BulletMonoPool projectilePool;
+        [SerializeField] private BulletMonoPool playerPool;
         [SerializeField] private List<Transform> transformTargets = new List<Transform>();
         private PlayerMovement _movement;
         private PlayerAttacker _attacker;
@@ -39,7 +40,15 @@ namespace _SPC.GamePlay.Player.Scripts
         void Start()
         {
             _movement = new PlayerMovement(rb2D,stats,playerLogger);
-            _attacker = new PlayerAttacker(stats,targetTransform,transform, projectilePool,transformTargets,playerLogger);
+            var deps = new AttackerDependencies
+            {
+                MainTarget = targetTransform,
+                EntityTransform = transform,
+                ProjectilePools = new Dictionary<BulletType, BulletMonoPool> { { BulletType.PlayerBullet, playerPool } },
+                TargetTransforms = transformTargets,
+                Logger = playerLogger
+            };
+            _attacker = new PlayerAttacker(stats, deps);
         }
         
         
@@ -82,7 +91,7 @@ namespace _SPC.GamePlay.Player.Scripts
         public void GotHit(Vector3 projectileTransform)
         {
             if (_flashCoroutine != null)
-                StopCoroutine(_flashCoroutine);
+                return;
 
             _flashCoroutine = StartCoroutine(FlashRed());
         }

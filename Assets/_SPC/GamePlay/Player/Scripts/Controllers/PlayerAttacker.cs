@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.InputSystem;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
@@ -7,27 +8,17 @@ using UnityEngine.InputSystem;
 
 namespace _SPC.GamePlay.Player.Scripts.Controllers
 {
-    public sealed class PlayerAttacker
+    public sealed class PlayerAttacker: Attacker
     {
-        private readonly BulletMonoPool _projectilePool;
         private readonly InputSystem_Actions _inputSystem;
         private bool _attack;
         private PlayerStats Stats;
-        private List<Transform> _targetTransforms;
-        private readonly GameLogger _playerLogger;
-        private Transform _playerTransform;
 
 
-        public PlayerAttacker(PlayerStats stats, Transform target, Transform playerTransform,
-            BulletMonoPool projectilePool, List<Transform> targetTransforms, GameLogger playerLogger) 
+        public PlayerAttacker(PlayerStats stats, AttackerDependencies dependencies) : base(dependencies) 
         {
-            _projectilePool = projectilePool;
             _inputSystem = InputSystemBuffer.Instance.InputSystem;
             _inputSystem.Player.Attack.performed += OnAttackPerformed;
-            _playerTransform = playerTransform;
-            _targetTransforms = targetTransforms;
-            _playerLogger = playerLogger;
-            _targetTransforms.Add(target);
             Stats = stats;
         }
 
@@ -39,27 +30,24 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         public void NormalAttack()
         {
             if (!_attack) return;
-            var target = UsedAlgorithms.GetClosestTarget(_targetTransforms, _playerTransform);
-                        if (target != null)
-                        {
-                            var proj = _projectilePool.Get();
-                            proj.Activate(
-                                target.position,
-                                _playerTransform.position,
-                                Stats.ProjectileSpeed,
-                                Stats.ProjectileBuffer,
-                                this
-                            );
-                        }
+            OneBulletShot();
             _attack = false;
         }
 
-        
-        public void ReturnToPool(Bullet bullet)
+        private void OneBulletShot()
         {
-            _projectilePool.Return(bullet);
+            var target = UsedAlgorithms.GetClosestTarget(TargetTransforms, EntityTransform);
+            if (target != null)
+            {
+                var proj = ProjectilePools[BulletType.PlayerBullet].Get();
+                proj.Activate(
+                    target.position,
+                    EntityTransform.position,
+                    Stats.ProjectileSpeed,
+                    Stats.ProjectileBuffer,
+                    ProjectilePools[BulletType.PlayerBullet]
+                );
+            }
         }
-
-        
     }
 }

@@ -1,4 +1,4 @@
-using _LB.Core.Scripts.Interfaces;
+using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.GamePlay.Player.Scripts.Controllers;
 using _SPC.GamePlay.Utils;
@@ -7,23 +7,20 @@ using UnityEngine.Serialization;
 
 namespace _SPC.GamePlay.Weapons.Bullet
 {
-    public class Bullet: LBBaseMono, IPoolable
+    public class Bullet: SPCBaseMono, IPoolable
     {
         
-        private PlayerAttacker _attacker;
-        [SerializeField] private GameObject explosionPrefab;
         [SerializeField] private Rigidbody2D rb2D;
         [SerializeField] private GameLogger bulletLogger;
-        private Transform _explosionsFather;
+        private BulletMonoPool _pool;
+        private bool _active;
 
-        public void Start()
-        {
-            _explosionsFather = GameObject.Find("Explosions")?.transform;
-        }
 
-        public void Activate(Vector2 target, Vector2 startPosition, float speed,float buffer, PlayerAttacker attacker)
+        public void Activate(Vector2 target, Vector2 startPosition, float speed,float buffer, BulletMonoPool pool)
         {
-            _attacker = attacker;
+            bulletLogger?.Log("Bullet activated");
+            _active = true;
+            _pool = pool;
             Vector2 direction = (target - startPosition).normalized;
             Vector2 spawnPosition = startPosition + direction * buffer;
             
@@ -36,6 +33,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
 
         public void OnTriggerEnter2D(Collider2D other)
         {
+            if (!_active) return;
             bulletLogger?.Log("Triggered by: " + other.name);
             var target = other.GetComponentInParent<IHitable>();
             if (target != null)
@@ -44,7 +42,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
                 bulletLogger?.Log("Bullet Hit: " + target);
             }
             transform.position = new Vector2(-100, -100);
-            _attacker.ReturnToPool(this);
+            _pool.Return(this);
         }
         
 
