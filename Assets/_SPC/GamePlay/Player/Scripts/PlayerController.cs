@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Player.Scripts
 {
-    public sealed class PlayerManager: SPCBaseMono, IHitable
+    public sealed class PlayerController: SPCBaseMono, IHitable
     {
         private static readonly int Flame = Animator.StringToHash("Flame");
 
@@ -95,7 +95,12 @@ namespace _SPC.GamePlay.Player.Scripts
 
             _flashCoroutine = StartCoroutine(FlashRed());
         }
-        
+
+        public Type GetTypeOfEntity()
+        {
+            return Type.Player;
+        }
+
         private Coroutine _flashCoroutine;
 
         private IEnumerator FlashRed()

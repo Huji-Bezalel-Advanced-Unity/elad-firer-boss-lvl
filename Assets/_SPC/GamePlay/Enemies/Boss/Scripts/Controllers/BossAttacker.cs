@@ -1,4 +1,5 @@
 using _SPC.Core.Scripts.Abstracts;
+using _SPC.Core.Scripts.Interfaces;
 using DG.Tweening;
 using UnityEngine;
 
@@ -44,9 +45,9 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
                 // Get and activate the bullet
                 var bullet = pool.Get();
-                bullet.Activate(
+                bullet.Activate(Type.Enemy,
                     dummyTarget,               // Fake target far in direction
-                    center,                    // Start at enemy
+                    center,          // Start at enemy
                     _stats.ProjectileSpeed,    // Use your speed
                     _stats.ProjectileBuffer,   // Use your buffer
                     pool

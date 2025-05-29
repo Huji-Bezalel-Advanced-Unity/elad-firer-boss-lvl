@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts
 {
-    public class BossManager: LBBaseEnemy.LBBaseEnemy
+    public class BossController: LBBaseEnemy.LBBaseEnemy
     {
         [Header("Stats")] 
         [SerializeField] private BossStats stats;

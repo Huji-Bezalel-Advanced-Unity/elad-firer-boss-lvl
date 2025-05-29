@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.InputSystem;
+using _SPC.Core.Scripts.Interfaces;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
@@ -40,7 +41,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             if (target != null)
             {
                 var proj = ProjectilePools[BulletType.PlayerBullet].Get();
-                proj.Activate(
+                proj.Activate(Type.Player,
                     target.position,
                     EntityTransform.position,
                     Stats.ProjectileSpeed,

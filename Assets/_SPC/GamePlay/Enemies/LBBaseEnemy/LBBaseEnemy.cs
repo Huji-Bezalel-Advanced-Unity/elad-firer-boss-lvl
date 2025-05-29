@@ -1,11 +1,11 @@
-using System;
+
 using System.Collections.Generic;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using Type = _SPC.Core.Scripts.Interfaces.Type;
 
 namespace _SPC.GamePlay.Enemies.LBBaseEnemy
 {
@@ -22,6 +22,11 @@ namespace _SPC.GamePlay.Enemies.LBBaseEnemy
         public void GotHit(Vector3 projectileTransform)
         {
             Instantiate(explosionPrefab, projectileTransform, Quaternion.identity,_explosionsFather);
+        }
+
+        public Type GetTypeOfEntity()
+        {
+            return Type.Enemy;
         }
     }
 
