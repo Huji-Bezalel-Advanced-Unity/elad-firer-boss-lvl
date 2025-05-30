@@ -35,7 +35,7 @@ namespace _SPC.GamePlay.Player.Scripts
         [SerializeField] private BulletMonoPool playerPool;
         [SerializeField] private List<Transform> transformTargets = new List<Transform>();
         private PlayerMovement _movement;
-        private PlayerAttacker _attacker;
+        private PlayerSrcAttacker _srcAttacker;
 
         void Start()
         {
@@ -48,13 +48,13 @@ namespace _SPC.GamePlay.Player.Scripts
                 TargetTransforms = transformTargets,
                 Logger = playerLogger
             };
-            _attacker = new PlayerAttacker(stats, deps);
+            _srcAttacker = new PlayerSrcAttacker(stats, deps);
         }
         
         
         public void Update()
         {
-            _attacker.NormalAttack();
+            _srcAttacker.NormalAttack();
             _movement.UpdateMovement();
             RotateTowardsNearestTarget();
             HandleFlame();
