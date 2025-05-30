@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BossStats
   m_EditorClassIdentifier: 
   ProjectileSpeed: 10
-  ProjectileBuffer: 4.5
-  ProjectileSpawnRate: 1.37
+  ProjectileBuffer: 4.6
+  ProjectileSpawnRate: 1.71

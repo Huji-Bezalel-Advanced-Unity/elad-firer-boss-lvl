@@ -7,6 +7,8 @@ using _SPC.GamePlay.Player.Scripts.Controllers;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
+using _SPC.GamePlay.UI.Scripts;
+using _SPC.GamePlay.UI.Scripts.Scripts;
 
 namespace _SPC.GamePlay.Player.Scripts
 {
@@ -24,6 +26,7 @@ namespace _SPC.GamePlay.Player.Scripts
         [SerializeField] private Animator animator;
         [SerializeField] private GameObject flame;
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Transform spaceshipTransform;
 
 
         [Header("Stats")] 
@@ -37,6 +40,9 @@ namespace _SPC.GamePlay.Player.Scripts
         private PlayerMovement _movement;
         private PlayerAttacker _attacker;
 
+        [Header("UI")]
+        [SerializeField] private HealthBarUI healthBarUI;
+
         void Start()
         {
             _movement = new PlayerMovement(rb2D,stats,playerLogger);
@@ -49,7 +55,8 @@ namespace _SPC.GamePlay.Player.Scripts
                 Logger = playerLogger
             };
             _attacker = new PlayerAttacker(stats, deps);
-            _health = new PlayerHealth(playerLogger);
+            var healthDeps = new HealthDependencies(playerLogger, healthBarUI);
+            _health = new PlayerHealth(healthDeps);
         }
         
         
@@ -87,7 +94,7 @@ namespace _SPC.GamePlay.Player.Scripts
             if (dir.sqrMagnitude < 0.0001f) return;
 
             // Make the sprite's "up" face the target
-            transform.up = -dir;
+            spaceshipTransform.up = -dir;
         }
 
 

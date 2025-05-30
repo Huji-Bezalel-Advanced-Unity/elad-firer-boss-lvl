@@ -6,11 +6,11 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
 {
     public class PlayerHealth: SPCHealth
     {
-        public PlayerHealth(GameLogger playerLogger)
+        public PlayerHealth(HealthDependencies dependencies)
+            : base(dependencies)
         {
             GameEvents.OnEnemyHit += ReduceLife;
             OnDeathAction += GameEvents.GameFinished;
-            logger = playerLogger;
         }
     }
 }

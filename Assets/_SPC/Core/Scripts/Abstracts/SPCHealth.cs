@@ -6,6 +6,22 @@ using UnityEngine;
 
 namespace _SPC.Core.Scripts.Abstracts
 {
+    public interface IHealthUI
+    {
+        void AssignEvent(SPCHealth health);
+    }
+
+    public struct HealthDependencies
+    {
+        public GameLogger logger;
+        public IHealthUI healthUI;
+        public HealthDependencies(GameLogger logger, IHealthUI healthUI)
+        {
+            this.logger = logger;
+            this.healthUI = healthUI;
+        }
+    }
+
     public class SPCHealth
     {
         public Action<float, float> OnDamageAction; 
@@ -18,6 +34,12 @@ namespace _SPC.Core.Scripts.Abstracts
         public Dictionary<float, List<SPCHealthAction>> OnHPReached = new();
         
         protected GameLogger logger;
+
+        public SPCHealth(HealthDependencies dependencies)
+        {
+            this.logger = dependencies.logger;
+            dependencies.healthUI?.AssignEvent(this);
+        }
 
         public void ReduceLife(int amount)
         {
