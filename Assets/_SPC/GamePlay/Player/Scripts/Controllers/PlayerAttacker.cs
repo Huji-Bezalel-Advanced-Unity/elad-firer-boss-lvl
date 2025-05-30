@@ -9,14 +9,14 @@ using UnityEngine.InputSystem;
 
 namespace _SPC.GamePlay.Player.Scripts.Controllers
 {
-    public sealed class PlayerSrcAttacker: SrcAttacker
+    public sealed class PlayerAttacker: SPCAttacker
     {
         private readonly InputSystem_Actions _inputSystem;
         private bool _attack;
         private PlayerStats Stats;
 
 
-        public PlayerSrcAttacker(PlayerStats stats, AttackerDependencies dependencies) : base(dependencies) 
+        public PlayerAttacker(PlayerStats stats, AttackerDependencies dependencies) : base(dependencies) 
         {
             _inputSystem = InputSystemBuffer.Instance.InputSystem;
             _inputSystem.Player.Attack.performed += OnAttackPerformed;

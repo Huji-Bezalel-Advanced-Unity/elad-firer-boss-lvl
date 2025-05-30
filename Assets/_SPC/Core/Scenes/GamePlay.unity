@@ -296,7 +296,7 @@ ParticleSystem:
     enabled: 1
     startLifetime:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 15
       minScalar: 5
       maxCurve:
@@ -1051,7 +1051,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 20
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5754,7 +5754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c4de3e9c7384909bf30be3e64ed8e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
 --- !u!1 &1449068707 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5781988761508159831, guid: e656ef677287c4fa78293016e4af69ff, type: 3}

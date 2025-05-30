@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 {
-    public class BossSrcAttacker: SrcAttacker
+    public class BossAttacker: SPCAttacker
     {
         private readonly BossStats _stats;
         private bool _attack;
 
-        public BossSrcAttacker(BossStats stats,AttackerDependencies deps) : base(deps)
+        public BossAttacker(BossStats stats,AttackerDependencies deps) : base(deps)
         {
             _stats = stats;
             _attack = false;

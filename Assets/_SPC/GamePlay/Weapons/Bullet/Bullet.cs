@@ -47,7 +47,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
                 }
                 if (_shooterType == Type.Enemy && target.GetTypeOfEntity() == Type.Player )
                 {
-                    GameEvents.EnemyHit();
+                    GameEvents.EnemyHit(10);
                 }
             }
             transform.position = new Vector2(-100, -100);

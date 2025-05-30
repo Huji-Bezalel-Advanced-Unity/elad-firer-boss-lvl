@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _SPC.Core.Scripts.Abstracts
 {
-    public abstract class SrcAttacker
+    public abstract class SPCAttacker
     {
         protected Transform MainTarget;
         protected Transform EntityTransform;
@@ -13,7 +13,7 @@ namespace _SPC.Core.Scripts.Abstracts
         protected List<Transform> TargetTransforms;
         protected GameLogger Logger;
 
-        protected SrcAttacker(AttackerDependencies deps)
+        protected SPCAttacker(AttackerDependencies deps)
         {
             MainTarget = deps.MainTarget;
             EntityTransform = deps.EntityTransform;

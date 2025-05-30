@@ -4,7 +4,7 @@ namespace _SPC.GamePlay.Managers
 {
     public static class GameEvents
     {
-        private static event Action OnEnemyHit;
+        public static event Action<int> OnEnemyHit;
         public static event Action OnGameStarted;
         public static event Action OnGameFinished;
         public static event Action OnPlayerHit;
@@ -36,9 +36,9 @@ namespace _SPC.GamePlay.Managers
             OnEndSceneStarted?.Invoke();
         }
 
-        public static void EnemyHit()
+        public static void EnemyHit(int damage)
         {
-            OnEnemyHit?.Invoke();
+            OnEnemyHit?.Invoke(damage);
         }
     }
 }

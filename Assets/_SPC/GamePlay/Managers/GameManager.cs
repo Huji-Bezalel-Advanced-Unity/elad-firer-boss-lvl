@@ -39,8 +39,15 @@ namespace _SPC.GamePlay.Managers
 
         private void OnGameFinished()
         {
-            _highScoreManager.TryAddHighScore(_gameplayScore.Score, CurrentNickname);
+            StartCoroutine(GameEndCoroutine());
         }
-       
+
+        private IEnumerator GameEndCoroutine()
+        {
+            _highScoreManager.TryAddHighScore(_gameplayScore.Score, CurrentNickname);
+            SceneManager.LoadScene("EndScene");
+            yield return null;
+            GameEvents.EndSceneStarted();
+        }
     }
 }

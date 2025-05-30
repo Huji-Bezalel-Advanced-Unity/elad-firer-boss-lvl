@@ -13,7 +13,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [Header("Stats")] 
         [SerializeField] private BossStats stats;
 
-        private BossSrcAttacker _srcAttacker;
+        private BossAttacker _attacker;
 
 
         private void Start()
@@ -26,12 +26,12 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
                 TargetTransforms = transformTargets,
                 Logger = enemyLogger
             };
-            _srcAttacker = new BossSrcAttacker(stats, deps);
+            _attacker = new BossAttacker(stats, deps);
         }
 
         private void Update()
         {
-            _srcAttacker.NormalAttack();
+            _attacker.NormalAttack();
         }
     }
 }

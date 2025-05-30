@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using _SPC.GamePlay.Utils;
 using UnityEngine;
 
 namespace _SPC.Core.Scripts.Abstracts
 {
-    public class SRCHealth
+    public class SPCHealth
     {
         public Action<float, float> OnDamageAction; 
         public Action<float, float> OnHealAction;
@@ -14,12 +15,14 @@ namespace _SPC.Core.Scripts.Abstracts
         public float maxHealth = 100;
         public float currentHealth = 100;
         
-        public Dictionary<float, List<SRCHealthAction>> OnHPReached = new();
+        public Dictionary<float, List<SPCHealthAction>> OnHPReached = new();
+        
+        protected GameLogger logger;
 
-        public void ReduceLife(float amount)
+        public void ReduceLife(int amount)
         {
             currentHealth -= amount;
-            
+            logger?.Log("Current Heath is " + currentHealth);
             OnDamageAction?.Invoke(amount, currentHealth);
             
             CheckDeath();
@@ -75,7 +78,7 @@ namespace _SPC.Core.Scripts.Abstracts
             return currentHealth;
         }
 
-        public void AddHPAction(float amount, SRCHealthAction action)
+        public void AddHPAction(float amount, SPCHealthAction action)
         {
             if (OnHPReached.ContainsKey(amount))
             {
@@ -83,7 +86,7 @@ namespace _SPC.Core.Scripts.Abstracts
             }
             else
             {
-                OnHPReached.Add(amount, new List<SRCHealthAction> { action });
+                OnHPReached.Add(amount, new List<SPCHealthAction> { action });
             }
         }
 
@@ -99,9 +102,9 @@ namespace _SPC.Core.Scripts.Abstracts
         }
     }
 
-    public struct SRCHealthAction : IEquatable<SRCHealthAction>
+    public struct SPCHealthAction : IEquatable<SPCHealthAction>
     {
-        public SRCHealthAction(Action action, bool isOnce = true)
+        public SPCHealthAction(Action action, bool isOnce = true)
         {
             OnDamageAction = action;
             IsOnce = isOnce;
@@ -115,14 +118,14 @@ namespace _SPC.Core.Scripts.Abstracts
             OnDamageAction?.Invoke();
         }
 
-        public bool Equals(SRCHealthAction other)
+        public bool Equals(SPCHealthAction other)
         {
             return Equals(OnDamageAction, other.OnDamageAction) && IsOnce == other.IsOnce;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is SRCHealthAction other && Equals(other);
+            return obj is SPCHealthAction other && Equals(other);
         }
 
         public override int GetHashCode()
