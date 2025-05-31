@@ -22,7 +22,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
             {
                 MainTarget = targetTransform,
                 EntityTransform = transform,
-                ProjectilePools = new Dictionary<BulletType, BulletMonoPool> { { BulletType.EnemyBullet, bulletPool } },
+                ProjectilePools = new Dictionary<WeaponType, BulletMonoPool> { { WeaponType.EnemyBullet, bulletPool } },
                 TargetTransforms = transformTargets,
                 Logger = enemyLogger
             };

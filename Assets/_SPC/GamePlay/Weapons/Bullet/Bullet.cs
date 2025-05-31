@@ -1,3 +1,4 @@
+using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.GamePlay.Managers;
@@ -13,13 +14,13 @@ namespace _SPC.GamePlay.Weapons.Bullet
         [SerializeField] private GameLogger bulletLogger;
         private BulletMonoPool _pool;
         private bool _active;
-        private Type _shooterType;
+        private WeaponType _weaponType;
 
 
-        public void Activate(Type shooterType ,Vector2 target, Vector2 startPosition, float speed,float buffer, BulletMonoPool pool)
+        public void Activate(WeaponType weaponType ,Vector2 target, Vector2 startPosition, float speed,float buffer, BulletMonoPool pool)
         {
             bulletLogger?.Log("Bullet activated");
-            _shooterType = shooterType;
+            _weaponType = weaponType;
             _active = true;
             _pool = pool;
             Vector2 direction = (target - startPosition).normalized;
@@ -39,16 +40,8 @@ namespace _SPC.GamePlay.Weapons.Bullet
             var target = other.GetComponentInParent<IHitable>();
             if (target != null)
             {
-                target.GotHit(transform.position);
+                target.GotHit(transform.position,_weaponType);
                 bulletLogger?.Log("Bullet Hit: " + target);
-                if (_shooterType == Type.Player && target.GetTypeOfEntity() == Type.Enemy )
-                {
-                    GameEvents.PlayerHit();
-                }
-                if (_shooterType == Type.Enemy && target.GetTypeOfEntity() == Type.Player )
-                {
-                    GameEvents.EnemyHit(10);
-                }
             }
             transform.position = new Vector2(-100, -100);
             _pool.Return(this);
@@ -60,6 +53,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
         {
             _active = false;
         }
+        
         
     }
 }

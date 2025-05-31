@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
+using _SPC.GamePlay.Managers;
 using _SPC.GamePlay.Player.Scripts.Controllers;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
@@ -50,7 +51,7 @@ namespace _SPC.GamePlay.Player.Scripts
             {
                 MainTarget = targetTransform,
                 EntityTransform = transform,
-                ProjectilePools = new Dictionary<BulletType, BulletMonoPool> { { BulletType.PlayerBullet, playerPool } },
+                ProjectilePools = new Dictionary<WeaponType, BulletMonoPool> { { WeaponType.PlayerBullet, playerPool } },
                 TargetTransforms = transformTargets,
                 Logger = playerLogger
             };
@@ -98,19 +99,14 @@ namespace _SPC.GamePlay.Player.Scripts
         }
 
 
-        public void GotHit(Vector3 projectileTransform)
+        public void GotHit(Vector3 projectileTransform, WeaponType weaponType)
         {
+            _health.ReduceLife(SPCAttacker.damage[weaponType]);
             if (_flashCoroutine != null)
                 return;
-
             _flashCoroutine = StartCoroutine(FlashRed());
         }
-
-        public Type GetTypeOfEntity()
-        {
-            return Type.Player;
-        }
-
+        
 
         private IEnumerator FlashRed()
         {
@@ -120,5 +116,8 @@ namespace _SPC.GamePlay.Player.Scripts
             spriteRenderer.color = originalColor;
             _flashCoroutine = null;
         }
+        
+        
+        
     }
 }

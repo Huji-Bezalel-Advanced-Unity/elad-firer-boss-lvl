@@ -18,7 +18,7 @@ namespace _SPC.GamePlay.UI.Scripts.Scripts
             // Get nickname from GameManager
             string currentNickname = GameManager.Instance.CurrentNickname;
             if (nicknameText != null)
-                nicknameText.text = currentNickname;
+                nicknameText.text = "Name: "+ currentNickname;
 
             // Subscribe to global score update event
             GameEvents.OnUpdateScore += UpdateScoreDisplay;
@@ -30,6 +30,7 @@ namespace _SPC.GamePlay.UI.Scripts.Scripts
         private void OnDestroy()
         {
             GameEvents.OnUpdateScore -= UpdateScoreDisplay;
+            
         }
 
         private void UpdateScoreDisplay(int score)

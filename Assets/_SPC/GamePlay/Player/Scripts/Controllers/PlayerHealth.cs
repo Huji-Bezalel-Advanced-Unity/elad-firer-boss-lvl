@@ -9,7 +9,6 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         public PlayerHealth(HealthDependencies dependencies)
             : base(dependencies)
         {
-            GameEvents.OnEnemyHit += ReduceLife;
             OnDeathAction += GameEvents.GameFinished;
         }
     }

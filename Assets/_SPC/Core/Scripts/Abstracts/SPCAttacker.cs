@@ -7,9 +7,15 @@ namespace _SPC.Core.Scripts.Abstracts
 {
     public abstract class SPCAttacker
     {
+        public static Dictionary<WeaponType,int> damage = new Dictionary<WeaponType, int>
+        {
+            {WeaponType.PlayerBullet, 10},
+            {WeaponType.EnemyBullet, 10},
+            { WeaponType.EnemyBody ,20}
+        };
         protected Transform MainTarget;
         protected Transform EntityTransform;
-        protected Dictionary<BulletType, BulletMonoPool> ProjectilePools;
+        protected Dictionary<WeaponType, BulletMonoPool> ProjectilePools;
         protected List<Transform> TargetTransforms;
         protected GameLogger Logger;
 
@@ -29,14 +35,15 @@ namespace _SPC.Core.Scripts.Abstracts
     {
         public Transform MainTarget;
         public Transform EntityTransform;
-        public Dictionary<BulletType, BulletMonoPool> ProjectilePools;
+        public Dictionary<WeaponType, BulletMonoPool> ProjectilePools;
         public List<Transform> TargetTransforms;
         public GameLogger Logger;
     }
     
-    public enum BulletType
+    public enum WeaponType
     {
         EnemyBullet,
-        PlayerBullet
+        PlayerBullet,
+        EnemyBody
     }
 }

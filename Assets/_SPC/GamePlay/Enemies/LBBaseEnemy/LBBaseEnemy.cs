@@ -1,11 +1,13 @@
 
+using System;
 using System.Collections.Generic;
+using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
+using _SPC.GamePlay.Managers;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
-using Type = _SPC.Core.Scripts.Interfaces.Type;
 
 namespace _SPC.GamePlay.Enemies.LBBaseEnemy
 {
@@ -19,14 +21,23 @@ namespace _SPC.GamePlay.Enemies.LBBaseEnemy
         [SerializeField] protected Transform targetTransform;
         [SerializeField] protected GameLogger  enemyLogger;
         
-        public void GotHit(Vector3 projectileTransform)
+        public void GotHit(Vector3 projectileTransform, WeaponType shooterType)
         {
             Instantiate(explosionPrefab, projectileTransform, Quaternion.identity,_explosionsFather);
+            if (shooterType == WeaponType.PlayerBullet)
+            {
+                GameEvents.PlayerHit();
+            }
         }
 
-        public Type GetTypeOfEntity()
+        public void OnCollisionEnter2D(Collision2D other)
         {
-            return Type.Enemy;
+            var hit = other.gameObject.GetComponentInParent<IHitable>();
+            if (hit != null)
+            {
+                hit.GotHit(transform.position,WeaponType.EnemyBody);
+                
+            }
         }
     }
 

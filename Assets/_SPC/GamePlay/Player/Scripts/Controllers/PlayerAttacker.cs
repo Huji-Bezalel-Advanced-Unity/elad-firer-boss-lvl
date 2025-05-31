@@ -40,13 +40,13 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             var target = UsedAlgorithms.GetClosestTarget(TargetTransforms, EntityTransform);
             if (target != null)
             {
-                var proj = ProjectilePools[BulletType.PlayerBullet].Get();
-                proj.Activate(Type.Player,
+                var proj = ProjectilePools[WeaponType.PlayerBullet].Get();
+                proj.Activate(WeaponType.PlayerBullet,
                     target.position,
                     EntityTransform.position,
                     Stats.ProjectileSpeed,
                     Stats.ProjectileBuffer,
-                    ProjectilePools[BulletType.PlayerBullet]
+                    ProjectilePools[WeaponType.PlayerBullet]
                 );
             }
         }
