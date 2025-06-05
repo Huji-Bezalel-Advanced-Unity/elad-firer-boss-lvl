@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -14,9 +15,9 @@ TagManager:
   - Lights
   - Player
   - Enemy
-  - Bullets
+  - PlayerBullets
   - Border
-  - 
+  - EnemyBullets
   - 
   - 
   - 

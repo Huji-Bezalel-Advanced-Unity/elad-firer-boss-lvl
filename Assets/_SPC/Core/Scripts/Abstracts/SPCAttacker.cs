@@ -10,8 +10,9 @@ namespace _SPC.Core.Scripts.Abstracts
         public static Dictionary<WeaponType,int> damage = new Dictionary<WeaponType, int>
         {
             {WeaponType.PlayerBullet, 10},
-            {WeaponType.EnemyBullet, 10},
-            { WeaponType.EnemyBody ,20}
+            {WeaponType.BossBullet, 10},
+            { WeaponType.EnemyBody ,20},
+            { WeaponType.DestroyerBullet, 7}
         };
         protected Transform MainTarget;
         protected Transform EntityTransform;
@@ -26,7 +27,7 @@ namespace _SPC.Core.Scripts.Abstracts
             ProjectilePools = deps.ProjectilePools;
             TargetTransforms = deps.TargetTransforms;
             Logger = deps.Logger;
-            TargetTransforms.Add(MainTarget);
+            if(!TargetTransforms.Contains(MainTarget)) TargetTransforms.Add(MainTarget);
         }
     }
     
@@ -42,8 +43,9 @@ namespace _SPC.Core.Scripts.Abstracts
     
     public enum WeaponType
     {
-        EnemyBullet,
+        BossBullet,
         PlayerBullet,
-        EnemyBody
+        EnemyBody,
+        DestroyerBullet
     }
 }

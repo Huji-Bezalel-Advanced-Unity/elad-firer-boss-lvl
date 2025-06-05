@@ -1,5 +1,3 @@
-
-using System;
 using System.Collections.Generic;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
@@ -9,9 +7,9 @@ using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
-namespace _SPC.GamePlay.Enemies.LBBaseEnemy
+namespace _SPC.GamePlay.Enemies.BaseEnemy
 {
-    public abstract class LBBaseEnemy: SPCBaseMono, IHitable
+    public abstract class SPCBaseEnemy: SPCBaseMono, IHitable
     {
         [Header("Attacker")]
         [SerializeField] protected GameObject explosionPrefab;
@@ -20,7 +18,11 @@ namespace _SPC.GamePlay.Enemies.LBBaseEnemy
         [SerializeField] protected List<Transform> transformTargets = new List<Transform>();
         [SerializeField] protected Transform targetTransform;
         [SerializeField] protected GameLogger  enemyLogger;
-        
+
+        void Start()
+        {
+            GameEvents.EnemyAdded(transform);
+        }
         public void GotHit(Vector3 projectileTransform, WeaponType shooterType)
         {
             Instantiate(explosionPrefab, projectileTransform, Quaternion.identity,_explosionsFather);
@@ -36,8 +38,16 @@ namespace _SPC.GamePlay.Enemies.LBBaseEnemy
             if (hit != null)
             {
                 hit.GotHit(transform.position,WeaponType.EnemyBody);
-                
             }
+        }
+
+        public virtual void Init(Transform mainTarget, List<Transform> targets, GameObject explosionPrefab, Transform explosionsFather, BulletMonoPool pool)
+        {
+            targetTransform = mainTarget;
+            transformTargets = targets;
+            this.explosionPrefab = explosionPrefab;
+            _explosionsFather = explosionsFather;
+            bulletPool = pool;
         }
     }
 

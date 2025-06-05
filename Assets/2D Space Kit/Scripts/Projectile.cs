@@ -8,7 +8,7 @@ public class Projectile : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		GameObject obj = (GameObject) Instantiate(shoot_effect, transform.position  - new Vector3(0,0,5), Quaternion.identity); //Spawn muzzle flash
+		GameObject obj = (GameObject) Instantiate(shoot_effect, transform.position  - new Vector3(0,0,5), Quaternion.identity,transform); //Spawn muzzle flash
 		obj.transform.parent = firing_ship.transform;
 		Destroy(gameObject, 5f); //Bullet will despawn after 5 seconds
 	}

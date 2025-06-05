@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using _SPC.Core.Scripts.Abstracts;
@@ -37,13 +38,21 @@ namespace _SPC.GamePlay.Player.Scripts
         [Header("Attacker")]
         [SerializeField] private Transform targetTransform;
         [SerializeField] private BulletMonoPool playerPool;
-        [SerializeField] private List<Transform> transformTargets = new List<Transform>();
+        [SerializeField] internal List<Transform> transformTargets = new List<Transform>();
         private PlayerMovement _movement;
         private PlayerAttacker _attacker;
 
         [Header("UI")]
         [SerializeField] private HealthBarUI healthBarUI;
 
+        private Coroutine _flashCoroutine;
+        private PlayerHealth _health;
+        private TargetsHandler _targetsHandler;
+        
+        void Awake()
+        {
+            _targetsHandler = new TargetsHandler(this);
+        }
         void Start()
         {
             _movement = new PlayerMovement(rb2D,stats,playerLogger);
@@ -68,8 +77,6 @@ namespace _SPC.GamePlay.Player.Scripts
             RotateTowardsNearestTarget();
             HandleFlame();
         }
-        private Coroutine _flashCoroutine;
-        private PlayerHealth _health;
 
         private void HandleFlame()
         {
@@ -119,5 +126,34 @@ namespace _SPC.GamePlay.Player.Scripts
         
         
         
+    }
+
+    internal class TargetsHandler
+    {
+        private readonly PlayerController _playerController;
+
+        public TargetsHandler(PlayerController playerController)
+        {
+            _playerController = playerController;
+            GameEvents.OnEnemyRemoved += RemoveTransform;
+            GameEvents.OnEnemyAdded += AddTranform;
+            GameEvents.OnGameFinished += DisableEvents;
+        }
+
+        private void RemoveTransform(Transform enemy)
+        {
+            _playerController.transformTargets.Remove(enemy);
+        }
+
+        private void AddTranform(Transform target)
+        {
+            _playerController.transformTargets.Add(target);
+        }
+
+        private void DisableEvents()
+        {
+            GameEvents.OnEnemyRemoved -= RemoveTransform;
+            GameEvents.OnEnemyAdded -= AddTranform;
+        }
     }
 }

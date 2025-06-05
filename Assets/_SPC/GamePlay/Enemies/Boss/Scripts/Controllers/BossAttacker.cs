@@ -22,7 +22,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             _attack = true;
 
             // Get the bullet pool for enemy bullets
-            if (!ProjectilePools.TryGetValue(WeaponType.EnemyBullet, out var pool))
+            if (!ProjectilePools.TryGetValue(WeaponType.BossBullet, out var pool))
             {
                 Logger?.Log("EnemyBullet pool not found!");
                 return;
@@ -45,7 +45,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
                 // Get and activate the bullet
                 var bullet = pool.Get();
-                bullet.Activate(WeaponType.EnemyBullet,
+                bullet.Activate(WeaponType.BossBullet,
                     dummyTarget,               // Fake target far in direction
                     center,          // Start at enemy
                     _stats.ProjectileSpeed,    // Use your speed
@@ -59,6 +59,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
                 _attack = false;
             });
         }
+        
+        
 
     }
 }

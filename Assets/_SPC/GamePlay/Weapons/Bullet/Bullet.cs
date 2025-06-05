@@ -9,15 +9,15 @@ namespace _SPC.GamePlay.Weapons.Bullet
 {
     public class Bullet: SPCBaseMono, IPoolable
     {
-        
-        [SerializeField] private Rigidbody2D rb2D;
-        [SerializeField] private GameLogger bulletLogger;
-        private BulletMonoPool _pool;
-        private bool _active;
-        private WeaponType _weaponType;
+        [Header("Bullet")]
+        [SerializeField] protected Rigidbody2D rb2D;
+        [SerializeField] protected GameLogger bulletLogger;
+        protected BulletMonoPool _pool;
+        protected bool _active;
+        protected WeaponType _weaponType;
 
 
-        public void Activate(WeaponType weaponType ,Vector2 target, Vector2 startPosition, float speed,float buffer, BulletMonoPool pool)
+        public virtual void Activate(WeaponType weaponType ,Vector2 target, Vector2 startPosition, float speed,float buffer, BulletMonoPool pool)
         {
             bulletLogger?.Log("Bullet activated");
             _weaponType = weaponType;
@@ -33,7 +33,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
             rb2D.linearVelocity = direction * speed;
         }
 
-        public void OnTriggerEnter2D(Collider2D other)
+        public virtual void OnTriggerEnter2D(Collider2D other)
         {
             if (!_active) return;
             bulletLogger?.Log("Triggered by: " + other.name);
@@ -49,7 +49,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
         
 
 
-        public void Reset()
+        public virtual void Reset()
         {
             _active = false;
         }

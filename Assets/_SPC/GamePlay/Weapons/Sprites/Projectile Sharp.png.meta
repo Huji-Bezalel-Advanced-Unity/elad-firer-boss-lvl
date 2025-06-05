@@ -1,13 +1,13 @@
 fileFormatVersion: 2
-guid: d80cdbc06d812fc4199cdd7c4c11f128
+guid: 31d8a46be10bcd3409183a6525fc1635
 labels:
-- Missile
+- Particles
 AssetOrigin:
   serializedVersion: 1
   productId: 27662
   packageName: 2D Space Kit
   packageVersion: Initial 2
-  assetPath: Assets/2D Space Kit/Missiles/Missile (7).png
+  assetPath: Assets/2D Space Kit/Particles (Sprites)/Projectile Sharp.png
   uploadId: 46238
 TextureImporter:
   internalIDToNameTable: []
@@ -40,10 +40,10 @@ TextureImporter:
   cubemapConvolution: 0
   seamlessCubemap: 0
   textureFormat: -3
-  maxTextureSize: 32
+  maxTextureSize: 1024
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 16
     mipBias: 0
     wrapU: 1
@@ -78,7 +78,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 32
+    maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -91,7 +91,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Standalone
-    maxTextureSize: 32
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -104,7 +104,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: WebGL
-    maxTextureSize: 32
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0

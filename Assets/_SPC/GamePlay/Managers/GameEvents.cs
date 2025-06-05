@@ -1,9 +1,13 @@
 using System;
+using _SPC.GamePlay.Enemies.BaseEnemy;
+using UnityEngine;
 
 namespace _SPC.GamePlay.Managers
 {
     public static class GameEvents
     {
+        public static event Action<Transform> OnEnemyAdded;
+        public static event Action<Transform> OnEnemyRemoved;
         public static event Action<int> OnEnemyHit;
         public static event Action OnGameStarted;
         public static event Action OnGameFinished;
@@ -39,6 +43,16 @@ namespace _SPC.GamePlay.Managers
         public static void EnemyHit(int damage)
         {
             OnEnemyHit?.Invoke(damage);
+        }
+
+        public static void EnemyAdded(Transform enemy)
+        {
+            OnEnemyAdded?.Invoke(enemy);
+        }
+
+        public static void EnemyRemoved(Transform enemy)
+        {
+            OnEnemyRemoved?.Invoke(enemy);
         }
     }
 }
