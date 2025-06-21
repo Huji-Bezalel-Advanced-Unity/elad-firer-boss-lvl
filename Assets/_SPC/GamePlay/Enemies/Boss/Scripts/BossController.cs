@@ -25,8 +25,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
 
         private void SetBossMissingStats()
         {
-            stats.ArenaCollider = arenaCollider;
-            stats.DestroyerPool = destroyerPool;
         }
 
         private void Start()
@@ -53,10 +51,10 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
             while (true)
             {
                 yield return new WaitForSeconds(15f);
-                var bounds = stats.ArenaCollider.bounds;
+                var bounds = arenaCollider.bounds;
                 List<Vector2> spawnPositions = new List<Vector2>();
-                int maxTries = 20;
-                float minDistance = 2.0f; // Minimum distance between spawns
+                int maxTries = stats.distanceBetweenEnemiesAccuracy;
+                float minDistance = stats.minDistanceBetweenEnemies; 
 
                 for (int i = 0; i < 3; i++)
                 {
@@ -87,11 +85,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
                     // Instantiate and initialize the destroyer
                     GameObject destroyerObj = Instantiate(stats.DestroyerPrefab, pos, Quaternion.identity);
                     var destroyer = destroyerObj.GetComponent<DestroyerController>();
-
-                    // You need to provide these arguments:
-                    // - mainTarget: e.g., targetTransform
-                    // - targets: e.g., transformTargets
-                    // - explosionPrefab, explosionsFather, bulletPool: from boss or scene
+                    
                     destroyer.Init(
                         mainTarget: targetTransform,
                         targets: new List<Transform>(transformTargets),

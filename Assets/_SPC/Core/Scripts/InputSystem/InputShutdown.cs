@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _SPC.Core.Scripts.InputSystem
 {
-    public class InputShutdown : SPCMonoSingleton<MonoBehaviour>
+    public class InputShutdown : SpcMonoSingleton<MonoBehaviour>
     {
         void OnApplicationQuit()
         {

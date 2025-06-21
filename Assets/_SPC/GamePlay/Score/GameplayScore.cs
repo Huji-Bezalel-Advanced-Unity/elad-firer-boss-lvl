@@ -28,5 +28,10 @@ namespace _SPC.GamePlay.Score
                 _score = 0;
             GameEvents.UpdateScore(_score);
         }
+
+        public void UpdateCombinator()
+        {
+            Combinator.UpdateCombinator();
+        }
     }
 }

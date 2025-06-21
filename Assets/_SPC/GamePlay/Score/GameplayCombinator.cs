@@ -13,8 +13,6 @@ namespace _SPC.GamePlay.Score
 
         private readonly GameplayScore _gameplayScore;
         private readonly List<EventType> _eventsThisFrame = new();
-        private GameObject _updaterGO;
-        private GameplayCombinatorUpdater _updater;
 
         public GameplayCombinator(GameplayScore gameplayScore)
         {
@@ -28,25 +26,13 @@ namespace _SPC.GamePlay.Score
             // Subscribe to events
             GameEvents.OnPlayerHit += OnPlayerHit;
 
-            if (_updaterGO == null)
-            {
-                _updaterGO = new GameObject("GameplayCombinatorUpdater");
-                _updater = _updaterGO.AddComponent<GameplayCombinatorUpdater>();
-                _updater.Init(this);
-            }
+          
         }
 
         private void DestroyGameplayCombinatorUpdater()
         {
             // Unsubscribe from events
             GameEvents.OnPlayerHit -= OnPlayerHit;
-
-            if (_updaterGO != null)
-            {
-                Object.Destroy(_updaterGO);
-                _updaterGO = null;
-                _updater = null;
-            }
         }
 
         private void OnPlayerHit()
@@ -54,8 +40,7 @@ namespace _SPC.GamePlay.Score
             _eventsThisFrame.Add(EventType.PlayerHit);
         }
         
-        // Should be called once per frame (e.g., from a MonoBehaviour proxy)
-        public void LateUpdate()
+        public void UpdateCombinator()
         {
             int playerHitCount = 0;
             foreach (var evt in _eventsThisFrame)
@@ -65,19 +50,6 @@ namespace _SPC.GamePlay.Score
             _gameplayScore.AddScore(playerHitCount*100);
             _eventsThisFrame.Clear();
         }
-
-        // MonoBehaviour proxy for calling LateUpdate
-        private class GameplayCombinatorUpdater : MonoBehaviour
-        {
-            private GameplayCombinator _combinator;
-            public void Init(GameplayCombinator combinator)
-            {
-                _combinator = combinator;
-            }
-            private void LateUpdate()
-            {
-                _combinator?.LateUpdate();
-            }
-        }
+        
     }
 } 

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace _SPC.Core.Scripts.Generics
 {
-    public class SPCMonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
+    public class SpcMonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         private static T _instance;
         private static bool _isInitialized;
@@ -20,7 +20,7 @@ namespace _SPC.Core.Scripts.Generics
                 {
                     // We found a scene object but it hasn't gone through Awake yet.
                     // Force initialization
-                    (_instance as SPCMonoSingleton<T>)?.ForceInitialize();
+                    (_instance as SpcMonoSingleton<T>)?.ForceInitialize();
                 }
 
                 // If still not found, create a new one

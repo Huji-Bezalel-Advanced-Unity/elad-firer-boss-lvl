@@ -1,4 +1,5 @@
 using _SPC.Core.Scripts.Abstracts;
+using _SPC.GamePlay.Weapons.Bullet;
 using DG.Tweening;
 using UnityEngine;
 
@@ -25,11 +26,16 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
                 return;
             }
             var bullet = pool.Get();
-            Vector2 startPosition = EntityTransform.position;
-            Vector2 targetPosition = MainTarget.position;
-            float speed = _stats.ProjectileSpeed;
-            float buffer = _stats.ProjectileBuffer;
-            bullet.Activate(WeaponType.DestroyerBullet, targetPosition, startPosition, speed, buffer, pool);
+            bullet.Activate(new BulletInitData(
+                WeaponType.DestroyerBullet,
+                MainTarget,
+                EntityTransform.position,
+                _stats.ProjectileSpeed,
+                _stats.ProjectileBuffer,
+                pool,
+                _stats.SmoothFactor,
+                _stats.turnSpeed
+            ));
             
             DOVirtual.DelayedCall(_stats.ProjectileSpawnRate,()=>
             {

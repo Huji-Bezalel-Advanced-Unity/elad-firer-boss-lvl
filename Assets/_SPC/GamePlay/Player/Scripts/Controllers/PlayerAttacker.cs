@@ -41,13 +41,14 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             if (target != null)
             {
                 var proj = ProjectilePools[WeaponType.PlayerBullet].Get();
-                proj.Activate(WeaponType.PlayerBullet,
-                    target.position,
+                proj.Activate(new BulletInitData(
+                    WeaponType.PlayerBullet,
+                    target,
                     EntityTransform.position,
                     Stats.ProjectileSpeed,
                     Stats.ProjectileBuffer,
                     ProjectilePools[WeaponType.PlayerBullet]
-                );
+                ));
             }
         }
     }

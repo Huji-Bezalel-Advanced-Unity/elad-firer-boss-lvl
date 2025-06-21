@@ -1,5 +1,6 @@
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
+using _SPC.GamePlay.Weapons.Bullet;
 using DG.Tweening;
 using UnityEngine;
 
@@ -41,17 +42,23 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
                 // Calculate direction
                 Vector2 direction = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)).normalized;
-                Vector2 dummyTarget = (Vector2)center + direction * 10f; // 10 is just to make a point in that direction
+                Vector2 dummyPosition = (Vector2)center + direction * 10f;
 
-                // Get and activate the bullet
+                GameObject tempTargetObject = new GameObject("DummyBulletTarget");
+                tempTargetObject.transform.position = dummyPosition;
+
                 var bullet = pool.Get();
-                bullet.Activate(WeaponType.BossBullet,
-                    dummyTarget,               // Fake target far in direction
-                    center,          // Start at enemy
-                    _stats.ProjectileSpeed,    // Use your speed
-                    _stats.ProjectileBuffer,   // Use your buffer
+                bullet.Activate(new BulletInitData(
+                    WeaponType.BossBullet,
+                    tempTargetObject.transform,
+                    center,
+                    _stats.ProjectileSpeed,
+                    _stats.ProjectileBuffer,
                     pool
-                );
+                ));
+
+                // Optional: Destroy dummy after short delay to clean up
+                Object.Destroy(tempTargetObject, 0.2f);
             }
 
             DOVirtual.DelayedCall(_stats.ProjectileSpawnRate,()=>

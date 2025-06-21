@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace _SPC.GamePlay.Managers
 {
-    public class GameManager: SPCMonoSingleton<GameManager>
+    public class GameManager: SpcMonoSingleton<GameManager>
     {
         private  GameplayScore _gameplayScore;
         private  HighScoreManager _highScoreManager;
@@ -48,6 +48,12 @@ namespace _SPC.GamePlay.Managers
             SceneManager.LoadScene("EndScene");
             yield return null;
             GameEvents.EndSceneStarted();
+        }
+
+
+        void LateUpdate()
+        {
+            _gameplayScore.UpdateCombinator();
         }
     }
 }

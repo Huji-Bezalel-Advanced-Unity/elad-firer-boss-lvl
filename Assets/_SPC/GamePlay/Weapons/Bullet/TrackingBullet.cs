@@ -4,20 +4,31 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Weapons.Bullet
 {
+    
     public class TrackingBullet: Bullet
     {
         [SerializeField] private GameObject shootEffect;
-        [SerializeField] private float turnSpeed = 5f; // How quickly the bullet turns toward the target
-        private Vector2 _targetPosition;
-        private float _speed;
+        private float _smoothFactor;
+        private float _turnSpeed;
 
-        public override void Activate(WeaponType weaponType, Vector2 target, Vector2 startPosition, float speed, float buffer,
-            BulletMonoPool pool)
+        public override void Activate(BulletInitData data)
         {
-            base.Activate(weaponType, target, startPosition, speed, buffer, pool);
-            Instantiate(shootEffect, transform.position  - new Vector3(0,0,5), Quaternion.identity, transform); 
-            _targetPosition = target;
-            _speed = speed;
+            base.Activate(data);
+            Instantiate(shootEffect, transform.position - new Vector3(0, 0, 5), Quaternion.identity, transform);
+            // Logs should be activated no matter what the logger state is
+            if (data.smoothFactor == null)
+            {
+                Debug.LogException(new Exception("Smooth Factor is null For TrackingBullet")); 
+                return;
+            }
+            if (data.turnSpeed == null)
+            {
+                Debug.LogException(new Exception("turnSpeed is null For TrackingBullet"));
+                return;
+            }
+            // Cast to float here is for compiler, we cant get her in case values are null
+            _turnSpeed = (float)data.turnSpeed;
+            _smoothFactor = (float)data.smoothFactor; 
         }
 
         public override void OnTriggerEnter2D(Collider2D other)
@@ -26,21 +37,30 @@ namespace _SPC.GamePlay.Weapons.Bullet
             bulletLogger.Log("Triggered!");
         }
 
-        public void Update()
+        private void FixedUpdate()
         {
-            if (rb2D == null) return;
-            Vector2 currentPosition = rb2D.position;
-            Vector2 toTarget = (_targetPosition - currentPosition).normalized;
-            Vector2 currentVelocity = rb2D.linearVelocity.normalized;
-            // Slerp for smooth turning
-            Vector2 newDirection = Vector2.Lerp(currentVelocity, toTarget, turnSpeed * Time.deltaTime).normalized;
-            rb2D.linearVelocity = newDirection * _speed;
-            // Optionally rotate the bullet to face its velocity
-            float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
+            Vector2 toTarget = (Vector2)_target.position - (Vector2)transform.position;
+
+            Vector2 desiredDirection = toTarget.normalized;
+
+            float smoothFactor = _smoothFactor;
+            _currentDirection = Vector3.Slerp(_currentDirection, desiredDirection, smoothFactor).normalized;
+
+            float angle = Mathf.Atan2(_currentDirection.y, _currentDirection.x) * Mathf.Rad2Deg;
+            rb2D.MoveRotation(angle);
+            rb2D.linearVelocity = _currentDirection * _speed;
         }
         
-        
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(transform.position, transform.position + (Vector3)(((Vector2)_target.position - (Vector2)transform.position).normalized));
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, transform.position + (Vector3)_currentDirection);
+        }
+
+
         
     }
 }

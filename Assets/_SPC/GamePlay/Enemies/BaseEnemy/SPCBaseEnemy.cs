@@ -23,10 +23,10 @@ namespace _SPC.GamePlay.Enemies.BaseEnemy
         {
             GameEvents.EnemyAdded(transform);
         }
-        public void GotHit(Vector3 projectileTransform, WeaponType shooterType)
+        public virtual void GotHit(Vector3 projectileTransform, WeaponType weaponType)
         {
             Instantiate(explosionPrefab, projectileTransform, Quaternion.identity,_explosionsFather);
-            if (shooterType == WeaponType.PlayerBullet)
+            if (weaponType == WeaponType.PlayerBullet)
             {
                 GameEvents.PlayerHit();
             }
