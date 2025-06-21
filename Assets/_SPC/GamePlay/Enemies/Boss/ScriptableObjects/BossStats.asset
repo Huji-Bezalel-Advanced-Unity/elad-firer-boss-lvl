@@ -16,4 +16,5 @@ MonoBehaviour:
   ProjectileBuffer: 4.6
   ProjectileSpawnRate: 1.71
   DestroyerPrefab: {fileID: 718941396229626140, guid: 4949968d3797d453db099b0508e1a5b4, type: 3}
-  ArenaCollider: {fileID: 0}
+  minDistanceBetweenEnemies: 2
+  distanceBetweenEnemiesAccuracy: 20

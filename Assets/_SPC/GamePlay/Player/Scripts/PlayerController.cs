@@ -60,7 +60,8 @@ namespace _SPC.GamePlay.Player.Scripts
                 ProjectilePools =
                     new Dictionary<WeaponType, BulletMonoPool> { { WeaponType.PlayerBullet, playerPool } },
                 TargetTransforms = transformTargets,
-                Logger = playerLogger
+                Logger = playerLogger,
+                AttackerMono = this
             };
             _attacker = new PlayerAttacker(stats, deps);
             var healthDeps = new HealthDependencies(playerLogger, healthBarUI, null, GameEvents.GameFinished,

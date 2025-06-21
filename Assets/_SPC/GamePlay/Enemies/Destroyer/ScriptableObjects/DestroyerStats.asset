@@ -15,3 +15,7 @@ MonoBehaviour:
   ProjectileSpeed: 9.9
   ProjectileBuffer: 0.3
   ProjectileSpawnRate: 2
+  SmoothFactor: 0.01
+  turnSpeed: 120
+  Health: 30
+  MovementSpeed: 5

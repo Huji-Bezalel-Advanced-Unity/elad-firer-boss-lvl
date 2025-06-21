@@ -18,6 +18,7 @@ namespace _SPC.GamePlay.Enemies.BaseEnemy
         [SerializeField] protected List<Transform> transformTargets = new List<Transform>();
         [SerializeField] protected Transform targetTransform;
         [SerializeField] protected GameLogger  enemyLogger;
+        [SerializeField] protected Collider2D collider;
 
         void Start()
         {

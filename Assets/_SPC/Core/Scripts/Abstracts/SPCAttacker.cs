@@ -19,6 +19,7 @@ namespace _SPC.Core.Scripts.Abstracts
         protected Dictionary<WeaponType, BulletMonoPool> ProjectilePools;
         protected List<Transform> TargetTransforms;
         protected GameLogger Logger;
+        protected MonoBehaviour AttackerMono;
 
         protected SPCAttacker(AttackerDependencies deps)
         {
@@ -27,6 +28,7 @@ namespace _SPC.Core.Scripts.Abstracts
             ProjectilePools = deps.ProjectilePools;
             TargetTransforms = deps.TargetTransforms;
             Logger = deps.Logger;
+            AttackerMono = deps.AttackerMono;
             if(!TargetTransforms.Contains(MainTarget)) TargetTransforms.Add(MainTarget);
         }
     }
@@ -39,6 +41,7 @@ namespace _SPC.Core.Scripts.Abstracts
         public Dictionary<WeaponType, BulletMonoPool> ProjectilePools;
         public List<Transform> TargetTransforms;
         public GameLogger Logger;
+        public MonoBehaviour AttackerMono;
     }
     
     public enum WeaponType

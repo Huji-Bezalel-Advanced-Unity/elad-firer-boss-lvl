@@ -13,5 +13,8 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
         [SerializeField] [Range(0.01f,0.5f)] public float SmoothFactor;
         [SerializeField] [Range(0f,360f)] public float turnSpeed;
         [SerializeField] public float Health;
+
+        [Header("Movement Stats")]
+        [SerializeField] [Range(1f, 20f)] public float MovementSpeed;
     }
 }

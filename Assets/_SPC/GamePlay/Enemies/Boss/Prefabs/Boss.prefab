@@ -79,6 +79,7 @@ GameObject:
   - component: {fileID: 6914558641617834090}
   - component: {fileID: 8419640332020017258}
   - component: {fileID: 2063923828286666697}
+  - component: {fileID: 2584334098469570782}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Untagged
@@ -121,7 +122,11 @@ MonoBehaviour:
   transformTargets: []
   targetTransform: {fileID: 0}
   enemyLogger: {fileID: 2063923828286666697}
+  collider: {fileID: 6054891483404640491}
   stats: {fileID: 11400000, guid: ee1fbcd50f0b54d348ddaeaa052cb4f0, type: 2}
+  arenaCollider: {fileID: 0}
+  destroyerPool: {fileID: 0}
+  dummyParentTransform: {fileID: 0}
 --- !u!114 &2063923828286666697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,6 +140,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
+--- !u!50 &2584334098469570782
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5118866422062492041}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &7925630928275594975
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +253,7 @@ MonoBehaviour:
   _scale: 1
   _warpAmount: 1
   _fresnelPower: 1
-  _flowSpeed: 0.1
+  _flowSpeed: 0.098177
 --- !u!33 &7541208570790593587
 MeshFilter:
   m_ObjectHideFlags: 0

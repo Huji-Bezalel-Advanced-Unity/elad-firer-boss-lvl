@@ -6,35 +6,63 @@ using _SPC.Core.Scripts.Interfaces;
 using _SPC.GamePlay.Enemies.BaseEnemy;
 using _SPC.GamePlay.Enemies.Boss.Scripts.Controllers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers;
+using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
 namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
 {
+    public struct DestroyerDependencies
+    {
+        public Transform MainTarget;
+        public List<Transform> Targets;
+        public GameObject ExplosionPrefab;
+        public Transform ExplosionsFather;
+        public BulletMonoPool Pool;
+        public BoxCollider2D ArenaBounds;
+    }
+
     public class DestroyerController: SPCBaseEnemy
     {
         [SerializeField] private DestroyerStats stats;
         private DestroyerAttacker _attacker;
+        private DestroyerMovement _movement;
         private SPCHealth _health;
         private Transform _explosionsFather;
+        private BoxCollider2D _arenaCollider;
         private bool _initialized = false;
         private Coroutine _flashCoroutine;
         [Header("Sprite Settings")]
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [Header("Movement")]
+        [SerializeField] private Rigidbody2D rb2D;
+        [SerializeField] private Transform spaceshipTransform;
 
-
-        public override void Init(Transform mainTarget, List<Transform> targets, GameObject explosionPrefab, Transform explosionsFather, BulletMonoPool pool)
+        public void Init(DestroyerDependencies destroyerDeps)
         {
-            base.Init(mainTarget, targets, explosionPrefab, explosionsFather, pool);
+            _arenaCollider = destroyerDeps.ArenaBounds;
+
+            base.Init(destroyerDeps.MainTarget, destroyerDeps.Targets, destroyerDeps.ExplosionPrefab, destroyerDeps.ExplosionsFather, destroyerDeps.Pool);
+            
             var deps = new AttackerDependencies
             {
                 MainTarget = targetTransform,
                 EntityTransform = transform,
                 ProjectilePools = new Dictionary<WeaponType, BulletMonoPool> { { WeaponType.DestroyerBullet, bulletPool } },
                 TargetTransforms = transformTargets,
-                Logger = enemyLogger
+                Logger = enemyLogger,
+                AttackerMono = this
             };
             _attacker = new DestroyerAttacker(stats, deps);
+            
+            var moveDeps = new DestroyerMovementDependencies
+            {
+                EntityTransform = transform,
+                Stats = stats,
+                ArenaBounds = _arenaCollider
+            };
+            _movement = new DestroyerMovement(moveDeps);
+
             _initialized = true;
 
             var healthDeps = new HealthDependencies
@@ -53,6 +81,8 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
         {
             if (!_initialized) return;
             _attacker.NormalAttack();
+            _movement.UpdateMovement();
+            RotateTowardsNearestTarget();
         }
 
         public override void GotHit(Vector3 projectileTransform, WeaponType weaponType)
@@ -69,6 +99,17 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
             _flashCoroutine = StartCoroutine(FlashRed());
         }
 
+        private void RotateTowardsNearestTarget()
+        {
+            if (transformTargets == null || transformTargets.Count == 0) return;
+            Transform closest = UsedAlgorithms.GetClosestTarget(transformTargets, transform);
+            if (closest == null) return;
+
+            Vector3 dir = (closest.position - transform.position).normalized;
+            if (dir.sqrMagnitude < 0.0001f) return;
+            
+            spaceshipTransform.up = -dir;
+        }
 
         private IEnumerator FlashRed()
         {
@@ -78,6 +119,5 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
             spriteRenderer.color = originalColor;
             _flashCoroutine = null;
         }
-
     }
 }

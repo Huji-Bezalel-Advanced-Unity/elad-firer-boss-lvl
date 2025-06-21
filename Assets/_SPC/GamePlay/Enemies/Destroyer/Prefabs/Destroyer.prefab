@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1645860394451425027}
   - component: {fileID: 4995517705870705695}
   - component: {fileID: 5005578196244305490}
+  - component: {fileID: 8963434277722756612}
   m_Layer: 0
   m_Name: Destroyer
   m_TagString: Untagged
@@ -53,8 +54,11 @@ MonoBehaviour:
   transformTargets: []
   targetTransform: {fileID: 0}
   enemyLogger: {fileID: 5005578196244305490}
+  collider: {fileID: 1602903016586806096}
   stats: {fileID: 11400000, guid: fbc0c9c37b322480ab837b7ae44b62cd, type: 2}
   spriteRenderer: {fileID: 6304655991386193647}
+  rb2D: {fileID: 8963434277722756612}
+  spaceshipTransform: {fileID: 1645860394451425027}
 --- !u!114 &5005578196244305490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,6 +72,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 1
+--- !u!50 &8963434277722756612
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 718941396229626140}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &5617562186190068681
 GameObject:
   m_ObjectHideFlags: 0
