@@ -40,19 +40,43 @@ namespace _SPC.GamePlay.Player.Scripts
         private PlayerAttacker _attacker;
 
         [Header("UI")] [SerializeField] private HealthBarUI healthBarUI;
+        [SerializeField] private PlayerUpgradeChooseRenderer upgradeRenderer;
 
         private Coroutine _flashCoroutine;
         private SPCHealth _health;
         private TargetsHandler _targetsHandler;
+        private PlayerStatsUpgrader _statsUpgrader;
+        private bool _isPaused = false;
 
         void Awake()
         {
             _targetsHandler = new TargetsHandler(this);
         }
 
+        void OnEnable()
+        {
+            GameEvents.OnGamePaused += () => _isPaused = true;
+            GameEvents.OnGameResumed += () => _isPaused = false;
+        }
+        
+        private void OnDisable()
+        {
+            _statsUpgrader.ResetStats();
+        }
+
+
         void Start()
         {
-            _movement = new PlayerMovement(rb2D, stats, playerLogger);
+            var moveDeps = new PlayerMovementDependencies
+            {
+                Rb = rb2D,
+                Stats = stats,
+                PlayerLogger = playerLogger,
+                SpaceshipTransform = spaceshipTransform,
+                TransformTargets = transformTargets
+            };
+            _movement = new PlayerMovement(moveDeps);
+
             var deps = new AttackerDependencies
             {
                 MainTarget = targetTransform,
@@ -67,14 +91,16 @@ namespace _SPC.GamePlay.Player.Scripts
             var healthDeps = new HealthDependencies(playerLogger, healthBarUI, null, GameEvents.GameFinished,
                 stats.Health, stats.Health, new List<Action<float, float>> { FlashCourtine });
             _health = new SPCHealth(healthDeps);
+            _statsUpgrader = new PlayerStatsUpgrader(stats, _health, upgradeRenderer);
         }
 
 
         public void Update()
         {
+            if (_isPaused) return;
+
             _attacker.NormalAttack();
             _movement.UpdateMovement();
-            RotateTowardsNearestTarget();
             HandleFlame();
         }
 
@@ -89,20 +115,6 @@ namespace _SPC.GamePlay.Player.Scripts
                 animator.SetBool(Flame, true);
                 flame.SetActive(true);
             }
-        }
-
-
-        private void RotateTowardsNearestTarget()
-        {
-            if (transformTargets == null || transformTargets.Count == 0) return;
-            Transform closest = UsedAlgorithms.GetClosestTarget(transformTargets, transform);
-            if (closest == null) return;
-
-            Vector3 dir = (closest.position - transform.position).normalized;
-            if (dir.sqrMagnitude < 0.0001f) return;
-
-            // Make the sprite's "up" face the target
-            spaceshipTransform.up = -dir;
         }
 
 
@@ -127,6 +139,9 @@ namespace _SPC.GamePlay.Player.Scripts
             spriteRenderer.color = originalColor;
             _flashCoroutine = null;
         }
+
+        
+    
     }
 
     internal class TargetsHandler

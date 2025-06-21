@@ -43,7 +43,39 @@ namespace _SPC.GamePlay.Weapons.Bullet
         protected Vector2 _currentDirection;
         protected Transform _target;
         protected float _speed;
+        private Vector2 _savedVelocity;
+        protected bool _isPaused = false;
 
+        protected virtual void OnEnable()
+        {
+            GameEvents.OnGamePaused += OnGamePaused;
+            GameEvents.OnGameResumed += OnGameResumed;
+        }
+
+        protected virtual void OnDisable()
+        {
+            GameEvents.OnGamePaused -= OnGamePaused;
+            GameEvents.OnGameResumed -= OnGameResumed;
+        }
+
+        private void OnGamePaused()
+        {
+            _isPaused = true;
+            if (rb2D != null && rb2D.linearVelocity != Vector2.zero)
+            {
+                _savedVelocity = rb2D.linearVelocity;
+                rb2D.linearVelocity = Vector2.zero;
+            }
+        }
+
+        private void OnGameResumed()
+        {
+            _isPaused = false;
+            if (rb2D != null)
+            {
+                rb2D.linearVelocity = _savedVelocity;
+            }
+        }
 
         public virtual void Activate(BulletInitData data)
         {
@@ -68,7 +100,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
 
         public virtual void OnTriggerEnter2D(Collider2D other)
         {
-            if (!_active) return;
+            if (!_active || _isPaused) return;
             bulletLogger?.Log("Triggered by: " + other.name);
             var target = other.GetComponentInParent<IHitable>();
             if (target != null)
@@ -77,6 +109,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
                 bulletLogger?.Log("Bullet Hit: " + target);
             }
             transform.position = new Vector2(-100, -100);
+            bulletLogger?.Log("Bullet Return");
             _pool.Return(this);
         }
         

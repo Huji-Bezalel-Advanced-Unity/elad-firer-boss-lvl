@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
+using _SPC.GamePlay.Managers;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 {
@@ -24,18 +25,32 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         private readonly BossStats _stats;
         private bool _attack;
         private readonly BossAttackerDependencies _bossDeps;
+        private Coroutine _spawningCoroutine;
+        private bool _isPaused = false;
 
         public BossAttacker(BossStats stats, AttackerDependencies deps, BossAttackerDependencies bossDeps) : base(deps)
         {
             _stats = stats;
             _attack = false;
             _bossDeps = bossDeps;
+            GameEvents.OnGamePaused += OnGamePaused;
+            GameEvents.OnGameResumed += OnGameResumed;
             StartSpawning();
+        }
+
+        private void OnGamePaused()
+        {
+            _isPaused = true;
+        }
+
+        private void OnGameResumed()
+        {
+            _isPaused = false;
         }
 
         public void NormalAttack()
         {
-            if (_attack) return;
+            if (_attack || _isPaused) return;
             _attack = true;
 
             if (!ProjectilePools.TryGetValue(WeaponType.BossBullet, out var pool))
@@ -83,14 +98,22 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         
         public void StartSpawning()
         {
-            AttackerMono.StartCoroutine(SpawnEnemies());
+            if (_spawningCoroutine == null)
+            {
+                _spawningCoroutine = AttackerMono.StartCoroutine(SpawnEnemies());
+            }
         }
 
         private IEnumerator SpawnEnemies()
         {
             while (true)
             {
+                yield return new WaitUntil(() => !_isPaused);
+                
                 yield return new WaitForSeconds(15f);
+
+                yield return new WaitUntil(() => !_isPaused);
+
                 var bounds = _bossDeps.ArenaCollider.bounds;
                 List<Vector2> spawnPositions = new List<Vector2>();
                 int maxTries = _stats.distanceBetweenEnemiesAccuracy;

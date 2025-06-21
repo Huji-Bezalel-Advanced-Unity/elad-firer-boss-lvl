@@ -10,6 +10,8 @@ namespace _SPC.GamePlay.Weapons.Bullet
         [SerializeField] private GameObject shootEffect;
         private float _smoothFactor;
         private float _turnSpeed;
+        private Vector2 _savedVelocity;
+
 
         public override void Activate(BulletInitData data)
         {
@@ -33,12 +35,15 @@ namespace _SPC.GamePlay.Weapons.Bullet
 
         public override void OnTriggerEnter2D(Collider2D other)
         {
+            if (_isPaused) return;
             base.OnTriggerEnter2D(other);
             bulletLogger.Log("Triggered!");
         }
+        
 
         private void FixedUpdate()
-        {
+        {   
+            if (_isPaused) return;
             Vector2 toTarget = (Vector2)_target.position - (Vector2)transform.position;
 
             Vector2 desiredDirection = toTarget.normalized;

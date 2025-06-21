@@ -31,20 +31,32 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         public void NormalAttack()
         {
             if (!_attack) return;
-            OneBulletShot();
+
+            for (int i = 0; i < Stats.NumberOfShots; i++)
+            {
+                OneBulletShot(i);
+            }
+            
             _attack = false;
         }
 
-        private void OneBulletShot()
+        private void OneBulletShot(int shotIndex)
         {
             var target = UsedAlgorithms.GetClosestTarget(TargetTransforms, EntityTransform);
             if (target != null)
             {
                 var proj = ProjectilePools[WeaponType.PlayerBullet].Get();
+
+                Vector2 fireDirection = (target.position - EntityTransform.position).normalized;
+                Vector2 perpendicular = new Vector2(-fireDirection.y, fireDirection.x);
+                float totalWidth = (Stats.NumberOfShots - 1) * Stats.ShotSpacing;
+                float offset = (Stats.NumberOfShots > 1) ? (shotIndex * Stats.ShotSpacing) - (totalWidth / 2f) : 0;
+                Vector2 spawnPosition = (Vector2)EntityTransform.position + perpendicular * offset;
+
                 proj.Activate(new BulletInitData(
                     WeaponType.PlayerBullet,
                     target,
-                    EntityTransform.position,
+                    spawnPosition,
                     Stats.ProjectileSpeed,
                     Stats.ProjectileBuffer,
                     ProjectilePools[WeaponType.PlayerBullet]

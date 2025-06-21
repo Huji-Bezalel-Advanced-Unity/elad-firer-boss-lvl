@@ -6,6 +6,7 @@ using _SPC.Core.Scripts.Interfaces;
 using _SPC.GamePlay.Enemies.BaseEnemy;
 using _SPC.GamePlay.Enemies.Boss.Scripts.Controllers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers;
+using _SPC.GamePlay.Managers;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
@@ -32,11 +33,18 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
         private BoxCollider2D _arenaCollider;
         private bool _initialized = false;
         private Coroutine _flashCoroutine;
+        private bool _isPaused = false;
         [Header("Sprite Settings")]
         [SerializeField] private SpriteRenderer spriteRenderer;
         [Header("Movement")]
         [SerializeField] private Rigidbody2D rb2D;
         [SerializeField] private Transform spaceshipTransform;
+
+        private void Awake()
+        {
+            GameEvents.OnGamePaused += () => _isPaused = true;
+            GameEvents.OnGameResumed += () => _isPaused = false;
+        }
 
         public void Init(DestroyerDependencies destroyerDeps)
         {
@@ -59,7 +67,9 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
             {
                 EntityTransform = transform,
                 Stats = stats,
-                ArenaBounds = _arenaCollider
+                ArenaBounds = _arenaCollider,
+                SpaceshipTransform = spaceshipTransform,
+                TransformTargets = transformTargets
             };
             _movement = new DestroyerMovement(moveDeps);
 
@@ -79,10 +89,9 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
 
         private void Update()
         {
-            if (!_initialized) return;
+            if (!_initialized || _isPaused) return;
             _attacker.NormalAttack();
             _movement.UpdateMovement();
-            RotateTowardsNearestTarget();
         }
 
         public override void GotHit(Vector3 projectileTransform, WeaponType weaponType)
@@ -118,6 +127,11 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
             yield return new WaitForSeconds(0.1f);
             spriteRenderer.color = originalColor;
             _flashCoroutine = null;
+        }
+
+        private void OnDisable()
+        {
+            _movement?.Cleanup();
         }
     }
 }

@@ -5,6 +5,7 @@ using _SPC.Core.Scripts.Abstracts;
 using _SPC.GamePlay.Enemies.BaseEnemy;
 using _SPC.GamePlay.Enemies.Boss.Scripts.Controllers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
+using _SPC.GamePlay.Managers;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
@@ -19,7 +20,13 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         
 
         private BossAttacker _attacker;
-        
+        private bool _isPaused = false;
+
+        private void Awake()
+        {
+            GameEvents.OnGamePaused += () => _isPaused = true;
+            GameEvents.OnGameResumed += () => _isPaused = false;
+        }
 
         private void Start()
         {
@@ -48,6 +55,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
 
         private void Update()
         {
+            if (_isPaused) return;
+
             _attacker.NormalAttack();
         }
     }

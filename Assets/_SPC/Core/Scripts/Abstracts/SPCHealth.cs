@@ -66,6 +66,7 @@ namespace _SPC.Core.Scripts.Abstracts
 
         public void ReduceLife(int amount)
         {
+            if(currentHealth <= 0) return;
             currentHealth -= amount;
             logger?.Log("Current Heath is " + currentHealth);
             OnDamageAction?.Invoke(amount, currentHealth);

@@ -14,8 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Acceleration: 1000
   MovementThreshold: 0.05
-  ProjectileSpeed: 10
+  ProjectileSpeed: 9.9
   ProjectileBuffer: 1.5
   ProjectileSpawnRate: 0.2
+  NumberOfShots: 1
+  ShotSpacing: 0.5
   Health: 100
+  ScoreThresholdUpgrade: 2000
+  ScoreThresholdMultiplier: 2.5
   RotationSpeed: 0
