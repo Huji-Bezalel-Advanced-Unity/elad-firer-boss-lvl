@@ -18,7 +18,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
         [SerializeField] [Range(1f, 20f)] public float MovementSpeed;
 
         [Header("Wander Settings")]
-        [field:SerializeField] public float minWanderDelay { get; private set; } = 1f;
-        [field:SerializeField] public float maxWanderDelay { get; private set; } = 3f;
+        [field:SerializeField] public float minWanderDelay { get; set; } = 1f;
+        [field:SerializeField] public float maxWanderDelay { get; set; } = 3f;
     }
 }

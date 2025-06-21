@@ -59,8 +59,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
                 return;
             }
 
-            const int bulletCount = 6;
-            const float degreesBetween = 360f / bulletCount;
+            int bulletCount = _stats.bulletCount;
+            float degreesBetween = 360f / bulletCount;
             float randomStartAngle = Random.Range(0f, 360f);
 
             Vector2 center = EntityTransform.position; 
@@ -110,21 +110,20 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             {
                 yield return new WaitUntil(() => !_isPaused);
                 
-                yield return new WaitForSeconds(15f);
+                yield return new WaitForSeconds(_stats.destroyerSpawnTime);
 
                 yield return new WaitUntil(() => !_isPaused);
 
                 var bounds = _bossDeps.ArenaCollider.bounds;
                 List<Vector2> spawnPositions = new List<Vector2>();
-                int maxTries = _stats.distanceBetweenEnemiesAccuracy;
                 float minDistance = _stats.minDistanceBetweenEnemies;
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < _stats.numberOfEnemiesToSpawn; i++)
                 {
                     Vector2 pos = Vector2.zero;
                     bool positionFound = false;
                     int tries = 0;
-                    while (!positionFound && tries < maxTries)
+                    while (!positionFound && tries < _stats.distanceBetweenEnemiesAccuracy)
                     {
                         tries++;
                         pos = new Vector2(

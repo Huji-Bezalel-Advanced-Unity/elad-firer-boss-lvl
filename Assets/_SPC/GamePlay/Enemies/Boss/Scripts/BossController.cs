@@ -7,6 +7,7 @@ using _SPC.GamePlay.Enemies.Boss.Scripts.Controllers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
 using _SPC.GamePlay.Managers;
 using _SPC.GamePlay.Weapons.Bullet;
+using DG.Tweening;
 using UnityEngine;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts
@@ -14,15 +15,17 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
     public class BossController : SPCBaseEnemy
     {
         [Header("Stats")] [SerializeField] private BossStats stats;
+        [SerializeField] private DestroyerStats destroyerStats;
         [SerializeField] private BoxCollider2D arenaCollider;
         [SerializeField] private BulletMonoPool destroyerPool;
         [SerializeField] private Transform dummyParentTransform;
         
 
         private BossAttacker _attacker;
+        private BossStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
 
-        private void Awake()
+        private void OnEnable()
         {
             GameEvents.OnGamePaused += () => _isPaused = true;
             GameEvents.OnGameResumed += () => _isPaused = false;
@@ -51,6 +54,22 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
             };
 
             _attacker = new BossAttacker(stats, deps, bossDeps);
+            _statsUpgrader = new BossStatsUpgrader(stats, destroyerStats);
+            _statsUpgrader.OnBossStatsUpgraded += OnBossUpgraded;
+        }
+
+        private void OnBossUpgraded()
+        {
+            transform.DOPunchScale(Vector3.one * stats.upgradePunchIntensity, stats.upgradePunchTime);
+        }
+
+        private void OnDisable()
+        {
+            _statsUpgrader?.ResetStats();
+            if (_statsUpgrader != null)
+            {
+                _statsUpgrader.OnBossStatsUpgraded -= OnBossUpgraded;
+            }
         }
 
         private void Update()

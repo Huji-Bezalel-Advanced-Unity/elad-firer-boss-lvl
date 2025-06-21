@@ -17,7 +17,9 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             ExtraLife,
             ReplenishLife,
             ExtraShot,
-            ShotSpeed
+            ShotSpeed,
+            IncreaseAcceleration,
+            DecreaseScoreThresholdMultiplier
         }
         
         private readonly PlayerStats _stats;
@@ -33,6 +35,8 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         private readonly float _initialProjectileSpeed;
         private readonly int _initialScoreThreshold;
         private readonly float _initialMaxHealth;
+        private readonly float _initialAcceleration;
+        private readonly float _initialScoreThresholdMultiplier;
 
 
         public PlayerStatsUpgrader(PlayerStats stats, SPCHealth health, PlayerUpgradeChooseRenderer renderer)
@@ -47,6 +51,8 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             _initialProjectileSpeed = stats.ProjectileSpeed;
             _initialScoreThreshold = stats.ScoreThresholdUpgrade;
             _initialMaxHealth = stats.Health;
+            _initialAcceleration = stats.Acceleration;
+            _initialScoreThresholdMultiplier = stats.ScoreThresholdMultiplier;
             
             _availableUpgrades = new List<UpgradeType>((UpgradeType[])Enum.GetValues(typeof(UpgradeType)));
             
@@ -70,14 +76,14 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             _currentChoices.Clear();
             var upgradePool = new List<UpgradeType>(_availableUpgrades);
             
-            // Select two unique random upgrades
+            // Select two unique random upgrades using a weighted algorithm
             for (int i = 0; i < 2; i++)
             {
                 if(upgradePool.Count == 0) break;
-                
-                int randIndex = Random.Range(0, upgradePool.Count);
-                _currentChoices.Add(upgradePool[randIndex]);
-                upgradePool.RemoveAt(randIndex);
+
+                var chosenUpgrade = GetWeightedRandomUpgrade(upgradePool);
+                _currentChoices.Add(chosenUpgrade);
+                upgradePool.Remove(chosenUpgrade);
             }
             
             if (_currentChoices.Count > 0)
@@ -87,6 +93,37 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
                 
                 _renderer.RenderChoices(leftChoiceText, rightChoiceText, OnChoicesRendered);
             }
+        }
+
+        private UpgradeType GetWeightedRandomUpgrade(List<UpgradeType> availableUpgrades)
+        {
+            bool isHealthLow = _health.currentHealth / _health.maxHealth < 0.5f;
+            var weightedUpgrades = new Dictionary<UpgradeType, int>();
+            int totalWeight = 0;
+
+            foreach (var upgrade in availableUpgrades)
+            {
+                int weight = 100; 
+                if (isHealthLow && (upgrade == UpgradeType.ExtraLife || upgrade == UpgradeType.ReplenishLife))
+                {
+                    weight += 10; 
+                }
+                weightedUpgrades.Add(upgrade, weight);
+                totalWeight += weight;
+            }
+
+            int randomValue = Random.Range(0, totalWeight);
+
+            foreach (var item in weightedUpgrades)
+            {
+                if (randomValue < item.Value)
+                {
+                    return item.Key;
+                }
+                randomValue -= item.Value;
+            }
+
+            return availableUpgrades.Last(); // Fallback, should not be reached
         }
 
         private void OnChoicesRendered()
@@ -137,6 +174,12 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
                 case UpgradeType.ShotSpeed:
                     _stats.ProjectileSpeed *= 1.1f;
                     break;
+                case UpgradeType.IncreaseAcceleration:
+                    _stats.Acceleration *= 1.02f;
+                    break;
+                case UpgradeType.DecreaseScoreThresholdMultiplier:
+                    _stats.ScoreThresholdMultiplier *= 0.9f;
+                    break;
             }
         }
         
@@ -148,6 +191,8 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
                 case UpgradeType.ReplenishLife: return "Replenish Life: Restore to full HP";
                 case UpgradeType.ExtraShot: return "Extra Shot: Fire an additional projectile";
                 case UpgradeType.ShotSpeed: return "Shot Speed: Increase projectile speed by 10%";
+                case UpgradeType.IncreaseAcceleration: return "Maneuverability: Increase acceleration by 2%";
+                case UpgradeType.DecreaseScoreThresholdMultiplier: return "Fast Learner: Get upgrades 10% faster";
                 default: return "Unknown Upgrade";
             }
         }
@@ -158,6 +203,8 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             _stats.ProjectileSpeed = _initialProjectileSpeed;
             _stats.ScoreThresholdUpgrade = _initialScoreThreshold;
             _stats.Health = _initialMaxHealth;
+            _stats.Acceleration = _initialAcceleration;
+            _stats.ScoreThresholdMultiplier = _initialScoreThresholdMultiplier;
             
             GameEvents.OnUpdateScore -= OnScoreUpdated;
             GameEvents.OnGameFinished -= ResetStats;

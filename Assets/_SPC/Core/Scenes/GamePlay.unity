@@ -7238,6 +7238,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1216999428}
     - target: {fileID: 8419640332020017258, guid: 0ed6929d1d50247b4a54c900b496d4e2, type: 3}
+      propertyPath: destroyerStats
+      value: 
+      objectReference: {fileID: 11400000, guid: fbc0c9c37b322480ab837b7ae44b62cd, type: 2}
+    - target: {fileID: 8419640332020017258, guid: 0ed6929d1d50247b4a54c900b496d4e2, type: 3}
       propertyPath: targetTransform
       value: 
       objectReference: {fileID: 1415010378}
