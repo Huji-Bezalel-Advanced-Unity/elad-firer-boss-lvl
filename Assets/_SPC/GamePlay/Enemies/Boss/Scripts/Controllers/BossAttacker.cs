@@ -5,8 +5,8 @@ using DG.Tweening;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using _SPC.Core.Scripts.Managers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
-using _SPC.GamePlay.Managers;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 {

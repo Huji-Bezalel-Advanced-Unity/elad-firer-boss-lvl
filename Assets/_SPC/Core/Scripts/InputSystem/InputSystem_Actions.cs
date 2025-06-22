@@ -126,6 +126,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""67dab3e0-aec1-4e37-ac79-1783785e4295"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Erase"",
+                    ""type"": ""Button"",
+                    ""id"": ""c868c771-a1f4-473d-a365-28ed5c1e553a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -315,6 +333,50 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""ChooseLeft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c5ba928f-5c11-4c4b-b553-b6a6cb61ca8a"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""698c8e22-ab32-4873-b82e-2ed1080caaf1"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bb222649-0211-46f0-9677-1fd0215c33f7"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Erase"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f074fb05-6dd9-47ae-a956-118f0dfe556e"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Erase"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -388,6 +450,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_ChooseRight = m_Player.FindAction("ChooseRight", throwIfNotFound: true);
         m_Player_ChooseLeft = m_Player.FindAction("ChooseLeft", throwIfNotFound: true);
+        m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
+        m_Player_Erase = m_Player.FindAction("Erase", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -472,6 +536,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_ChooseRight;
     private readonly InputAction m_Player_ChooseLeft;
+    private readonly InputAction m_Player_Select;
+    private readonly InputAction m_Player_Erase;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -499,6 +565,14 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ChooseLeft".
         /// </summary>
         public InputAction @ChooseLeft => m_Wrapper.m_Player_ChooseLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Select".
+        /// </summary>
+        public InputAction @Select => m_Wrapper.m_Player_Select;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Erase".
+        /// </summary>
+        public InputAction @Erase => m_Wrapper.m_Player_Erase;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -537,6 +611,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ChooseLeft.started += instance.OnChooseLeft;
             @ChooseLeft.performed += instance.OnChooseLeft;
             @ChooseLeft.canceled += instance.OnChooseLeft;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+            @Erase.started += instance.OnErase;
+            @Erase.performed += instance.OnErase;
+            @Erase.canceled += instance.OnErase;
         }
 
         /// <summary>
@@ -560,6 +640,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ChooseLeft.started -= instance.OnChooseLeft;
             @ChooseLeft.performed -= instance.OnChooseLeft;
             @ChooseLeft.canceled -= instance.OnChooseLeft;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+            @Erase.started -= instance.OnErase;
+            @Erase.performed -= instance.OnErase;
+            @Erase.canceled -= instance.OnErase;
         }
 
         /// <summary>
@@ -693,5 +779,19 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnChooseLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Select" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelect(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Erase" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnErase(InputAction.CallbackContext context);
     }
 }

@@ -1,7 +1,7 @@
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
-using _SPC.GamePlay.Managers;
+using _SPC.Core.Scripts.Managers;
 using _SPC.GamePlay.Utils;
 using UnityEngine;
 

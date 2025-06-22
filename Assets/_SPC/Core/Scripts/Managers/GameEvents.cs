@@ -1,8 +1,7 @@
 using System;
-using _SPC.GamePlay.Enemies.BaseEnemy;
 using UnityEngine;
 
-namespace _SPC.GamePlay.Managers
+namespace _SPC.Core.Scripts.Managers
 {
     public static class GameEvents
     {

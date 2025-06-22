@@ -1,32 +1,42 @@
 using System.Text;
-using _SPC.GamePlay.Managers;
+using _SPC.Core.Scripts.Managers;
 using UnityEngine;
 
 namespace _SPC.GamePlay.UI.Scripts.Scripts
 {
     public class HighScoreRenderer : MonoBehaviour
     {
+        [SerializeField] private Transform _gridContainer;
+        [SerializeField] private GameObject _highScoreEntryPrefab;
+        
         private void OnEnable()
         {
-            GameEvents.OnEndSceneStarted += PrintHighScores;
+            GameEvents.OnEndSceneStarted += RenderHighScores;
         }
 
         private void OnDisable()
         {
-            GameEvents.OnEndSceneStarted  -= PrintHighScores;
+            GameEvents.OnEndSceneStarted  -= RenderHighScores;
         }
 
-        private void PrintHighScores()
+        private void RenderHighScores()
         {
             var highScoreManager = GameManager.Instance.HighScoreManager;
             var table = highScoreManager.GetHighScoreTable();
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("High Scores:");
+            
             foreach (var entry in table)
             {
-                sb.AppendLine($"{entry.Rank}. {entry.Nickname} - {entry.Score}");
+                var entryGO = Instantiate(_highScoreEntryPrefab, _gridContainer);
+                var entryUI = entryGO.GetComponent<HighScoreEntryUI>();
+                if (entryUI != null)
+                {
+                    entryUI.Initialize(entry.Rank, entry.Nickname, entry.Score);
+                }
+                else
+                {
+                    Debug.LogError("HighScoreEntry prefab is missing the HighScoreEntryUI script.", entryGO);
+                }
             }
-            Debug.Log(sb.ToString());
         }
     }
 } 

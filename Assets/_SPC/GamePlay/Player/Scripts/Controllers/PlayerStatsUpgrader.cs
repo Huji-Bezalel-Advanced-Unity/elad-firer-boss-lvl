@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.InputSystem;
-using _SPC.GamePlay.Managers;
+using _SPC.Core.Scripts.Managers;
 using _SPC.GamePlay.UI.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;

@@ -1,15 +1,18 @@
+using System;
 using System.Collections;
 using _SPC.Core.Scripts.Generics;
 using _SPC.GamePlay.Score;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
-namespace _SPC.GamePlay.Managers
+namespace _SPC.Core.Scripts.Managers
 {
     public class GameManager: SpcMonoSingleton<GameManager>
     {
         private  GameplayScore _gameplayScore;
         private  HighScoreManager _highScoreManager;
+        public SceneLoader sceneLoader;
         
         public HighScoreManager HighScoreManager => _highScoreManager;
 
@@ -22,35 +25,29 @@ namespace _SPC.GamePlay.Managers
             "Jinx", "Maple", "Muffin", "Rocket", "Hazel",
             "Blitz", "Mocha", "Sprout", "Olive", "Cosmo"
         };
+        
 
-        public string CurrentNickname { get; private set; }
+        public void OnEnable()
+        {
+            GameEvents.OnGameFinished += OnGameFinished;
+        }
         
 
         // Private constructor prevents external instantiation
-        public void Awake()
+        public void Start()
         {
-            _highScoreManager = new HighScoreManager();
-            int idx = Random.Range(0, _randomNames.Length);
-            CurrentNickname = _randomNames[idx];
-            _gameplayScore = new GameplayScore();
-            GameEvents.OnGameFinished += OnGameFinished;
-            GameEvents.GameStarted();
+            sceneLoader ??= new SceneLoader(this);
+            _highScoreManager ??= new HighScoreManager();
+            _gameplayScore ??= new GameplayScore();
+            
         }
 
         private void OnGameFinished()
         {
-            StartCoroutine(GameEndCoroutine());
+            _highScoreManager.TryAddHighScore(_gameplayScore.Score, PlayerPrefs.GetString("Nickname"));
+            sceneLoader.LoadSceneWithCallback(2,()=>GameEvents.EndSceneStarted());
         }
-
-        private IEnumerator GameEndCoroutine()
-        {
-            _highScoreManager.TryAddHighScore(_gameplayScore.Score, CurrentNickname);
-            SceneManager.LoadScene("EndScene");
-            yield return null;
-            GameEvents.EndSceneStarted();
-        }
-
-
+        
         void LateUpdate()
         {
             _gameplayScore.UpdateCombinator();

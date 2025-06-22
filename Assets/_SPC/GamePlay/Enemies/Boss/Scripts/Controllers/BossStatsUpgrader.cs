@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using _SPC.Core.Scripts.Managers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
-using _SPC.GamePlay.Managers;
 using Random = UnityEngine.Random;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers

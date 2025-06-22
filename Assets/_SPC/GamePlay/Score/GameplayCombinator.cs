@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using _SPC.GamePlay.Managers;
+using _SPC.Core.Scripts.Managers;
 using UnityEngine;
 
 namespace _SPC.GamePlay.Score

@@ -3,7 +3,7 @@ using _SPC.GamePlay.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using _SPC.GamePlay.Managers;
+using _SPC.Core.Scripts.Managers;
 
 namespace _SPC.GamePlay.Player.Scripts.Controllers
 {

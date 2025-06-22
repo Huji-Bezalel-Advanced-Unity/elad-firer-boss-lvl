@@ -1,4 +1,4 @@
-using _SPC.GamePlay.Managers;
+using _SPC.Core.Scripts.Managers;
 
 namespace _SPC.GamePlay.Score
 {
