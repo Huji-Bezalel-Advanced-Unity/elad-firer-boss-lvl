@@ -162,11 +162,10 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
                 case UpgradeType.ExtraLife:
                     var healthIncrease = _health.maxHealth * 0.25f;
                     _health.maxHealth += healthIncrease;
-                    _health.currentHealth += healthIncrease;
-                    _availableUpgrades.Remove(UpgradeType.ExtraLife); // Can only be chosen once
+                    _health.currentHealth += _health.currentHealth * 0.25f;
                     break;
                 case UpgradeType.ReplenishLife:
-                    _health.AddLife(_health.maxHealth); // Heals to full
+                    _health.AddLife(_health.maxHealth); 
                     break;
                 case UpgradeType.ExtraShot:
                     _stats.NumberOfShots++;
