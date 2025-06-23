@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _SPC.GamePlay.Utils
+namespace _SPC.Core.Scripts.Utils
 {
     public class GameLogger: MonoBehaviour
     {

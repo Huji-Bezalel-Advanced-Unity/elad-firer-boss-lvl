@@ -1,9 +1,10 @@
 using _SPC.Core.Scripts.InputSystem;
-using _SPC.GamePlay.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Managers;
+using _SPC.Core.Scripts.Utils;
 
 namespace _SPC.GamePlay.Player.Scripts.Controllers
 {
@@ -16,7 +17,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         public List<Transform> TransformTargets;
     }
 
-    public sealed class PlayerMovement
+    public sealed class PlayerMovement: SPCMovement
     {
         private readonly Rigidbody2D _rb;
         private readonly PlayerStats _stats;
@@ -27,7 +28,6 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
         private float _savedAngularVelocity;
         private bool _isPaused = false;
         
-        public bool IsMoving { get; private set; }
         private Vector2 _direction;
         private readonly Transform _spaceshipTransform;
         private readonly List<Transform> _transformTargets;
@@ -85,7 +85,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             _moveInput = Vector2.zero;
         }
 
-        public void UpdateMovement()
+        public override void UpdateMovement()
         {
             if (_isPaused || _moveInput == Vector2.zero)
             {
@@ -111,6 +111,14 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             if (dir.sqrMagnitude < 0.0001f) return;
             
             _spaceshipTransform.up = -dir;
+        }
+        
+        public override void Cleanup()
+        {
+            GameEvents.OnGamePaused -= OnGamePaused;
+            GameEvents.OnGameResumed -= OnGameResumed;
+            _inputSystem.Player.Move.performed -= OnMovePerformed;
+            _inputSystem.Player.Move.canceled  -= OnMoveCanceled;
         }
     }
 }

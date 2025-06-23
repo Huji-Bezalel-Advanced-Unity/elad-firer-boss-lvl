@@ -1,4 +1,5 @@
 using _SPC.Core.Scripts.Managers;
+using _SPC.Core.Scripts.Text;
 using _SPC.GamePlay.Score;
 using TMPro;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace _SPC.GamePlay.UI.Scripts.Scripts
 
         private void Start()
         {
-            string currentNickname = PlayerPrefs.GetString("CurrentNickname");
+            string currentNickname = PlayerPrefs.GetString(NameInputUI.PlayerPrefsName);
             if (nicknameText != null)
                 nicknameText.text = "Name: "+ currentNickname;
             

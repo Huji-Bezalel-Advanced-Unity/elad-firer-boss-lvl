@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using _SPC.GamePlay.Utils;
+using _SPC.Core.Scripts.Utils;
 using UnityEngine;
 
 namespace _SPC.Core.Scripts.Abstracts

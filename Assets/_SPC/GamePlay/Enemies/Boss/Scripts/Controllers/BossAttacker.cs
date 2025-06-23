@@ -48,7 +48,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             _isPaused = false;
         }
 
-        public void NormalAttack()
+        public override void Attack()
         {
             if (_attack || _isPaused) return;
             _attack = true;

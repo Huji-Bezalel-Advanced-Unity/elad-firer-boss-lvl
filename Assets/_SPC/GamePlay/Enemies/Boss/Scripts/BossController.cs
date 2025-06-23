@@ -20,10 +20,10 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [SerializeField] private BulletMonoPool destroyerPool;
         [SerializeField] private Transform dummyParentTransform;
         
-
-        private BossAttacker _attacker;
-        private BossStatsUpgrader _statsUpgrader;
+        
+        private SPCStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
+        private SpcBasicAiModule _aiModule;
 
         private void OnEnable()
         {
@@ -54,8 +54,17 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
             };
 
             _attacker = new BossAttacker(stats, deps, bossDeps);
-            _statsUpgrader = new BossStatsUpgrader(stats, destroyerStats);
-            _statsUpgrader.OnBossStatsUpgraded += OnBossUpgraded;
+            _aiModule = new BossAiStatsChooser(enemyLogger);
+            _aiModule.Fit();
+            var upgraderDeps = new BossStatsUpgraderDependencies
+            {
+                Stats = stats,
+                DestroyerStats = destroyerStats,
+                Logger = enemyLogger,
+                OnBossUpgradedActions = new Action[] { OnBossUpgraded },
+                AiModule = _aiModule
+            };
+            _statsUpgrader = new BossStatsUpgrader(upgraderDeps);
         }
 
         private void OnBossUpgraded()
@@ -66,17 +75,12 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         private void OnDisable()
         {
             _statsUpgrader?.ResetStats();
-            if (_statsUpgrader != null)
-            {
-                _statsUpgrader.OnBossStatsUpgraded -= OnBossUpgraded;
-            }
         }
 
         private void Update()
         {
             if (_isPaused) return;
-
-            _attacker.NormalAttack();
+            _attacker.Attack();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
             _stats = destroyerStats;
         }
 
-        public void NormalAttack()
+        public override void Attack()
         {
             if (_attack) return;
             _attack = true;

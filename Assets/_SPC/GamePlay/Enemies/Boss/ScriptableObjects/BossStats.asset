@@ -21,7 +21,7 @@ MonoBehaviour:
   distanceBetweenEnemiesAccuracy: 20
   numberOfEnemiesToSpawn: 3
   destroyerSpawnTime: 20
-  scoreThresholdUpgrade: 2500
-  scoreThresholdMultiplier: 2
+  scoreThresholdUpgrade: 1500
+  scoreThresholdMultiplier: 1.5
   upgradePunchIntensity: 0.5
   upgradePunchTime: 0.5

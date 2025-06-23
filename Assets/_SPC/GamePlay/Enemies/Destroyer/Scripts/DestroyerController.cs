@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.Managers;
+using _SPC.Core.Scripts.Utils;
 using _SPC.GamePlay.Enemies.BaseEnemy;
 using _SPC.GamePlay.Enemies.Boss.Scripts.Controllers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers;
-using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
@@ -26,8 +26,8 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
     public class DestroyerController: SPCBaseEnemy
     {
         [SerializeField] private DestroyerStats stats;
-        private DestroyerAttacker _attacker;
-        private DestroyerMovement _movement;
+        private SPCAttacker _attacker;
+        private SPCMovement _movement;
         private SPCHealth _health;
         private Transform _explosionsFather;
         private BoxCollider2D _arenaCollider;
@@ -90,7 +90,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
         private void Update()
         {
             if (!_initialized || _isPaused) return;
-            _attacker.NormalAttack();
+            _attacker.Attack();
             _movement.UpdateMovement();
         }
 

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using _SPC.Core.Scripts.StartScene.TextInputSystem;
+using _SPC.Core.Scripts.Utils;
 using DG.Tweening;
 using TMPro;
 using Unity.VisualScripting;
@@ -10,6 +12,9 @@ namespace _SPC.Core.Scripts.Text
 {
     public class NameInputUI : MonoBehaviour
     {
+        
+        public static readonly string PlayerPrefsName = "Nickname";
+        
         [Header("UI References")]
         [SerializeField] private TextMeshProUGUI _nameDisplayText;
         [SerializeField] private Transform _gridContainer;
@@ -52,7 +57,7 @@ namespace _SPC.Core.Scripts.Text
 
         private void Start()
         {
-            _currentName = PlayerPrefs.GetString("CurrentName","");
+            _currentName = PlayerPrefs.GetString(PlayerPrefsName,"");
             UpdateNameDisplay();
             _nameDisplayText.DOFade(1f, 2f);
             GenerateGrid();
@@ -137,7 +142,7 @@ namespace _SPC.Core.Scripts.Text
         private void HandleSubmit()
         {
             if(_currentName.Equals("")) return;
-            PlayerPrefs.SetString("CurrentName", _currentName);
+            PlayerPrefs.SetString(PlayerPrefsName, _currentName);
             OnSubmitName?.Invoke(_currentName);
         }
     }

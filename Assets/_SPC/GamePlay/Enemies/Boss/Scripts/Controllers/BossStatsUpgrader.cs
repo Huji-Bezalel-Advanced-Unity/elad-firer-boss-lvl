@@ -1,14 +1,25 @@
 using System;
 using System.Collections.Generic;
+using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Managers;
+using _SPC.Core.Scripts.Utils;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
 using Random = UnityEngine.Random;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 {
-    public class BossStatsUpgrader
+    public struct BossStatsUpgraderDependencies
     {
-        private enum UpgradeType
+        public BossStats Stats;
+        public DestroyerStats DestroyerStats;
+        public GameLogger Logger;
+        public Action[] OnBossUpgradedActions;
+        public SpcBasicAiModule AiModule;
+    }
+
+    public class BossStatsUpgrader : SPCStatsUpgrader
+    {
+        public enum UpgradeType
         {
             IncreaseDestroyerCount,
             IncreaseBulletCount,
@@ -23,6 +34,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
         private readonly BossStats _bossStats;
         private readonly DestroyerStats _destroyerStats;
+        private readonly SpcBasicAiModule _aiModule;
+        private readonly GameLogger _enemyLogger;
         
         private readonly List<UpgradeType> _availableUpgrades;
         private bool _isFirstUpgrade = true;
@@ -43,14 +56,24 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         private readonly float _initialMinWanderDelay;
         private readonly float _initialMaxWanderDelay;
         private readonly float _initialDestroyerHealth;
-        
-        
-        public event Action OnBossStatsUpgraded;
-        public BossStatsUpgrader(BossStats bossStats, DestroyerStats destroyerStats)
-        {
-            _bossStats = bossStats;
-            _destroyerStats = destroyerStats;
+        private readonly Action[] _OnBossUpgraded;
 
+
+        private event Action OnBossStatsUpgraded;
+        public BossStatsUpgrader(BossStatsUpgraderDependencies deps)
+        {
+            _bossStats = deps.Stats;
+            _destroyerStats = deps.DestroyerStats;
+            _aiModule = deps.AiModule;
+            _enemyLogger = deps.Logger;
+            _OnBossUpgraded = deps.OnBossUpgradedActions;
+            if (_OnBossUpgraded != null)
+            {
+                foreach (var action in _OnBossUpgraded)
+                {
+                    OnBossStatsUpgraded += action;
+                }
+            }
             // Store initial BossStats
             _initialBulletCount = _bossStats.bulletCount;
             _initialNumberOfEnemiesToSpawn = _bossStats.numberOfEnemiesToSpawn;
@@ -67,7 +90,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             _initialMinWanderDelay = _destroyerStats.minWanderDelay;
             _initialMaxWanderDelay = _destroyerStats.maxWanderDelay;
             _initialDestroyerHealth = _destroyerStats.Health;
-            
             _availableUpgrades = new List<UpgradeType>((UpgradeType[])Enum.GetValues(typeof(UpgradeType)));
             GameEvents.OnGameFinished += ResetStats;
             GameEvents.OnUpdateScore += OnScoreUpdated;
@@ -78,12 +100,12 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             if (newScore >= _bossStats.scoreThresholdUpgrade)
             {
                 _bossStats.scoreThresholdUpgrade = (int)(_bossStats.scoreThresholdUpgrade * _bossStats.scoreThresholdMultiplier);
-                ApplyRandomUpgrade();
+                ApplyAiUpgrade();
                 OnBossStatsUpgraded?.Invoke();
             }
         }
 
-        private void ApplyRandomUpgrade()
+        private void ApplyAiUpgrade()
         {
             UpgradeType chosenUpgrade;
             if (_isFirstUpgrade)
@@ -91,13 +113,22 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
                 chosenUpgrade = UpgradeType.IncreaseBulletCount;
                 _isFirstUpgrade = false;
             }
+            else if (_aiModule != null)
+            {
+                chosenUpgrade = (UpgradeType)_aiModule.Predict();
+            }
             else
             {
                 if (_availableUpgrades.Count == 0) return;
                 int randomIndex = Random.Range(0, _availableUpgrades.Count);
                 chosenUpgrade = _availableUpgrades[randomIndex];
             }
-            
+            BossUpgradeCounts.TryAdd(chosenUpgrade, 0);
+            BossUpgradeCounts[chosenUpgrade]++;
+            if (_enemyLogger != null)
+            {
+                _enemyLogger.Log($"Boss chose upgrade: {chosenUpgrade} (Total: {BossUpgradeCounts[chosenUpgrade]})");
+            }
             switch (chosenUpgrade)
             {
                 case UpgradeType.IncreaseDestroyerCount:
@@ -111,7 +142,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
                     _destroyerStats.ProjectileSpeed *= 1.1f;
                     break;
                 case UpgradeType.IncreaseDestroyerSmoothFactor:
-                    _destroyerStats.SmoothFactor *= 2f; // 100% increase
+                    _destroyerStats.SmoothFactor *= 1.2f; 
                     break;
                 case UpgradeType.IncreaseDestroyerMovementSpeed:
                     _destroyerStats.MovementSpeed *= 1.15f;
@@ -133,8 +164,11 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             }
         }
         
-        public void ResetStats()
+        public override void ResetStats()
         {
+            _aiModule?.Clear();
+            PlayerUpgradeCounts.Clear();
+            BossUpgradeCounts.Clear();
             // Reset BossStats
             _bossStats.bulletCount = _initialBulletCount;
             _bossStats.numberOfEnemiesToSpawn = _initialNumberOfEnemiesToSpawn;
@@ -154,6 +188,13 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             
             GameEvents.OnGameFinished -= ResetStats;
             GameEvents.OnUpdateScore -= OnScoreUpdated;
+            if (_OnBossUpgraded != null)
+            {
+                foreach (var action in _OnBossUpgraded)
+                {
+                    OnBossStatsUpgraded -= action;
+                }
+            }
         }
     }
 } 

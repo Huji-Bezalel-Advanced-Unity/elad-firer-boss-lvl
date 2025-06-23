@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.InputSystem;
 using _SPC.Core.Scripts.Interfaces;
-using _SPC.GamePlay.Utils;
+using _SPC.Core.Scripts.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -28,7 +28,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             _attack = true;
         }
 
-        public void NormalAttack()
+        public override void Attack()
         {
             if (!_attack) return;
 

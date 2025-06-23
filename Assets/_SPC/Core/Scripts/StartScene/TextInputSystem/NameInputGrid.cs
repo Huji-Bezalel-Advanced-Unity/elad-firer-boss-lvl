@@ -3,7 +3,7 @@ using _SPC.Core.Scripts.InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace _SPC.Core.Scripts.Text
+namespace _SPC.Core.Scripts.StartScene.TextInputSystem
 {
     public class NameInputGrid
     {

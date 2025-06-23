@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using _SPC.GamePlay.Utils;
+using _SPC.Core.Scripts.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
@@ -31,6 +31,8 @@ namespace _SPC.Core.Scripts.Abstracts
             AttackerMono = deps.AttackerMono;
             if(!TargetTransforms.Contains(MainTarget)) TargetTransforms.Add(MainTarget);
         }
+
+        public abstract void Attack();
     }
     
     

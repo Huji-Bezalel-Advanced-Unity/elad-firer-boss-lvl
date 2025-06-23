@@ -10,9 +10,9 @@ using Random = UnityEngine.Random;
 
 namespace _SPC.GamePlay.Player.Scripts.Controllers
 {
-    public class PlayerStatsUpgrader
+    public class PlayerStatsUpgrader : SPCStatsUpgrader
     {
-        private enum UpgradeType
+        public enum UpgradeType
         {
             ExtraLife,
             ReplenishLife,
@@ -152,11 +152,13 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
                 ApplyUpgrade(_currentChoices[choiceIndex]);
             }
             
-            _renderer.UnrenderChoices(() => GameEvents.GameResumed());
+            _renderer.UnrenderChoices(GameEvents.GameResumed);
         }
 
         private void ApplyUpgrade(UpgradeType upgrade)
         {
+            PlayerUpgradeCounts.TryAdd(upgrade, 0);
+            PlayerUpgradeCounts[upgrade]++;
             switch (upgrade)
             {
                 case UpgradeType.ExtraLife:
@@ -196,7 +198,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             }
         }
 
-        public void ResetStats()
+        public override void ResetStats()
         {
             _stats.NumberOfShots = _initialNumberOfShots;
             _stats.ProjectileSpeed = _initialProjectileSpeed;

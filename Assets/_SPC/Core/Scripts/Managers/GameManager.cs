@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using _SPC.Core.Scripts.Generics;
+using _SPC.Core.Scripts.Text;
 using _SPC.GamePlay.Score;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,17 +16,6 @@ namespace _SPC.Core.Scripts.Managers
         public SceneLoader sceneLoader;
         
         public HighScoreManager HighScoreManager => _highScoreManager;
-
-        // The single instance, lazily initialized
-        
-        private static readonly string[] _randomNames = new string[]
-        {
-            "Pixel", "Whiskers", "Shadow", "Nova", "Milo",
-            "Luna", "Ziggy", "Pepper", "Mochi", "Ninja",
-            "Jinx", "Maple", "Muffin", "Rocket", "Hazel",
-            "Blitz", "Mocha", "Sprout", "Olive", "Cosmo"
-        };
-        
 
         public void OnEnable()
         {
@@ -44,7 +34,7 @@ namespace _SPC.Core.Scripts.Managers
 
         private void OnGameFinished()
         {
-            _highScoreManager.TryAddHighScore(_gameplayScore.Score, PlayerPrefs.GetString("Nickname"));
+            _highScoreManager.TryAddHighScore(_gameplayScore.Score, PlayerPrefs.GetString(NameInputUI.PlayerPrefsName));
             sceneLoader.LoadSceneWithCallback(2,()=>GameEvents.EndSceneStarted());
         }
         

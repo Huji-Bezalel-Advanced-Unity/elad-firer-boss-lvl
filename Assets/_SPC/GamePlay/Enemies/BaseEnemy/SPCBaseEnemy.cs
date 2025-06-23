@@ -3,7 +3,7 @@ using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.Core.Scripts.Managers;
-using _SPC.GamePlay.Utils;
+using _SPC.Core.Scripts.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
@@ -19,6 +19,8 @@ namespace _SPC.GamePlay.Enemies.BaseEnemy
         [SerializeField] protected Transform targetTransform;
         [SerializeField] protected GameLogger  enemyLogger;
         [SerializeField] protected Collider2D collider;
+        
+        protected SPCAttacker _attacker;
 
         void Start()
         {

@@ -5,8 +5,9 @@ using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.Core.Scripts.Managers;
+using _SPC.Core.Scripts.Utils;
+using _SPC.GamePlay.Enemies.Boss.Scripts.Controllers;
 using _SPC.GamePlay.Player.Scripts.Controllers;
-using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 using _SPC.GamePlay.UI.Scripts;
@@ -19,6 +20,7 @@ namespace _SPC.GamePlay.Player.Scripts
         private static readonly int Flame = Animator.StringToHash("Flame");
 
         [Header("Movement")] [SerializeField] private Rigidbody2D rb2D;
+        private SPCMovement _movement;
 
         [Header("Data")] [SerializeField] private Collider2D entityCollider;
 
@@ -36,21 +38,21 @@ namespace _SPC.GamePlay.Player.Scripts
         [Header("Attacker")] [SerializeField] private Transform targetTransform;
         [SerializeField] private BulletMonoPool playerPool;
         [SerializeField] internal List<Transform> transformTargets = new List<Transform>();
-        private PlayerMovement _movement;
-        private PlayerAttacker _attacker;
+        private SPCAttacker _attacker;
+        private SPCHealth _health;
 
         [Header("UI")] [SerializeField] private HealthBarUI healthBarUI;
         [SerializeField] private PlayerUpgradeChooseRenderer upgradeRenderer;
 
         private Coroutine _flashCoroutine;
-        private SPCHealth _health;
         private TargetsHandler _targetsHandler;
-        private PlayerStatsUpgrader _statsUpgrader;
+        private SPCStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
 
         void Awake()
         {
             _targetsHandler = new TargetsHandler(this);
+            
         }
 
         void OnEnable()
@@ -62,9 +64,9 @@ namespace _SPC.GamePlay.Player.Scripts
         private void OnDisable()
         {
             _statsUpgrader.ResetStats();
+            _movement?.Cleanup();
         }
-
-
+        
         void Start()
         {
             var moveDeps = new PlayerMovementDependencies
@@ -91,6 +93,7 @@ namespace _SPC.GamePlay.Player.Scripts
             var healthDeps = new HealthDependencies(playerLogger, healthBarUI, null, GameEvents.GameFinished,
                 stats.Health, stats.Health, new List<Action<float, float>> { FlashCourtine });
             _health = new SPCHealth(healthDeps);
+            BossAiStatsChooser.SetPlayerHealth(_health);
             _statsUpgrader = new PlayerStatsUpgrader(stats, _health, upgradeRenderer);
         }
 
@@ -99,7 +102,7 @@ namespace _SPC.GamePlay.Player.Scripts
         {
             if (_isPaused) return;
 
-            _attacker.NormalAttack();
+            _attacker.Attack();
             _movement.UpdateMovement();
             HandleFlame();
         }

@@ -1,8 +1,9 @@
 using DG.Tweening;
 using UnityEngine;
 using System.Collections.Generic;
+using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Managers;
-using _SPC.GamePlay.Utils;
+using _SPC.Core.Scripts.Utils;
 
 namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
 {
@@ -15,14 +16,13 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
         public List<Transform> TransformTargets;
     }
 
-    public class DestroyerMovement
+    public class DestroyerMovement: SPCMovement
     {
         private readonly Transform _entityTransform;
         private readonly DestroyerStats _stats;
         private readonly BoxCollider2D _arenaBounds;
         private readonly Transform _spaceshipTransform;
         private readonly List<Transform> _transformTargets;
-        private bool _isMoving;
 
         public DestroyerMovement(DestroyerMovementDependencies deps)
         {
@@ -31,7 +31,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
             _arenaBounds = deps.ArenaBounds;
             _spaceshipTransform = deps.SpaceshipTransform;
             _transformTargets = deps.TransformTargets;
-            _isMoving = false;
+            IsMoving = false;
             
             GameEvents.OnGamePaused += OnGamePaused;
             GameEvents.OnGameResumed += OnGameResumed;
@@ -47,13 +47,13 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
             DOTween.Play(_entityTransform);
         }
 
-        public void UpdateMovement()
+        public override void UpdateMovement()
         {
             RotateTowardsNearestTarget();
 
-            if (_isMoving) return;
+            if (IsMoving) return;
             
-            _isMoving = true;
+            IsMoving = true;
             MoveToNewPoint();
         }
 
@@ -70,7 +70,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
             var sequence = DOTween.Sequence();
             sequence.Append(_entityTransform.DOMove(randomPoint, duration).SetEase(Ease.Linear));
             sequence.AppendInterval(Random.Range(_stats.minWanderDelay, _stats.maxWanderDelay));
-            sequence.OnComplete(() => _isMoving = false);
+            sequence.OnComplete(() => IsMoving = false);
             sequence.SetTarget(_entityTransform);
         }
 
@@ -86,7 +86,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
             _spaceshipTransform.up = -dir;
         }
         
-        public void Cleanup()
+        public override void Cleanup()
         {
             GameEvents.OnGamePaused -= OnGamePaused;
             GameEvents.OnGameResumed -= OnGameResumed;
