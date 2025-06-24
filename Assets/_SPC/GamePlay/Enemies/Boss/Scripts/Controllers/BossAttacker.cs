@@ -1,12 +1,13 @@
+using System;
+using System.Collections;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.Core.Scripts.Interfaces;
 using _SPC.GamePlay.Weapons.Bullet;
-using DG.Tweening;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using _SPC.Core.Scripts.Managers;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
+using Unity.VisualScripting;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 {
@@ -18,25 +19,143 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         public Transform ExplosionsFather;
         public Collider2D BossCollider;
         public Transform DummyParentTransform;
+        public SPCHealth Health;
     }
 
-    public class BossAttacker: SPCAttacker
+    public enum BossAttacks
+    {
+        BulletsShot,
+        BigBulletShot,
+        SpawnDestroyers,
+        Rage
+    }
+    
+    public class BossAttacker : SPCAttacker
     {
         private readonly BossStats _stats;
-        private bool _attack;
         private readonly BossAttackerDependencies _bossDeps;
-        private Coroutine _spawningCoroutine;
+        private readonly BossBulletAttack _bulletAttack;
+        private readonly BossBigBulletAttack _bigBulletAttack;
+        private readonly BossSpawnDestroyersAttack _spawnDestroyersAttack;
+        private readonly BossRageAttack _rageAttack;
         private bool _isPaused = false;
+        private Coroutine _currentCourtine;
+
 
         public BossAttacker(BossStats stats, AttackerDependencies deps, BossAttackerDependencies bossDeps) : base(deps)
         {
             _stats = stats;
-            _attack = false;
             _bossDeps = bossDeps;
+
+            _bossDeps.Health.AddHPAction(_bossDeps.Health.maxHealth * 2 / 3,
+                new SPCHealthAction(() =>
+                {
+                    if(_currentCourtine != null)
+                    {
+                        AttackerMono.StopCoroutine(_currentCourtine);
+                    }
+                    _currentCourtine = AttackerMono.StartCoroutine(Phase2Attack());
+                }));
+            _bossDeps.Health.AddHPAction(_bossDeps.Health.maxHealth * 1 / 3,
+                new SPCHealthAction(() =>
+                {
+                    if(_currentCourtine != null)
+                    {
+                        AttackerMono.StopCoroutine(_currentCourtine);
+                    }
+                    _currentCourtine = AttackerMono.StartCoroutine(Phase3Attack());
+                }));
+
+            _currentCourtine = AttackerMono.StartCoroutine(Phase1Attack());
+            // Initialize bullet attack
+            var bulletAttackDeps = new BossBulletAttackDependencies
+            {
+                EntityTransform = EntityTransform,
+                DummyParentTransform = _bossDeps.DummyParentTransform,
+                BossBulletPool = ProjectilePools[WeaponType.BossBullet],
+                Logger = Logger
+            };
+            _bulletAttack = new BossBulletAttack(_stats, bulletAttackDeps);
+
+            // Initialize big bullet attack
+            var bigBulletAttackDeps = new BossBigBulletAttackDependencies
+            {
+                EntityTransform = EntityTransform,
+                DummyParentTransform = _bossDeps.DummyParentTransform,
+                MainTarget = MainTarget,
+                BigBulletPool = ProjectilePools[WeaponType.BossBigBullet],
+                Logger = Logger
+            };
+            _bigBulletAttack = new BossBigBulletAttack(_stats, bigBulletAttackDeps);
+
+            // Initialize spawn destroyers attack
+            var spawnDestroyersDeps = new BossSpawnDestroyersAttackDependencies
+            {
+                ArenaCollider = _bossDeps.ArenaCollider,
+                DestroyerPool = _bossDeps.DestroyerPool,
+                ExplosionPrefab = _bossDeps.ExplosionPrefab,
+                ExplosionsFather = _bossDeps.ExplosionsFather,
+                BossCollider = _bossDeps.BossCollider,
+                MainTarget = MainTarget,
+                TargetTransforms = new List<Transform>(TargetTransforms)
+            };
+            _spawnDestroyersAttack = new BossSpawnDestroyersAttack(_stats, spawnDestroyersDeps);
+
+            // Initialize rage attack
+            var rageAttackDeps = new BossRageAttackDependencies
+            {
+                EntityTransform = EntityTransform,
+                MainTarget = MainTarget,
+                Logger = Logger
+            };
+            _rageAttack = new BossRageAttack(_stats, rageAttackDeps);
+
             GameEvents.OnGamePaused += OnGamePaused;
             GameEvents.OnGameResumed += OnGameResumed;
-            StartSpawning();
         }
+
+        #region Phase 1
+        
+        private IEnumerator Phase1Attack()
+        {
+            while (true)
+            {
+                if(_isPaused) continue;
+                yield return new WaitForSeconds(5f);
+                Attack(BossAttacks.Rage);
+            }
+            yield break;
+        }
+        
+        #endregion
+        
+        #region Phase 2
+        private IEnumerator Phase2Attack()
+        {
+            while (true)
+            {
+                if(_isPaused) continue;
+                yield return null;
+            }
+            yield break;
+        }
+        
+        #endregion
+        
+        #region Phase 3
+        private IEnumerator Phase3Attack()
+        {
+            while (true)
+            {
+                if(_isPaused) continue;
+                yield return null;
+            }
+            yield break;
+        }
+        
+        #endregion
+
+
 
         private void OnGamePaused()
         {
@@ -50,130 +169,42 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
         public override void Attack()
         {
-            if (_attack || _isPaused) return;
-            _attack = true;
-
-            if (!ProjectilePools.TryGetValue(WeaponType.BossBullet, out var pool))
-            {
-                Logger?.Log("EnemyBullet pool not found!");
-                return;
-            }
-
-            int bulletCount = _stats.bulletCount;
-            float degreesBetween = 360f / bulletCount;
-            float randomStartAngle = Random.Range(0f, 360f);
-
-            Vector2 center = EntityTransform.position; 
-
-            for (int i = 0; i < bulletCount; i++)
-            {
-                float angle = randomStartAngle + i * degreesBetween;
-                float rad = angle * Mathf.Deg2Rad;
-                
-                Vector2 direction = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)).normalized;
-                Vector2 dummyPosition = center + direction * 10f;
-
-                GameObject tempTargetObject = new GameObject("DummyBulletTarget");
-                tempTargetObject.transform.SetParent(_bossDeps.DummyParentTransform);
-                tempTargetObject.transform.position = dummyPosition;
-
-                var bullet = pool.Get();
-                bullet.Activate(new BulletInitData(
-                    WeaponType.BossBullet,
-                    tempTargetObject.transform,
-                    center,
-                    _stats.ProjectileSpeed,
-                    _stats.ProjectileBuffer,
-                    pool
-                ));
-
-                Object.Destroy(tempTargetObject, 0.2f);
-            }
-
-            DOVirtual.DelayedCall(_stats.ProjectileSpawnRate,()=>
-            {
-                _attack = false;
-            });
+            if (_isPaused) return;
+            // Attack(BossAttacks.BigBulletShot);
         }
+
+        public override void CleanUp()
+        {
+            GameEvents.OnGamePaused -= OnGamePaused;
+            GameEvents.OnGameResumed -= OnGameResumed;
+            
+            _rageAttack?.Cleanup();
+        }
+
+        private bool Attack(BossAttacks attackType, Action onFinish = null)
+        {
+            if (_isPaused) return false;
+
+            switch (attackType)
+            {
+                case BossAttacks.BulletsShot:
+                    return _bulletAttack.Attack();
+                    break;
+                case BossAttacks.BigBulletShot:
+                    return _bigBulletAttack.Attack();
+                    break;
+                case BossAttacks.SpawnDestroyers:
+                    return _spawnDestroyersAttack.Attack();
+                    break;
+                case BossAttacks.Rage:
+                    return _rageAttack.Attack();
+                    break;
+            }
+            return false;
+        }
+
         
-        public void StartSpawning()
-        {
-            if (_spawningCoroutine == null)
-            {
-                _spawningCoroutine = AttackerMono.StartCoroutine(SpawnEnemies());
-            }
-        }
 
-        private IEnumerator SpawnEnemies()
-        {
-            while (true)
-            {
-                yield return new WaitUntil(() => !_isPaused);
-                
-                yield return new WaitForSeconds(_stats.destroyerSpawnTime);
-
-                yield return new WaitUntil(() => !_isPaused);
-
-                var bounds = _bossDeps.ArenaCollider.bounds;
-                List<Vector2> spawnPositions = new List<Vector2>();
-                float minDistance = _stats.minDistanceBetweenEnemies;
-
-                for (int i = 0; i < _stats.numberOfEnemiesToSpawn; i++)
-                {
-                    Vector2 pos = Vector2.zero;
-                    bool positionFound = false;
-                    int tries = 0;
-                    while (!positionFound && tries < _stats.distanceBetweenEnemiesAccuracy)
-                    {
-                        tries++;
-                        pos = new Vector2(
-                            Random.Range(bounds.min.x, bounds.max.x),
-                            Random.Range(bounds.min.y, bounds.max.y)
-                        );
-
-                        if (_bossDeps.BossCollider.OverlapPoint(pos))
-                        {
-                            continue;
-                        }
-
-                        bool tooClose = false;
-                        foreach (var other in spawnPositions)
-                        {
-                            if (Vector2.Distance(pos, other) < minDistance)
-                            {
-                                tooClose = true;
-                                break;
-                            }
-                        }
-                        if (tooClose)
-                        {
-                            continue;
-                        }
-
-                        positionFound = true;
-                    }
-
-                    if (positionFound)
-                    {
-                        spawnPositions.Add(pos);
-
-                        GameObject destroyerObj = Object.Instantiate(_stats.DestroyerPrefab, pos, Quaternion.identity);
-                        var destroyer = destroyerObj.GetComponent<DestroyerController>();
-
-                        var destroyerDeps = new DestroyerDependencies
-                        {
-                            MainTarget = MainTarget,
-                            Targets = new List<Transform>(TargetTransforms),
-                            ExplosionPrefab = _bossDeps.ExplosionPrefab,
-                            ExplosionsFather = _bossDeps.ExplosionsFather,
-                            Pool = _bossDeps.DestroyerPool,
-                            ArenaBounds = _bossDeps.ArenaCollider
-                        };
-                        
-                        destroyer.Init(destroyerDeps);
-                    }
-                }
-            }
-        }
+        public bool IsRageAttacking => _rageAttack.IsAttacking;
     }
 }

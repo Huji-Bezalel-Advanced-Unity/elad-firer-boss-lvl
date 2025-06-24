@@ -34,6 +34,7 @@ namespace _SPC.Core.Scripts.Abstracts
         }
 
         public abstract void Attack();
+        public abstract void CleanUp();
     }
     
     

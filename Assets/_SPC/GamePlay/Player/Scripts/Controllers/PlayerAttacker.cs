@@ -40,6 +40,11 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             _attack = false;
         }
 
+        public override void CleanUp()
+        {
+            _inputSystem.Player.Attack.performed -= OnAttackPerformed;
+        }
+
         private void OneBulletShot(int shotIndex)
         {
             var target = UsedAlgorithms.GetClosestTarget(TargetTransforms, EntityTransform);
@@ -63,5 +68,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
                 ));
             }
         }
+        
+        
     }
 }

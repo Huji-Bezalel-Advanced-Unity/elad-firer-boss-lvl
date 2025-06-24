@@ -7,7 +7,6 @@ namespace _SPC.GamePlay.Weapons.Bullet
     
     public class TrackingBullet: Bullet
     {
-        [SerializeField] private GameObject shootEffect;
         private float _smoothFactor;
         private float _turnSpeed;
         private Vector2 _savedVelocity;
@@ -16,7 +15,6 @@ namespace _SPC.GamePlay.Weapons.Bullet
         public override void Activate(BulletInitData data)
         {
             base.Activate(data);
-            Instantiate(shootEffect, transform.position - new Vector3(0, 0, 5), Quaternion.identity, transform);
             // Logs should be activated no matter what the logger state is
             if (data.smoothFactor == null)
             {
@@ -31,13 +29,6 @@ namespace _SPC.GamePlay.Weapons.Bullet
             // Cast to float here is for compiler, we cant get her in case values are null
             _turnSpeed = (float)data.turnSpeed;
             _smoothFactor = (float)data.smoothFactor; 
-        }
-
-        public override void OnTriggerEnter2D(Collider2D other)
-        {
-            if (_isPaused) return;
-            base.OnTriggerEnter2D(other);
-            bulletLogger.Log("Triggered!");
         }
         
 

@@ -91,11 +91,6 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
             _attacker.Attack();
             _movement.UpdateMovement();
         }
-
-        public override void GotHit(Vector3 projectileTransform, WeaponType weaponType)
-        {
-            base.GotHit(projectileTransform, weaponType);
-        }
         
 
         private void FlashCourtine(float health, float damage)

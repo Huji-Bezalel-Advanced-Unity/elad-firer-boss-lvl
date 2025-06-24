@@ -65,6 +65,7 @@ namespace _SPC.GamePlay.Player.Scripts
         {
             _statsUpgrader.ResetStats();
             _movement?.Cleanup();
+            _attacker?.CleanUp();
         }
         
         void Start()

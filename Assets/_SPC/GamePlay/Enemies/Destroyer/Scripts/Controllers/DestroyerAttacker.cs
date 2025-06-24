@@ -42,5 +42,10 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts.Controllers
                 _attack = false;
             });
         }
+
+        public override void CleanUp()
+        {
+            
+        }
     }
 }
