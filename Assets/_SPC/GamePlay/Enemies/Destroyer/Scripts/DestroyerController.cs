@@ -26,9 +26,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
     public class DestroyerController: SpcBaseEnemy
     {
         [SerializeField] private DestroyerStats stats;
-        private SPCAttacker _attacker;
         private SPCMovement _movement;
-        private SPCHealth _health;
         private Transform _explosionsFather;
         private BoxCollider2D _arenaCollider;
         private bool _initialized = false;
@@ -77,7 +75,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
 
             var healthDeps = new HealthDependencies
             {
-                healthUI = null,
+                healthUI = healthBarUI,
                 logger = enemyLogger,
                 OnDeathAction = (() => Destroy(gameObject)),
                 maxHP = stats.Health,
@@ -97,7 +95,6 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
         public override void GotHit(Vector3 projectileTransform, WeaponType weaponType)
         {
             base.GotHit(projectileTransform, weaponType);
-            _health.ReduceLife(SPCAttacker.damage[weaponType]);
         }
         
 

@@ -20,10 +20,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [SerializeField] private BulletMonoPool destroyerPool;
         [SerializeField] private Transform dummyParentTransform;
 
-
         private SPCStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
-        private SPCHealth _health;
 
         private void OnEnable()
         {
@@ -66,7 +64,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
 
             var healthDeps = new HealthDependencies
             {
-                healthUI = null,
+                healthUI = healthBarUI,
                 logger = enemyLogger,
                 OnDeathAction = (
                     () => transform.DOPunchScale(Vector3.one * stats.upgradePunchIntensity * 4, stats.upgradePunchTime)

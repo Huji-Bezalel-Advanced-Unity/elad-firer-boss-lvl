@@ -4,6 +4,7 @@ using _SPC.Core.Scripts.Interfaces;
 using _SPC.Core.Scripts.LBBaseMono;
 using _SPC.Core.Scripts.Managers;
 using _SPC.Core.Scripts.Utils;
+using _SPC.GamePlay.UI.Scripts.Scripts;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
@@ -20,6 +21,9 @@ namespace _SPC.GamePlay.Enemies.BaseEnemy
         [SerializeField] protected GameLogger  enemyLogger;
         [SerializeField] protected Collider2D collider;
         
+        [Header("UI")] [SerializeField] protected HealthBarUI healthBarUI;
+        
+        protected SPCHealth _health;
         protected SPCAttacker _attacker;
 
         void Start()
@@ -28,6 +32,7 @@ namespace _SPC.GamePlay.Enemies.BaseEnemy
         }
         public virtual void GotHit(Vector3 projectileTransform, WeaponType weaponType)
         {
+            _health.ReduceLife(SPCAttacker.damage[weaponType]);
             Instantiate(explosionPrefab, projectileTransform, Quaternion.identity,_explosionsFather);
             if (weaponType == WeaponType.PlayerBullet)
             {
