@@ -4,8 +4,8 @@ namespace _SPC.GamePlay.Score
 {
     public class GameplayScore
     {
-        private int _score;
-        public int Score => _score;
+        private long _score;
+        public long Score => _score;
         public GameplayCombinator Combinator { get; }
 
         public GameplayScore()
@@ -21,12 +21,15 @@ namespace _SPC.GamePlay.Score
             GameEvents.UpdateScore(_score);
         }
 
-        public void AddScore(int amount)
+        public long AddScore(long amount)    
         {
+            long oldScore = _score;
             _score += amount;
             if (_score < 0)
                 _score = 0;
+            long actualAdded = _score - oldScore;
             GameEvents.UpdateScore(_score);
+            return actualAdded;
         }
 
         public void UpdateCombinator()

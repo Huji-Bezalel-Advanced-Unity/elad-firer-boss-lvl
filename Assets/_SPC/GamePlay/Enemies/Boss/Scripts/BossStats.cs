@@ -21,7 +21,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [SerializeField] public float destroyerSpawnTime = 15f;
 
         [Header("Upgrading Stats")] 
-        [SerializeField] public int scoreThresholdUpgrade = 1000;
+        [SerializeField] public long scoreThresholdUpgrade = 1000;
         [SerializeField] [Range(1f,5f)] public float scoreThresholdMultiplier = 1.5f;
         [SerializeField] public float upgradePunchIntensity = 0.5f;
         [SerializeField] public float upgradePunchTime;

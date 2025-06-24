@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts
 {
-    public class BossController : SPCBaseEnemy
+    public class BossController : SpcBaseEnemy
     {
         [Header("Stats")] [SerializeField] private BossStats stats;
         [SerializeField] private DestroyerStats destroyerStats;
@@ -23,7 +23,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         
         private SPCStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
-        private SpcBasicAiModule _aiModule;
 
         private void OnEnable()
         {
@@ -54,15 +53,12 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
             };
 
             _attacker = new BossAttacker(stats, deps, bossDeps);
-            _aiModule = new BossAiStatsChooser(enemyLogger);
-            _aiModule.Fit();
             var upgraderDeps = new BossStatsUpgraderDependencies
             {
                 Stats = stats,
                 DestroyerStats = destroyerStats,
                 Logger = enemyLogger,
                 OnBossUpgradedActions = new Action[] { OnBossUpgraded },
-                AiModule = _aiModule
             };
             _statsUpgrader = new BossStatsUpgrader(upgraderDeps);
         }

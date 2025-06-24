@@ -31,7 +31,7 @@ namespace _SPC.GamePlay.UI.Scripts.Scripts
             
         }
 
-        private void UpdateScoreDisplay(int score)
+        private void UpdateScoreDisplay(long score)
         {
             if (scoreText != null)
                 scoreText.text = $"Current Points: {score}";

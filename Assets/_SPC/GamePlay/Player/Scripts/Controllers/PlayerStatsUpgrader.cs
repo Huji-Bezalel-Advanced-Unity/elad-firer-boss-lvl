@@ -60,7 +60,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             GameEvents.OnGameFinished += ResetStats;
         }
 
-        private void OnScoreUpdated(int newScore)
+        private void OnScoreUpdated(long newScore)
         {
             if (newScore >= _stats.ScoreThresholdUpgrade)
             {

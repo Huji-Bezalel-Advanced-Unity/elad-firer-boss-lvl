@@ -17,7 +17,7 @@ namespace _SPC.GamePlay.Score
     }
 
     // Call this when player finishes and wants to submit score
-    public void TryAddHighScore(int score, string nickname)
+    public void TryAddHighScore(long score, string nickname)
     {
         if (string.IsNullOrEmpty(nickname))
             nickname = "Player";
@@ -75,9 +75,9 @@ namespace _SPC.GamePlay.Score
     }
 
     // For displaying the high scores (returns list for UI)
-    public List<(int Rank, int Score, string Nickname)> GetHighScoreTable()
+    public List<(int Rank, long Score, string Nickname)> GetHighScoreTable()
     {
-        var table = new List<(int, int, string)>();
+        var table = new List<(int, long, string)>();
         for (int i = 0; i < _highScoreList.Scores.Count; i++)
         {
             var entry = _highScoreList.Scores[i];
@@ -96,10 +96,10 @@ namespace _SPC.GamePlay.Score
     [Serializable]
     public class HighScoreEntry
     {
-        public int Score;
+        public long Score;
         public string Nickname;
 
-        public HighScoreEntry(int score, string nickname)
+        public HighScoreEntry(long score, string nickname)
         {
             Score = score;
             Nickname = nickname;

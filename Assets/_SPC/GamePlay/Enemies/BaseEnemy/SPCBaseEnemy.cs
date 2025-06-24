@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Enemies.BaseEnemy
 {
-    public abstract class SPCBaseEnemy: SPCBaseMono, IHitable
+    public abstract class SpcBaseEnemy: SPCBaseMono, IHitable
     {
         [Header("Attacker")]
         [SerializeField] protected GameObject explosionPrefab;
@@ -31,7 +31,7 @@ namespace _SPC.GamePlay.Enemies.BaseEnemy
             Instantiate(explosionPrefab, projectileTransform, Quaternion.identity,_explosionsFather);
             if (weaponType == WeaponType.PlayerBullet)
             {
-                GameEvents.PlayerHit();
+                GameEvents.PlayerHit(projectileTransform);
             }
         }
 
@@ -44,7 +44,7 @@ namespace _SPC.GamePlay.Enemies.BaseEnemy
             }
         }
 
-        public virtual void Init(Transform mainTarget, List<Transform> targets, GameObject explosionPrefab, Transform explosionsFather, BulletMonoPool pool)
+        protected virtual void Init(Transform mainTarget, List<Transform> targets, GameObject explosionPrefab, Transform explosionsFather, BulletMonoPool pool)
         {
             targetTransform = mainTarget;
             transformTargets = targets;

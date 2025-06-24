@@ -23,7 +23,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
         public BoxCollider2D ArenaBounds;
     }
 
-    public class DestroyerController: SPCBaseEnemy
+    public class DestroyerController: SpcBaseEnemy
     {
         [SerializeField] private DestroyerStats stats;
         private SPCAttacker _attacker;
@@ -107,18 +107,7 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
                 return;
             _flashCoroutine = StartCoroutine(FlashRed());
         }
-
-        private void RotateTowardsNearestTarget()
-        {
-            if (transformTargets == null || transformTargets.Count == 0) return;
-            Transform closest = UsedAlgorithms.GetClosestTarget(transformTargets, transform);
-            if (closest == null) return;
-
-            Vector3 dir = (closest.position - transform.position).normalized;
-            if (dir.sqrMagnitude < 0.0001f) return;
-            
-            spaceshipTransform.up = -dir;
-        }
+        
 
         private IEnumerator FlashRed()
         {

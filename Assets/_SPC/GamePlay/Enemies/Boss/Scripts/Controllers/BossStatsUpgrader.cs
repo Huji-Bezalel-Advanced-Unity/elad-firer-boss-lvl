@@ -14,7 +14,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         public DestroyerStats DestroyerStats;
         public GameLogger Logger;
         public Action[] OnBossUpgradedActions;
-        public SpcBasicAiModule AiModule;
     }
 
     public class BossStatsUpgrader : SPCStatsUpgrader
@@ -34,7 +33,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
         private readonly BossStats _bossStats;
         private readonly DestroyerStats _destroyerStats;
-        private readonly SpcBasicAiModule _aiModule;
         private readonly GameLogger _enemyLogger;
         
         private readonly List<UpgradeType> _availableUpgrades;
@@ -46,7 +44,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         private readonly float _initialBossProjectileSpeed;
         private readonly float _initialBossProjectileSpawnRate;
         private readonly float _initialDestroyerSpawnTime;
-        private readonly int _initialScoreThreshold;
+        private readonly long _initialScoreThreshold;
 
         // Destroyer initial stats
         private readonly float _initialDestroyerProjectileSpeed;
@@ -64,7 +62,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         {
             _bossStats = deps.Stats;
             _destroyerStats = deps.DestroyerStats;
-            _aiModule = deps.AiModule;
             _enemyLogger = deps.Logger;
             _OnBossUpgraded = deps.OnBossUpgradedActions;
             if (_OnBossUpgraded != null)
@@ -95,11 +92,11 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             GameEvents.OnUpdateScore += OnScoreUpdated;
         }
 
-        private void OnScoreUpdated(int newScore)
+        private void OnScoreUpdated(long newScore)
         {
             if (newScore >= _bossStats.scoreThresholdUpgrade)
             {
-                _bossStats.scoreThresholdUpgrade = (int)(_bossStats.scoreThresholdUpgrade * _bossStats.scoreThresholdMultiplier);
+                _bossStats.scoreThresholdUpgrade = (long)(_bossStats.scoreThresholdUpgrade * _bossStats.scoreThresholdMultiplier);
                 ApplyAiUpgrade();
                 OnBossStatsUpgraded?.Invoke();
             }
@@ -112,10 +109,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             {
                 chosenUpgrade = UpgradeType.IncreaseBulletCount;
                 _isFirstUpgrade = false;
-            }
-            else if (_aiModule != null)
-            {
-                chosenUpgrade = (UpgradeType)_aiModule.Predict();
             }
             else
             {
@@ -166,7 +159,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         
         public override void ResetStats()
         {
-            _aiModule?.Clear();
             PlayerUpgradeCounts.Clear();
             BossUpgradeCounts.Clear();
             // Reset BossStats

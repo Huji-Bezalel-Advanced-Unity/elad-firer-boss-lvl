@@ -11,6 +11,7 @@ namespace _SPC.Core.Scripts.Abstracts
         {
             {WeaponType.PlayerBullet, 10},
             {WeaponType.BossBullet, 10},
+            { WeaponType.BossBigBullet ,30},
             { WeaponType.EnemyBody ,20},
             { WeaponType.DestroyerBullet, 7}
         };
@@ -49,6 +50,7 @@ namespace _SPC.Core.Scripts.Abstracts
     public enum WeaponType
     {
         BossBullet,
+        BossBigBullet,
         PlayerBullet,
         EnemyBody,
         DestroyerBullet

@@ -7,16 +7,16 @@ namespace _SPC.Core.Scripts.Managers
     {
         public static event Action<Transform> OnEnemyAdded;
         public static event Action<Transform> OnEnemyRemoved;
-        public static event Action<int> OnEnemyHit;
+        public static event Action<Vector3> OnEnemyHit;
         public static event Action OnGameStarted;
         public static event Action OnGameFinished;
         public static event Action OnGamePaused;
         public static event Action OnGameResumed;
-        public static event Action OnPlayerHit;
-        public static event Action<int> OnUpdateScore;
+        public static event Action<Vector3> OnPlayerHit;
+        public static event Action<long> OnUpdateScore;
         public static event Action OnEndSceneStarted;
 
-        public static void UpdateScore(int score)
+        public static void UpdateScore(long score)
         {
             OnUpdateScore?.Invoke(score);
         }
@@ -26,9 +26,9 @@ namespace _SPC.Core.Scripts.Managers
             OnGameStarted?.Invoke();
         }
 
-        public static void PlayerHit()
+        public static void PlayerHit(Vector3 position)
         {
-            OnPlayerHit?.Invoke();
+            OnPlayerHit?.Invoke(position);
         }
 
         public static void GameFinished()
@@ -51,9 +51,9 @@ namespace _SPC.Core.Scripts.Managers
             OnEndSceneStarted?.Invoke();
         }
 
-        public static void EnemyHit(int damage)
+        public static void EnemyHit(Vector3 position)
         {
-            OnEnemyHit?.Invoke(damage);
+            OnEnemyHit?.Invoke(position);
         }
 
         public static void EnemyAdded(Transform enemy)

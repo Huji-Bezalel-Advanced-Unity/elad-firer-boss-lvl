@@ -93,7 +93,6 @@ namespace _SPC.GamePlay.Player.Scripts
             var healthDeps = new HealthDependencies(playerLogger, healthBarUI, null, GameEvents.GameFinished,
                 stats.Health, stats.Health, new List<Action<float, float>> { FlashCourtine });
             _health = new SPCHealth(healthDeps);
-            BossAiStatsChooser.SetPlayerHealth(_health);
             _statsUpgrader = new PlayerStatsUpgrader(stats, _health, upgradeRenderer);
         }
 
@@ -123,6 +122,7 @@ namespace _SPC.GamePlay.Player.Scripts
 
         public void GotHit(Vector3 projectileTransform, WeaponType weaponType)
         {
+            GameEvents.EnemyHit(transform.position);
             _health.ReduceLife(SPCAttacker.damage[weaponType]);
         }
 
