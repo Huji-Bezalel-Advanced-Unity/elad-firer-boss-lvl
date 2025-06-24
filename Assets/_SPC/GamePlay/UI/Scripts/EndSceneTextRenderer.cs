@@ -2,11 +2,13 @@ using System;
 using _SPC.Core.Scripts.InputSystem;
 using _SPC.Core.Scripts.Managers;
 using _SPC.Core.Scripts.Text;
+using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace _SPC.GamePlay.UI.Scripts.Scripts
 {
-    public class EndSceneTextRenderer: SceneTextUI
+    public class MoveSceneTextRenderer: SceneTextUI
     {
         private InputSystem_Actions _inputSystem;
 

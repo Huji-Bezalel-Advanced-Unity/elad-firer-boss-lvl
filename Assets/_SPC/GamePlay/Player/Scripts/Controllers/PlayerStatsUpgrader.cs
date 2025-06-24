@@ -58,6 +58,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             
             GameEvents.OnUpdateScore += OnScoreUpdated;
             GameEvents.OnGameFinished += ResetStats;
+            GameEvents.OnGameLoss += ResetStats;
         }
 
         private void OnScoreUpdated(long newScore)
@@ -209,6 +210,7 @@ namespace _SPC.GamePlay.Player.Scripts.Controllers
             
             GameEvents.OnUpdateScore -= OnScoreUpdated;
             GameEvents.OnGameFinished -= ResetStats;
+            GameEvents.OnGameLoss -= ResetStats;
             _inputSystem.Player.ChooseLeft.performed -= OnChooseLeft;
             _inputSystem.Player.ChooseRight.performed -= OnChooseRight;
         }

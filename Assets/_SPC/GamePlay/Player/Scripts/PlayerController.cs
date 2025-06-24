@@ -90,7 +90,7 @@ namespace _SPC.GamePlay.Player.Scripts
                 AttackerMono = this
             };
             _attacker = new PlayerAttacker(stats, deps);
-            var healthDeps = new HealthDependencies(playerLogger, healthBarUI, null, GameEvents.GameFinished,
+            var healthDeps = new HealthDependencies(playerLogger, healthBarUI, null, GameEvents.GameLoss,
                 stats.Health, stats.Health, new List<Action<float, float>> { FlashCourtine });
             _health = new SPCHealth(healthDeps);
             _statsUpgrader = new PlayerStatsUpgrader(stats, _health, upgradeRenderer);
@@ -157,6 +157,7 @@ namespace _SPC.GamePlay.Player.Scripts
             GameEvents.OnEnemyRemoved += RemoveTransform;
             GameEvents.OnEnemyAdded += AddTranform;
             GameEvents.OnGameFinished += DisableEvents;
+            GameEvents.OnGameLoss += DisableEvents;
         }
 
         private void RemoveTransform(Transform enemy)

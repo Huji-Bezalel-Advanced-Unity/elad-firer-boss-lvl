@@ -19,10 +19,11 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [SerializeField] private BoxCollider2D arenaCollider;
         [SerializeField] private BulletMonoPool destroyerPool;
         [SerializeField] private Transform dummyParentTransform;
-        
-        
+
+
         private SPCStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
+        private SPCHealth _health;
 
         private void OnEnable()
         {
@@ -61,6 +62,19 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
                 OnBossUpgradedActions = new Action[] { OnBossUpgraded },
             };
             _statsUpgrader = new BossStatsUpgrader(upgraderDeps);
+
+
+            var healthDeps = new HealthDependencies
+            {
+                healthUI = null,
+                logger = enemyLogger,
+                OnDeathAction = (
+                    () => transform.DOPunchScale(Vector3.one * stats.upgradePunchIntensity * 4, stats.upgradePunchTime)
+                        .OnComplete(GameEvents.GameFinished)),
+                    maxHP = stats.Health,
+                    currentHP = stats.Health, 
+            };
+            _health = new SPCHealth(healthDeps);
         }
 
         private void OnBossUpgraded()

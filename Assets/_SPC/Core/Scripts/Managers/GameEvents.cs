@@ -5,6 +5,7 @@ namespace _SPC.Core.Scripts.Managers
 {
     public static class GameEvents
     {
+        public static event Action OnGameLoss;
         public static event Action<Transform> OnEnemyAdded;
         public static event Action<Transform> OnEnemyRemoved;
         public static event Action<Vector3> OnEnemyHit;
@@ -64,6 +65,11 @@ namespace _SPC.Core.Scripts.Managers
         public static void EnemyRemoved(Transform enemy)
         {
             OnEnemyRemoved?.Invoke(enemy);
+        }
+
+        public static void GameLoss()
+        {
+            OnGameLoss?.Invoke();
         }
     }
 }

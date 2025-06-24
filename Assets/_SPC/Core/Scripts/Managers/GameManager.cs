@@ -20,8 +20,14 @@ namespace _SPC.Core.Scripts.Managers
         public void OnEnable()
         {
             GameEvents.OnGameFinished += OnGameFinished;
+            GameEvents.OnGameLoss += OnGameLoss;
         }
-        
+
+        private void OnGameLoss()
+        {
+            sceneLoader.LoadSceneWithCallback(3);
+        }
+
 
         // Private constructor prevents external instantiation
         public void Start()

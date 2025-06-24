@@ -10,16 +10,11 @@ namespace _SPC.GamePlay.UI.Scripts.Scripts
     {
         [Header("TextMeshPro References")]
         [SerializeField] private TextMeshProUGUI scoreText;
-        [SerializeField] private TextMeshProUGUI nicknameText;
 
         private GameplayScore _gameplayScore;
 
         private void Start()
         {
-            string currentNickname = PlayerPrefs.GetString(NameInputUI.PlayerPrefsName);
-            if (nicknameText != null)
-                nicknameText.text = "Name: "+ currentNickname;
-            
             GameEvents.OnUpdateScore += UpdateScoreDisplay;
             
             UpdateScoreDisplay(0);
@@ -34,7 +29,7 @@ namespace _SPC.GamePlay.UI.Scripts.Scripts
         private void UpdateScoreDisplay(long score)
         {
             if (scoreText != null)
-                scoreText.text = $"Current Points: {score}";
+                scoreText.text = $"{score}";
         }
     }
 }

@@ -90,6 +90,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             _availableUpgrades = new List<UpgradeType>((UpgradeType[])Enum.GetValues(typeof(UpgradeType)));
             GameEvents.OnGameFinished += ResetStats;
             GameEvents.OnUpdateScore += OnScoreUpdated;
+            GameEvents.OnGameLoss += ResetStats;
         }
 
         private void OnScoreUpdated(long newScore)
@@ -179,6 +180,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             _destroyerStats.Health = _initialDestroyerHealth;
             
             GameEvents.OnGameFinished -= ResetStats;
+            GameEvents.OnGameLoss -= ResetStats;
             GameEvents.OnUpdateScore -= OnScoreUpdated;
             if (_OnBossUpgraded != null)
             {

@@ -25,5 +25,9 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [SerializeField] [Range(1f,5f)] public float scoreThresholdMultiplier = 1.5f;
         [SerializeField] public float upgradePunchIntensity = 0.5f;
         [SerializeField] public float upgradePunchTime;
+
+
+        [Header("Helath Stats")] 
+        [SerializeField] public float Health;
     }
 }

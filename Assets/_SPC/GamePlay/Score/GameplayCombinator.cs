@@ -23,11 +23,13 @@ namespace _SPC.GamePlay.Score
         public GameplayCombinator(GameplayScore gameplayScore)
         {
             _gameplayScore = gameplayScore;
-            GameEvents.OnGameStarted += CreateGameplayCombinatorUpdater;
-            GameEvents.OnGameFinished += DestroyGameplayCombinatorUpdater;
+            GameEvents.OnGameStarted += SubscribeEvents;
+            GameEvents.OnGameFinished += UnsubscribeEvents;
+            GameEvents.OnGameLoss += UnsubscribeEvents;
+            
         }
 
-        private void CreateGameplayCombinatorUpdater()
+        private void SubscribeEvents()
         {
             // Subscribe to events
             GameEvents.OnPlayerHit += OnPlayerHit;
@@ -40,10 +42,13 @@ namespace _SPC.GamePlay.Score
             _eventsThisFrame.Add(new KeyValuePair<EventType, Vector3>(EventType.EnemyHit, obj));
         }
 
-        private void DestroyGameplayCombinatorUpdater()
+        private void UnsubscribeEvents()
         {
             // Unsubscribe from events
+            GameEvents.OnGameStarted -= SubscribeEvents;
+            GameEvents.OnGameFinished -= UnsubscribeEvents;
             GameEvents.OnPlayerHit -= OnPlayerHit;
+            GameEvents.OnEnemyHit -= OnEnemyHit;
         }
 
         private void OnPlayerHit(Vector3 hitPoint)
