@@ -45,8 +45,6 @@ namespace _SPC.GamePlay.Score
         private void UnsubscribeEvents()
         {
             // Unsubscribe from events
-            GameEvents.OnGameStarted -= SubscribeEvents;
-            GameEvents.OnGameFinished -= UnsubscribeEvents;
             GameEvents.OnPlayerHit -= OnPlayerHit;
             GameEvents.OnEnemyHit -= OnEnemyHit;
         }

@@ -21,6 +21,11 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [SerializeField] public int numberOfEnemiesToSpawn = 3;
         [SerializeField] public float destroyerSpawnTime = 15f;
 
+        [Header("Phase Stats")]
+        [SerializeField] [Range(1f, 15f)] public float phase1SpecialAttackInterval = 7f;
+        [SerializeField] [Range(1f, 15f)] public float phase2SpecialAttackInterval = 6f;
+        [SerializeField] [Range(1f, 15f)] public float phase3SpecialAttackInterval = 5f;
+
         [Header("Rage Attack Stats")]
         [SerializeField] [Range(1f, 20f)] public float rageChargeDistance = 5f;
         [SerializeField] [Range(0.1f, 3f)] public float rageChargeTime = 0.5f;

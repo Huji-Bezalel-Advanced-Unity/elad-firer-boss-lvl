@@ -27,7 +27,6 @@ namespace _SPC.GamePlay.Enemies.Destroyer.Scripts
     {
         [SerializeField] private DestroyerStats stats;
         private SPCMovement _movement;
-        private Transform _explosionsFather;
         private BoxCollider2D _arenaCollider;
         private bool _initialized = false;
         private Coroutine _flashCoroutine;

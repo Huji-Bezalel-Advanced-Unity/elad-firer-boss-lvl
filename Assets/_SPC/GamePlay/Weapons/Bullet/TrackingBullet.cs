@@ -9,7 +9,6 @@ namespace _SPC.GamePlay.Weapons.Bullet
     {
         private float _smoothFactor;
         private float _turnSpeed;
-        private Vector2 _savedVelocity;
 
 
         public override void Activate(BulletInitData data)

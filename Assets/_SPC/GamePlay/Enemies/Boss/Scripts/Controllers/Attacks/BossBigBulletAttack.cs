@@ -6,6 +6,7 @@ using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
 
 using Object = UnityEngine.Object;
+using DG.Tweening;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 {
@@ -22,7 +23,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
     {
         private readonly BossStats _stats;
         private readonly BossBigBulletAttackDependencies _deps;
-
+        private bool _attack = false;
 
         public BossBigBulletAttack(BossStats stats, BossBigBulletAttackDependencies deps)
         {
@@ -32,7 +33,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
         public override bool Attack(Action onFinished = null)
         {
-           
+            if (_attack) return false;
+            _attack = true;
 
             if (_deps.BigBulletPool == null)
             {
@@ -60,6 +62,14 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             ));
 
             Object.Destroy(tempTargetObject, 0.2f);
+
+            // Reset attack flag after delay and call callback
+            DOVirtual.DelayedCall(_stats.ProjectileSpawnRate, () =>
+            {
+                _attack = false;
+                onFinished?.Invoke();
+            });
+
             return true;
         }
     }

@@ -39,34 +39,21 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         private readonly BossSpawnDestroyersAttack _spawnDestroyersAttack;
         private readonly BossRageAttack _rageAttack;
         private bool _isPaused = false;
-        private Coroutine _currentCourtine;
+        private Coroutine _currentCoroutine;
+        private bool _isSpecialAttackActive = false;
+        private float _lastBulletAttackTime = 0f;
 
+        // Phase-specific attack lists
+        private readonly List<BossAttacks> _phase1Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers };
+        private readonly List<BossAttacks> _phase2Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers };
+        private readonly List<BossAttacks> _phase3Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers, BossAttacks.Rage };
+        private float _lastTime;
 
         public BossAttacker(BossStats stats, AttackerDependencies deps, BossAttackerDependencies bossDeps) : base(deps)
         {
             _stats = stats;
             _bossDeps = bossDeps;
 
-            _bossDeps.Health.AddHPAction(_bossDeps.Health.maxHealth * 2 / 3,
-                new SPCHealthAction(() =>
-                {
-                    if(_currentCourtine != null)
-                    {
-                        AttackerMono.StopCoroutine(_currentCourtine);
-                    }
-                    _currentCourtine = AttackerMono.StartCoroutine(Phase2Attack());
-                }));
-            _bossDeps.Health.AddHPAction(_bossDeps.Health.maxHealth * 1 / 3,
-                new SPCHealthAction(() =>
-                {
-                    if(_currentCourtine != null)
-                    {
-                        AttackerMono.StopCoroutine(_currentCourtine);
-                    }
-                    _currentCourtine = AttackerMono.StartCoroutine(Phase3Attack());
-                }));
-
-            _currentCourtine = AttackerMono.StartCoroutine(Phase1Attack());
             // Initialize bullet attack
             var bulletAttackDeps = new BossBulletAttackDependencies
             {
@@ -110,52 +97,85 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             };
             _rageAttack = new BossRageAttack(_stats, rageAttackDeps);
 
+            // Set up health-based phase transitions
+            _bossDeps.Health.AddHPAction(_bossDeps.Health.maxHealth * 2 / 3,
+                new SPCHealthAction(() =>
+                {
+                    if(_currentCoroutine != null)
+                    {
+                        AttackerMono.StopCoroutine(_currentCoroutine);
+                    }
+                    _currentCoroutine = AttackerMono.StartCoroutine(PhaseAttack(_phase2Attacks, _stats.phase2SpecialAttackInterval));
+                }));
+            _bossDeps.Health.AddHPAction(_bossDeps.Health.maxHealth * 1 / 3,
+                new SPCHealthAction(() =>
+                {
+                    if(_currentCoroutine != null)
+                    {
+                        AttackerMono.StopCoroutine(_currentCoroutine);
+                    }
+                    _currentCoroutine = AttackerMono.StartCoroutine(PhaseAttack(_phase3Attacks, _stats.phase3SpecialAttackInterval));
+                }));
+
+            // Start phase 1
+            _currentCoroutine = AttackerMono.StartCoroutine(PhaseAttack(_phase1Attacks, _stats.phase1SpecialAttackInterval));
+
             GameEvents.OnGamePaused += OnGamePaused;
             GameEvents.OnGameResumed += OnGameResumed;
         }
 
-        #region Phase 1
-        
-        private IEnumerator Phase1Attack()
+        private IEnumerator PhaseAttack(List<BossAttacks> availableAttacks, float attackInterval)
         {
+            
+            
             while (true)
             {
-                if(_isPaused) continue;
-                yield return new WaitForSeconds(5f);
-                Attack(BossAttacks.Rage);
+                while(_isPaused){
+                    yield return null;
+                }
+                
+                yield return AttackerMono.StartCoroutine(WaitForSecondsPauseAware(attackInterval));
+                
+                while(_isPaused){
+                    yield return null;
+                }
+                
+                // Choose and execute random special attack
+                ExecuteRandomSpecialAttack(availableAttacks);
             }
-            yield break;
         }
-        
-        #endregion
-        
-        #region Phase 2
-        private IEnumerator Phase2Attack()
+
+        private IEnumerator WaitForSecondsPauseAware(float seconds)
         {
-            while (true)
+            float elapsed = 0f;
+            while (elapsed < seconds)
             {
-                if(_isPaused) continue;
+                if (!_isPaused)
+                {
+                    elapsed += Time.deltaTime;
+                }
                 yield return null;
             }
-            yield break;
         }
-        
-        #endregion
-        
-        #region Phase 3
-        private IEnumerator Phase3Attack()
+
+        private void ExecuteRandomSpecialAttack(List<BossAttacks> availableAttacks)
         {
-            while (true)
+            if (_isSpecialAttackActive) return;
+            
+            _isSpecialAttackActive = true;
+            
+            // Stop bullet attacks during special attack
+            
+            // Choose random attack
+            BossAttacks chosenAttack = availableAttacks[UnityEngine.Random.Range(0, availableAttacks.Count)];
+            
+            // Execute the attack with callback to resume bullet attacks
+            Attack(chosenAttack, () =>
             {
-                if(_isPaused) continue;
-                yield return null;
-            }
-            yield break;
+                _isSpecialAttackActive = false;
+                _lastBulletAttackTime = Time.time;
+            });
         }
-        
-        #endregion
-
-
 
         private void OnGamePaused()
         {
@@ -169,8 +189,19 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
         public override void Attack()
         {
-            if (_isPaused) return;
-            // Attack(BossAttacks.BigBulletShot);
+            if (_isPaused)
+            {
+                _lastBulletAttackTime = Time.time - _lastTime;
+                return;
+            }
+            if (_isSpecialAttackActive) return;
+            _lastTime = Time.time - _lastBulletAttackTime;
+            // Check if enough time has passed since last bullet attack
+            if (_lastTime >= _stats.ProjectileSpawnRate)
+            {
+                _bulletAttack.Attack();
+                _lastBulletAttackTime = Time.time;
+            }
         }
 
         public override void CleanUp()
@@ -178,6 +209,10 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             GameEvents.OnGamePaused -= OnGamePaused;
             GameEvents.OnGameResumed -= OnGameResumed;
             
+            if (_currentCoroutine != null)
+            {
+                AttackerMono.StopCoroutine(_currentCoroutine);
+            }
             _rageAttack?.Cleanup();
         }
 
@@ -188,23 +223,17 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             switch (attackType)
             {
                 case BossAttacks.BulletsShot:
-                    return _bulletAttack.Attack();
-                    break;
+                    return _bulletAttack.Attack(onFinish);
                 case BossAttacks.BigBulletShot:
-                    return _bigBulletAttack.Attack();
-                    break;
+                    return _bigBulletAttack.Attack(onFinish);
                 case BossAttacks.SpawnDestroyers:
-                    return _spawnDestroyersAttack.Attack();
-                    break;
+                    return _spawnDestroyersAttack.Attack(onFinish);
                 case BossAttacks.Rage:
-                    return _rageAttack.Attack();
-                    break;
+                    return _rageAttack.Attack(onFinish);
+                default:
+                    return false;
             }
-            return false;
         }
-
         
-
-        public bool IsRageAttacking => _rageAttack.IsAttacking;
     }
 }

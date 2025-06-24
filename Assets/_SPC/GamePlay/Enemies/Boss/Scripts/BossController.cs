@@ -24,22 +24,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         private SPCStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
 
-        private void OnEnable()
-        {
-            GameEvents.OnGamePaused += OnGamePaused;
-            GameEvents.OnGameResumed += OnGameResumed;
-        }
-
-        private void OnGamePaused()
-        {
-            _isPaused = true;
-        }
-
-        private void OnGameResumed()
-        {
-            _isPaused = false;
-        }
-
+       
         private void Start()
         {
             var healthDeps = new HealthDependencies
@@ -94,15 +79,12 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
 
         private void OnDisable()
         {
-            GameEvents.OnGamePaused -= OnGamePaused;
-            GameEvents.OnGameResumed -= OnGameResumed;
             _statsUpgrader?.ResetStats();
             _attacker?.CleanUp();
         }
 
         private void Update()
         {
-            if (_isPaused) return;
             _attacker.Attack();
         }
     }

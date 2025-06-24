@@ -24,6 +24,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
     {
         private readonly BossStats _stats;
         private readonly BossSpawnDestroyersAttackDependencies _deps;
+        private bool _isPaused = false;
        
         public BossSpawnDestroyersAttack(BossStats stats, BossSpawnDestroyersAttackDependencies deps)
         {
@@ -34,7 +35,11 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
         public override bool Attack(Action onFinished = null)
         {
-            return SpawnEnemies();
+            if (_isPaused) return false;
+            
+            SpawnEnemies();
+            onFinished?.Invoke();
+            return true;
         }
 
         private bool SpawnEnemies()

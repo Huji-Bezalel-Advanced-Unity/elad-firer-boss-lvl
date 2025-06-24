@@ -51,12 +51,12 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         }
 
         
-        public override bool Attack(Action onAttackFinished = null)
+        public override bool Attack(Action onFinished = null)
         {
             if (_isAttacking) return false;
             
             _isAttacking = true;
-            _onAttackFinished = onAttackFinished;
+            _onAttackFinished = onFinished;
             _originalPosition = _deps.EntityTransform.position;
 
             // Move towards player
@@ -83,7 +83,6 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             _currentSequence.OnComplete(() =>
             {
                 _isAttacking = false;
-                _currentSequence = null;
                 _onAttackFinished?.Invoke();
                 _onAttackFinished = null;
             });

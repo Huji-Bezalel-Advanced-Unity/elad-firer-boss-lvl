@@ -1,10 +1,9 @@
 using System;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.GamePlay.Weapons.Bullet;
-
 using UnityEngine;
 using _SPC.Core.Scripts.Utils;
-
+using DG.Tweening;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -22,12 +21,16 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
     {
         private readonly BossStats _stats;
         private readonly BossBulletAttackDependencies _deps;
+        private bool _isAttacking = false;
+        private Action _onAttackFinished;
 
         public BossBulletAttack(BossStats stats, BossBulletAttackDependencies deps)
         {
             _stats = stats;
             _deps = deps;
         }
+
+        
 
         public override bool Attack(Action onFinished = null)
         {
@@ -36,7 +39,14 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
                 _deps.Logger?.Log("BossBullet pool not found!");
                 return false;
             }
+            
+            PerformAttack();
+            
+            return true;
+        }
 
+        private void PerformAttack()
+        {
             int bulletCount = _stats.bulletCount;
             float degreesBetween = 360f / bulletCount;
             float randomStartAngle = Random.Range(0f, 360f);
@@ -67,11 +77,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
                 Object.Destroy(tempTargetObject, 0.2f);
             }
-            return true;
         }
-
-       
-       
-       
+        
+        
     }
 } 
