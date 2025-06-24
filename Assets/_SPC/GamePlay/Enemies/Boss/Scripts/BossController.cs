@@ -21,6 +21,11 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         [SerializeField] private Transform dummyParentTransform;
         [SerializeField] private BulletMonoPool bigBulletPool;
 
+        [Header("Face")]
+        [SerializeField] private SpriteRenderer faceSpriteRenderer;
+        [SerializeField] private Sprite normalFaceSprite;
+        [SerializeField] private Sprite rageFaceSprite;
+
         private SPCStatsUpgrader _statsUpgrader;
         private bool _isPaused = false;
 
@@ -61,6 +66,16 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
                 Health = _health,
             };
 
+            // Create face changer
+            var faceChangerDeps = new BossFaceChangerDependencies
+            {
+                BossSpriteRenderer = faceSpriteRenderer,
+                NormalFaceSprite = normalFaceSprite,
+                AngryFaceSprite = rageFaceSprite
+            };
+            var faceChanger = new BossFaceChanger(faceChangerDeps);
+            bossDeps.FaceChanger = faceChanger;
+
             _attacker = new BossAttacker(stats, deps, bossDeps);
             var upgraderDeps = new BossStatsUpgraderDependencies
             {
@@ -87,5 +102,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts
         {
             _attacker.Attack();
         }
+
+
+    
     }
 }

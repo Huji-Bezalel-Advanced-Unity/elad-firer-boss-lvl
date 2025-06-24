@@ -20,6 +20,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         public Collider2D BossCollider;
         public Transform DummyParentTransform;
         public SPCHealth Health;
+        public BossFaceChanger FaceChanger;
     }
 
     public enum BossAttacks
@@ -84,7 +85,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
                 ExplosionsFather = _bossDeps.ExplosionsFather,
                 BossCollider = _bossDeps.BossCollider,
                 MainTarget = MainTarget,
-                TargetTransforms = new List<Transform>(TargetTransforms)
+                TargetTransforms = new List<Transform>(TargetTransforms),
+                AttackerMono = AttackerMono
             };
             _spawnDestroyersAttack = new BossSpawnDestroyersAttack(_stats, spawnDestroyersDeps);
 
@@ -164,7 +166,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             
             _isSpecialAttackActive = true;
             
-            // Stop bullet attacks during special attack
+            // Set angry face for special attack
+            _bossDeps.FaceChanger?.SetAngryFace();
             
             // Choose random attack
             BossAttacks chosenAttack = availableAttacks[UnityEngine.Random.Range(0, availableAttacks.Count)];
@@ -174,6 +177,8 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
             {
                 _isSpecialAttackActive = false;
                 _lastBulletAttackTime = Time.time;
+                
+                _bossDeps.FaceChanger?.SetNormalFace();
             });
         }
 

@@ -2,10 +2,12 @@ using System;
 using _SPC.Core.Scripts.Abstracts;
 using _SPC.GamePlay.Weapons.Bullet;
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using _SPC.GamePlay.Enemies.Destroyer.Scripts;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using DG.Tweening;
 
 namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 {
@@ -18,6 +20,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         public Collider2D BossCollider;
         public Transform MainTarget;
         public List<Transform> TargetTransforms;
+        public MonoBehaviour AttackerMono;
     }
 
     public class BossSpawnDestroyersAttack : SPCAttack
@@ -25,6 +28,7 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
         private readonly BossStats _stats;
         private readonly BossSpawnDestroyersAttackDependencies _deps;
         private bool _isPaused = false;
+        private bool _isSpawning = false;
        
         public BossSpawnDestroyersAttack(BossStats stats, BossSpawnDestroyersAttackDependencies deps)
         {
@@ -35,19 +39,20 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
 
         public override bool Attack(Action onFinished = null)
         {
-            if (_isPaused) return false;
+            if (_isPaused || _isSpawning) return false;
             
-            SpawnEnemies();
-            onFinished?.Invoke();
+            _isSpawning = true;
+            _deps.AttackerMono.StartCoroutine(SpawnEnemiesSequentially(onFinished));
             return true;
         }
 
-        private bool SpawnEnemies()
+        private IEnumerator SpawnEnemiesSequentially(Action onFinished)
         {
             var bounds = _deps.ArenaCollider.bounds;
             List<Vector2> spawnPositions = new List<Vector2>();
             float minDistance = _stats.minDistanceBetweenEnemies;
 
+            // First, find all valid spawn positions
             for (int i = 0; i < _stats.numberOfEnemiesToSpawn; i++)
             {
                 Vector2 pos = Vector2.zero;
@@ -86,25 +91,43 @@ namespace _SPC.GamePlay.Enemies.Boss.Scripts.Controllers
                 if (positionFound)
                 {
                     spawnPositions.Add(pos);
-
-                    GameObject destroyerObj = Object.Instantiate(_stats.DestroyerPrefab, pos, Quaternion.identity);
-                    var destroyer = destroyerObj.GetComponent<DestroyerController>();
-
-                    var destroyerDeps = new DestroyerDependencies
-                    {
-                        MainTarget = _deps.MainTarget,
-                        Targets = new List<Transform>(_deps.TargetTransforms),
-                        ExplosionPrefab = _deps.ExplosionPrefab,
-                        ExplosionsFather = _deps.ExplosionsFather,
-                        Pool = _deps.DestroyerPool,
-                        ArenaBounds = _deps.ArenaCollider
-                    };
-                    
-                    destroyer.Init(destroyerDeps);
                 }
             }
-            return true;
+
+            // Now spawn destroyers one by one with delays
+            for (int i = 0; i < spawnPositions.Count; i++)
+            {
+                if (_isPaused)
+                {
+                    yield return new WaitUntil(() => !_isPaused);
+                }
+
+                // Spawn the destroyer
+                Vector2 pos = spawnPositions[i];
+                GameObject destroyerObj = Object.Instantiate(_stats.DestroyerPrefab, pos, Quaternion.identity);
+                var destroyer = destroyerObj.GetComponent<DestroyerController>();
+
+                var destroyerDeps = new DestroyerDependencies
+                {
+                    MainTarget = _deps.MainTarget,
+                    Targets = new List<Transform>(_deps.TargetTransforms),
+                    ExplosionPrefab = _deps.ExplosionPrefab,
+                    ExplosionsFather = _deps.ExplosionsFather,
+                    Pool = _deps.DestroyerPool,
+                    ArenaBounds = _deps.ArenaCollider
+                };
+                
+                destroyer.Init(destroyerDeps);
+
+                // Wait before spawning next destroyer (except for the last one)
+                if (i < spawnPositions.Count - 1)
+                {
+                    yield return new WaitForSeconds(_stats.destroyerSpawnTime);
+                }
+            }
+
+            _isSpawning = false;
+            onFinished?.Invoke();
         }
-        
     }
 } 
