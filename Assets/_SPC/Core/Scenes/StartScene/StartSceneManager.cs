@@ -1,4 +1,5 @@
 using System;
+using _SPC.Core.Audio;
 using _SPC.Core.BaseScripts.InputSystem.Scripts;
 using _SPC.Core.BaseScripts.Managers;
 using _SPC.Core.Scripts.Managers;
@@ -13,6 +14,10 @@ namespace _SPC.Core.Scripts.Text
         [SerializeField] private NameInputUI nameInputUI;
         private InputSystem_Actions inputSystem;
 
+        private void Start()
+        {
+            AudioManager.Instance.Play(AudioName.GameStartMusic, Vector3.zero);
+        }
 
         private void OnEnable()
         {

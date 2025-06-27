@@ -42,18 +42,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Select",
+                    "name": "GameWin",
                     "type": "Button",
-                    "id": "67dab3e0-aec1-4e37-ac79-1783785e4295",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Erase",
-                    "type": "Button",
-                    "id": "c868c771-a1f4-473d-a365-28ed5c1e553a",
+                    "id": "ad7a8eb2-c810-4ce4-b703-5f0341970f27",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -250,45 +241,12 @@
                 },
                 {
                     "name": "",
-                    "id": "c5ba928f-5c11-4c4b-b553-b6a6cb61ca8a",
-                    "path": "<Keyboard>/shift",
+                    "id": "175612a6-1b58-4cb6-8e5d-8c051e75188c",
+                    "path": "<Keyboard>/p",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Select",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "698c8e22-ab32-4873-b82e-2ed1080caaf1",
-                    "path": "<Gamepad>/buttonNorth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Select",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "bb222649-0211-46f0-9677-1fd0215c33f7",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Erase",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f074fb05-6dd9-47ae-a956-118f0dfe556e",
-                    "path": "<Keyboard>/backspace",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Erase",
+                    "action": "GameWin",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

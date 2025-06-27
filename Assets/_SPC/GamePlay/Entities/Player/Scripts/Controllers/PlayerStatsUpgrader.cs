@@ -99,7 +99,7 @@ namespace _SPC.GamePlay.Entities.Player
             bool isHealthLow = _health.currentHealth / _health.maxHealth < 0.5f;
             var weightedUpgrades = new Dictionary<UpgradeType, int>();
             int totalWeight = 0;
-
+            
             foreach (var upgrade in availableUpgrades)
             {
                 int weight = 100; 
@@ -107,6 +107,17 @@ namespace _SPC.GamePlay.Entities.Player
                 {
                     weight += 10; 
                 }
+
+                if (upgrade == UpgradeType.ExtraShot)
+                {
+                    // We give Extra shot a downgrade because its very powerful
+                    weight -= 10;
+                }
+                if (PlayerUpgradeCounts.ContainsKey(upgrade))
+                {
+                    weight -= 10 * PlayerUpgradeCounts[upgrade];
+                }
+                
                 weightedUpgrades.Add(upgrade, weight);
                 totalWeight += weight;
             }

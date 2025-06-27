@@ -1,5 +1,4 @@
 using _SPC.Core.BaseScripts.Generics.MonoPool;
-using _SPC.Core.BaseScripts.Managers;
 using UnityEngine;
 
 
@@ -40,23 +39,11 @@ namespace _SPC.GamePlay.Weapons.Bullet
         protected Transform _target;
         protected float _speed;
         private Vector2 _savedVelocity;
-        protected bool _isPaused = false;
+        
 
-        protected virtual void OnEnable()
+        protected override void OnGamePaused()
         {
-            GameEvents.OnGamePaused += OnGamePaused;
-            GameEvents.OnGameResumed += OnGameResumed;
-        }
-
-        protected virtual void OnDisable()
-        {
-            GameEvents.OnGamePaused -= OnGamePaused;
-            GameEvents.OnGameResumed -= OnGameResumed;
-        }
-
-        private void OnGamePaused()
-        {
-            _isPaused = true;
+            base.OnGamePaused();
             if (rb2D != null && rb2D.linearVelocity != Vector2.zero)
             {
                 _savedVelocity = rb2D.linearVelocity;
@@ -64,9 +51,9 @@ namespace _SPC.GamePlay.Weapons.Bullet
             }
         }
 
-        private void OnGameResumed()
+        protected override void OnGameResumed()
         {
-            _isPaused = false;
+            base.OnGameResumed();
             if (rb2D != null)
             {
                 rb2D.linearVelocity = _savedVelocity;
@@ -76,6 +63,7 @@ namespace _SPC.GamePlay.Weapons.Bullet
         public virtual void Activate(BulletInitData data)
         {
             weaponLogger?.Log("Bullet activated");
+            _hitTransform = transform;
             _weaponType = data.weaponType;
             _active = true;
             _pool = data.pool;
@@ -96,8 +84,8 @@ namespace _SPC.GamePlay.Weapons.Bullet
 
         public override void OnTriggerEnter2D(Collider2D other)
         {
-            base.OnTriggerEnter2D(other);
             if (!_active || _isPaused) return;
+            base.OnTriggerEnter2D(other);
             weaponLogger?.Log("Triggered by: " + other.name);
             transform.position = new Vector2(-100, -100);
             weaponLogger?.Log("Bullet Return");
@@ -108,6 +96,8 @@ namespace _SPC.GamePlay.Weapons.Bullet
 
         public virtual void Reset()
         {
+            _target = null;
+            _hitSuccess = false;
             _active = false;
         }
         

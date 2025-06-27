@@ -21,13 +21,12 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         {
             IncreaseDestroyerCount,
             IncreaseBulletCount,
-            IncreaseProjectileSpeed,
             IncreaseDestroyerSmoothFactor,
             IncreaseDestroyerMovementSpeed,
             DecreaseWanderDelay,
             IncreaseDestroyerHealth,
             DecreaseProjectileSpawnRate,
-            DecreaseDestroyerSpawnTime
+            IncreaseAttacksSpeed
         }
 
         private readonly BossStats _bossStats;
@@ -36,6 +35,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         
         private readonly List<UpgradeType> _availableUpgrades;
         private bool _isFirstUpgrade = true;
+        private readonly Action[] _OnBossUpgraded;
 
         // Boss initial stats
         private readonly int _initialBulletCount;
@@ -44,6 +44,9 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         private readonly float _initialBossProjectileSpawnRate;
         private readonly float _initialDestroyerSpawnTime;
         private readonly long _initialScoreThreshold;
+        private float _initialRageChargeTime;
+        private float _laserMoveSpeed;
+        private float _initialLaserStretchTime;
 
         // Destroyer initial stats
         private readonly float _initialDestroyerProjectileSpeed;
@@ -53,7 +56,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         private readonly float _initialMinWanderDelay;
         private readonly float _initialMaxWanderDelay;
         private readonly float _initialDestroyerHealth;
-        private readonly Action[] _OnBossUpgraded;
 
 
         private event Action OnBossStatsUpgraded;
@@ -75,9 +77,10 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             _initialNumberOfEnemiesToSpawn = _bossStats.numberOfEnemiesToSpawn;
             _initialBossProjectileSpeed = _bossStats.ProjectileSpeed;
             _initialBossProjectileSpawnRate = _bossStats.ProjectileSpawnRate;
-            _initialDestroyerSpawnTime = _bossStats.destroyerSpawnTime;
             _initialScoreThreshold = _bossStats.scoreThresholdUpgrade;
-
+            _initialRageChargeTime = _bossStats.rageChargeTime;
+            _laserMoveSpeed = _bossStats.laserMoveSpeed;
+            _initialLaserStretchTime =  _bossStats.laserStretchTime;
             // Store initial DestroyerStats
             _initialDestroyerProjectileSpeed = _destroyerStats.ProjectileSpeed;
             _initialDestroyerProjectileSpawnRate = _destroyerStats.ProjectileSpawnRate;
@@ -130,9 +133,12 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                 case UpgradeType.IncreaseBulletCount:
                     _bossStats.bulletCount++;
                     break;
-                case UpgradeType.IncreaseProjectileSpeed:
+                case UpgradeType.IncreaseAttacksSpeed:
                     _bossStats.ProjectileSpeed *= 1.1f;
                     _destroyerStats.ProjectileSpeed *= 1.1f;
+                    _bossStats.rageChargeTime *= 0.9f;
+                    _bossStats.laserMoveSpeed *= 1.1f;
+                    _bossStats.laserStretchTime *= 0.9f;
                     break;
                 case UpgradeType.IncreaseDestroyerSmoothFactor:
                     _destroyerStats.SmoothFactor *= 1.2f; 
@@ -145,14 +151,11 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                     _destroyerStats.maxWanderDelay *= 0.8f;
                     break;
                 case UpgradeType.IncreaseDestroyerHealth:
-                    _destroyerStats.Health += 10;
+                    _destroyerStats.Health += 20;
                     break;
                 case UpgradeType.DecreaseProjectileSpawnRate:
                     _bossStats.ProjectileSpawnRate *= 0.9f;
                     _destroyerStats.ProjectileSpawnRate *= 0.9f;
-                    break;
-                case UpgradeType.DecreaseDestroyerSpawnTime:
-                    _bossStats.destroyerSpawnTime *= 0.925f; // 7.5% decrease
                     break;
             }
         }
@@ -166,9 +169,10 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             _bossStats.numberOfEnemiesToSpawn = _initialNumberOfEnemiesToSpawn;
             _bossStats.ProjectileSpeed = _initialBossProjectileSpeed;
             _bossStats.ProjectileSpawnRate = _initialBossProjectileSpawnRate;
-            _bossStats.destroyerSpawnTime = _initialDestroyerSpawnTime;
             _bossStats.scoreThresholdUpgrade = _initialScoreThreshold;
-            
+            _bossStats.rageChargeTime = _initialRageChargeTime;
+            _bossStats.laserMoveSpeed = _laserMoveSpeed;
+            _bossStats.laserStretchTime = _initialLaserStretchTime;
             // Reset DestroyerStats
             _destroyerStats.ProjectileSpeed = _initialDestroyerProjectileSpeed;
             _destroyerStats.ProjectileSpawnRate = _initialDestroyerProjectileSpawnRate;

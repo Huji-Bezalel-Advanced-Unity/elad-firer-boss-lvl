@@ -19,14 +19,18 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         public Transform DummyParentTransform;
         public SPCHealth Health;
         public BossFaceChanger FaceChanger;
+        public GameObject LaserPrefab;
+        public Transform LaserTransform;
     }
 
     public enum BossAttacks
     {
+        None,
         BulletsShot,
         BigBulletShot,
         SpawnDestroyers,
-        Rage
+        Rage,
+        Laser
     }
     
     public class BossAttacker : SPCAttacker
@@ -37,15 +41,18 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         private readonly BossBigBulletAttack _bigBulletAttack;
         private readonly BossSpawnDestroyersAttack _spawnDestroyersAttack;
         private readonly BossRageAttack _rageAttack;
+        private readonly BossLaserAttack _laserAttack;
         private bool _isPaused = false;
         private Coroutine _currentCoroutine;
         private bool _isSpecialAttackActive = false;
         private float _lastBulletAttackTime = 0f;
-
-        // Phase-specific attack lists
+        private BossAttacks _lastAttack = BossAttacks.None;
+        
+        
         private readonly List<BossAttacks> _phase1Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers };
-        private readonly List<BossAttacks> _phase2Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers };
-        private readonly List<BossAttacks> _phase3Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers, BossAttacks.Rage };
+        private readonly List<BossAttacks> _phase2Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers, BossAttacks.Laser };
+        private readonly List<BossAttacks> _phase3Attacks = new List<BossAttacks> { BossAttacks.BigBulletShot, BossAttacks.SpawnDestroyers, BossAttacks.Rage, BossAttacks.Laser };
+        
         private float _lastTime;
 
         public BossAttacker(BossStats stats, AttackerDependencies deps, BossAttackerDependencies bossDeps) : base(deps)
@@ -97,6 +104,18 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             };
             _rageAttack = new BossRageAttack(_stats, rageAttackDeps);
 
+            // Initialize laser attack
+            var laserAttackDeps = new BossLaserAttackDependencies
+            {
+                EntityTransform = EntityTransform,
+                ArenaCollider = _bossDeps.ArenaCollider,
+                LaserPrefab = _bossDeps.LaserPrefab,
+                Logger = Logger,
+                AttackerMono = AttackerMono,
+                LaserTransform = _bossDeps.LaserTransform,
+            };
+            _laserAttack = new BossLaserAttack(_stats, laserAttackDeps);
+
             // Set up health-based phase transitions
             _bossDeps.Health.AddHPAction(_bossDeps.Health.maxHealth * 2 / 3,
                 new SPCHealthAction(() =>
@@ -119,7 +138,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
 
             // Start phase 1
             _currentCoroutine = AttackerMono.StartCoroutine(PhaseAttack(_phase1Attacks, _stats.phase1SpecialAttackInterval));
-
             GameEvents.OnGamePaused += OnGamePaused;
             GameEvents.OnGameResumed += OnGameResumed;
         }
@@ -134,7 +152,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                     yield return null;
                 }
                 
-                yield return AttackerMono.StartCoroutine(WaitForSecondsPauseAware(attackInterval));
+                yield return AttackerMono.StartCoroutine(WaitForSeconds(attackInterval));
                 
                 while(_isPaused){
                     yield return null;
@@ -145,7 +163,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             }
         }
 
-        private IEnumerator WaitForSecondsPauseAware(float seconds)
+        private IEnumerator WaitForSeconds(float seconds)
         {
             float elapsed = 0f;
             while (elapsed < seconds)
@@ -168,8 +186,13 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             _bossDeps.FaceChanger?.SetAngryFace();
             
             // Choose random attack
-            BossAttacks chosenAttack = availableAttacks[UnityEngine.Random.Range(0, availableAttacks.Count)];
-            
+            BossAttacks chosenAttack;
+            do
+            {
+                chosenAttack = availableAttacks[UnityEngine.Random.Range(0, availableAttacks.Count)];
+            } while (_lastAttack == chosenAttack);
+                
+            _lastAttack = chosenAttack;
             // Execute the attack with callback to resume bullet attacks
             Attack(chosenAttack, () =>
             {
@@ -217,6 +240,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                 AttackerMono.StopCoroutine(_currentCoroutine);
             }
             _rageAttack?.Cleanup();
+            _laserAttack?.Cleanup();
         }
 
         private bool Attack(BossAttacks attackType, Action onFinish = null)
@@ -233,6 +257,8 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                     return _spawnDestroyersAttack.Attack(onFinish);
                 case BossAttacks.Rage:
                     return _rageAttack.Attack(onFinish);
+                case BossAttacks.Laser:
+                    return _laserAttack.Attack(onFinish);
                 default:
                     return false;
             }

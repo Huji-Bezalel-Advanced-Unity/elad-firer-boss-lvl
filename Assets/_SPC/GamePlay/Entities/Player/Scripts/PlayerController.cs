@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _SPC.Core.Audio;
 using _SPC.Core.BaseScripts.BaseMono;
 using _SPC.Core.BaseScripts.Managers;
 using UnityEngine;
@@ -119,6 +120,7 @@ namespace _SPC.GamePlay.Entities.Player
 
         public void GotHit(Vector3 projectileTransform, WeaponType weaponType)
         {
+            AudioManager.Instance.Play(AudioName.EnemySuccessfulShotMusic, transform.position);
             GameEvents.EnemyHit(transform.position);
             _health.ReduceLife(SPCAttacker.damage[weaponType]);
         }

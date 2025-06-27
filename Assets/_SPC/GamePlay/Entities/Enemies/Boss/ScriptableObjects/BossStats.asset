@@ -21,9 +21,9 @@ MonoBehaviour:
   distanceBetweenEnemiesAccuracy: 20
   numberOfEnemiesToSpawn: 3
   destroyerSpawnTime: 1
-  phase1SpecialAttackInterval: 7
-  phase2SpecialAttackInterval: 6
-  phase3SpecialAttackInterval: 5
+  phase1SpecialAttackInterval: 6.5
+  phase2SpecialAttackInterval: 5.5
+  phase3SpecialAttackInterval: 4.5
   rageChargeDistance: 5
   rageChargeTime: 0.5
   rageHoldTime: 0.2
@@ -35,6 +35,8 @@ MonoBehaviour:
   rageShakeVibrato: 10
   rageShakeRandomness: 90
   rageShakeEase: 7
+  laserStretchTime: 1.5
+  laserMoveSpeed: 15.9
   scoreThresholdUpgrade: 1500
   scoreThresholdMultiplier: 1.5
   upgradePunchIntensity: 0.5

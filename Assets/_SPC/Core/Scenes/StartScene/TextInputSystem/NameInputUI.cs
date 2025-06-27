@@ -83,10 +83,11 @@ namespace _SPC.Core.Scripts.Text
                     canvasGroup.alpha = 0f;
                     float delay = buttonIndex * 0.05f;
                     canvasGroup.DOFade(1f, 0.4f).SetDelay(delay);
-
+                    
+                    
                     var buttonImage = buttonGO.GetComponent<Image>();
                     var buttonText = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
-
+                    buttonImage.color = _defaultColor;
                     string character = gridLayout[y][x].ToString();
 
                     if (character == "<") character = "BACK";

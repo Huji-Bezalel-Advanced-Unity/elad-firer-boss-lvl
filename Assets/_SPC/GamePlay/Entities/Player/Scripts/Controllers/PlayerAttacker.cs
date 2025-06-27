@@ -1,3 +1,4 @@
+using _SPC.Core.Audio;
 using _SPC.Core.BaseScripts.InputSystem.Scripts;
 using _SPC.GamePlay.Utils;
 using _SPC.GamePlay.Weapons;
@@ -29,7 +30,7 @@ namespace _SPC.GamePlay.Entities.Player
         public override void Attack()
         {
             if (!_attack) return;
-
+            AudioManager.Instance.Play(AudioName.PlayerShotMusic, EntityTransform.position);
             for (int i = 0; i < Stats.NumberOfShots; i++)
             {
                 OneBulletShot(i);

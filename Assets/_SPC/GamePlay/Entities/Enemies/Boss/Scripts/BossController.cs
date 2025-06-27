@@ -16,7 +16,9 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         [SerializeField] private BoxCollider2D arenaCollider;
         [SerializeField] private BulletMonoPool destroyerPool;
         [SerializeField] private Transform dummyParentTransform;
+        [SerializeField] private Transform laserTransform;
         [SerializeField] private BulletMonoPool bigBulletPool;
+        [SerializeField] private GameObject laserPrefab;
 
         [Header("Face")]
         [SerializeField] private SpriteRenderer faceSpriteRenderer;
@@ -61,6 +63,8 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                 BossCollider = collider,
                 DummyParentTransform = dummyParentTransform,
                 Health = _health,
+                LaserPrefab = laserPrefab,
+                LaserTransform = laserTransform,
             };
 
             // Create face changer

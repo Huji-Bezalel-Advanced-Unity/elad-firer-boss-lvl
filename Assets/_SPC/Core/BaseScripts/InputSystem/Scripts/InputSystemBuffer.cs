@@ -18,7 +18,7 @@ namespace _SPC.Core.BaseScripts.InputSystem.Scripts
         
         void OnApplicationQuit()
         {
-            InputSystemBuffer.Instance.InputSystem.Disable();
+            Instance.InputSystem.Disable();
         }
     }
 }

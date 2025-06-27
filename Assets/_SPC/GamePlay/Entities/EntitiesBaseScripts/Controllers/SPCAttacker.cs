@@ -13,7 +13,8 @@ namespace _SPC.GamePlay.Entities
             {WeaponType.BossBullet, 10},
             { WeaponType.BossBigBullet ,30},
             { WeaponType.EnemyBody ,20},
-            { WeaponType.DestroyerBullet, 7}
+            { WeaponType.DestroyerBullet, 7},
+            {WeaponType.Laser,8}
         };
         protected Transform MainTarget;
         protected Transform EntityTransform;
