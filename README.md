@@ -1,4 +1,3 @@
-# Space Blaze
 
 <p align="center">
   <img src="Assets/_SPC/Core/Scenes/Background/Sprites/logo.png" alt="Space Blaze Logo" width="400" height="400"/>
@@ -41,7 +40,7 @@ A hostile, powerful planet is attempting to conquer your homeworld. You, the las
 * **Phase Progression:**
   * **Phase 1 (100% - 67% HP):** Basic attacks with Big Bullet Shot and Destroyer Spawns. Special attacks occur at regular intervals.
   * **Phase 2 (67% - 33% HP):** Introduces Laser attacks alongside Phase 1 abilities. Increased aggression with faster special attack intervals.
-  * **Phase 3 (33% - 0% HP):** Maximum difficulty with all attacks including the devastating Rage attack. Fastest special attack intervals for intense final battle.
+  * **Phase 3 (33% - 0% HP):** Maximum difficulty with all attacks including Rage attack. Fastest special attack intervals for intense final battle.
 * **Attack Types:**
   * **Big Bullet Ball:** Large projectile towards the player.
   * **Bullet Barrage:** Rapid small shots.
@@ -69,7 +68,6 @@ A hostile, powerful planet is attempting to conquer your homeworld. You, the las
 * **Combo System:** Multiplier increases with consecutive hits; resets when player is damaged.
 * **High Score & Leaderboard:** HighScore is displayed when player wins. 
 
----
 
 ## Project Architecture
 
