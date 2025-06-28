@@ -29,7 +29,7 @@ A hostile, powerful planet is attempting to conquer your homeworld. You, the las
 * **Movement:** Right Joystick
 * **Shoot:** X
 * **Upgrade 1:** L1
-* **Upgrade 2:** R
+* **Upgrade 2:** R1
 
 ## Gameplay Features
 
