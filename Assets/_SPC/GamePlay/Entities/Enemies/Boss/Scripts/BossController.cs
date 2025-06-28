@@ -78,14 +78,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             _statsUpgrader?.ResetStats();
             _attacker?.CleanUp();
         }
-
-        /// <summary>
-        /// Updates the boss attack logic each frame.
-        /// </summary>
-        private void Update()
-        {
-            _attacker.Attack();
-        }
+        
 
         /// <summary>
         /// Initializes the boss health system with dependencies.

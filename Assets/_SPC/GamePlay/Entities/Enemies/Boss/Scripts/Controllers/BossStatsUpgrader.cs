@@ -249,7 +249,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                     ApplyAttackSpeedUpgrade();
                     break;
                 case UpgradeType.IncreaseDestroyerSmoothFactor:
-                    _destroyerStats.SmoothFactor *= 1.2f; 
+                    _destroyerStats.SmoothFactor *= 1.02f; 
                     break;
                 case UpgradeType.IncreaseDestroyerMovementSpeed:
                     _destroyerStats.MovementSpeed *= 1.15f;

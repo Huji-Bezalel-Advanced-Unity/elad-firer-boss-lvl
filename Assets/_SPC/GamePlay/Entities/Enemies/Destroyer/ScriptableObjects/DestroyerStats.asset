@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb2aab095dc64f9faa7246f61613f6e7, type: 3}
   m_Name: DestroyerStats
   m_EditorClassIdentifier: 
-  ProjectileSpeed: 9.9
+  ProjectileSpeed: 10
   ProjectileBuffer: 0.3
-  ProjectileSpawnRate: 2
+  ProjectileSpawnRate: 3
   SmoothFactor: 0.01
   turnSpeed: 120
   Health: 30
   MovementSpeed: 5
+  <minWanderDelay>k__BackingField: 1
+  <maxWanderDelay>k__BackingField: 3

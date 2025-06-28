@@ -52,7 +52,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         private readonly BossLaserAttack _laserAttack;
         private bool _isPaused = false;
         private Coroutine _currentCoroutine;
-        private bool _isSpecialAttackActive = false;
+        
         private float _lastBulletAttackTime = 0f;
         private BossAttacks _lastAttack = BossAttacks.None;
 
@@ -120,6 +120,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
 
             // Start phase 1
             _currentCoroutine = AttackerMono.StartCoroutine(PhaseAttack(_phase1Attacks, _stats.phase1SpecialAttackInterval));
+            Attack();
             GameEvents.OnGamePaused += OnGamePaused;
             GameEvents.OnGameResumed += OnGameResumed;
         }
@@ -171,8 +172,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         /// </summary>
         private void ExecuteRandomSpecialAttack(List<BossAttacks> availableAttacks)
         {
-            if (_isSpecialAttackActive) return;
-            _isSpecialAttackActive = true;
             _bossDeps.FaceChanger?.SetAngryFace();
             BossAttacks chosenAttack;
             do
@@ -182,8 +181,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             _lastAttack = chosenAttack;
             Attack(chosenAttack, () =>
             {
-                _isSpecialAttackActive = false;
-                _lastBulletAttackTime = Time.time;
                 _bossDeps.FaceChanger?.SetNormalFace();
             });
         }
@@ -203,18 +200,27 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         /// </summary>
         public override void Attack()
         {
-            if (_isPaused)
+            AttackerMono.StartCoroutine(AttackerCourtine());
+        }
+
+        private IEnumerator AttackerCourtine()
+        {
+            while (true)
             {
-                _lastBulletAttackTime = Time.time - _lastTime;
-                return;
+                while(_isPaused)
+                {
+                    yield return null;
+                    _lastBulletAttackTime = Time.time - _lastTime;
+                }
+                _lastTime = Time.time - _lastBulletAttackTime;
+                if (_lastTime >= _stats.ProjectileSpawnRate)
+                {
+                    _bulletAttack.Attack();
+                    _lastBulletAttackTime = Time.time;
+                }
+                yield return null;
             }
-            if (_isSpecialAttackActive) return;
-            _lastTime = Time.time - _lastBulletAttackTime;
-            if (_lastTime >= _stats.ProjectileSpawnRate)
-            {
-                _bulletAttack.Attack();
-                _lastBulletAttackTime = Time.time;
-            }
+            
         }
 
         /// <summary>

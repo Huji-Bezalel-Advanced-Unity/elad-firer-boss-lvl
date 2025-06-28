@@ -1,0 +1,1074 @@
+@startuml Space Blaze Complete Architecture
+
+
+
+title Space Blaze - Complete Game Architecture Diagram
+
+package "Core Base Scripts" {
+    abstract class SPCBaseMono {
+        // Base class for all custom MonoBehaviours
+    }
+
+    class SpcMonoSingleton <<generic>> {
+        - static T _instance
+        - static bool _isInitialized
+        + static T Instance
+        - void ForceInitialize()
+        + virtual void Awake()
+    }
+
+    interface IPoolable {
+        + void Reset()
+    }
+
+    class SPCMonoPool <<generic>> {
+        - int initialSize
+        - T prefab
+        - Transform parent
+        - Stack<T> _pool
+        - void Awake()
+        + T Get()
+        + void Return(T obj)
+        - void CreateObjects()
+    }
+}
+
+package "Core Audio System" {
+    class AudioManager {
+        - SoundPool soundPool
+        + Sound[] sounds
+        - Dictionary<AudioName, List<SoundObject>> soundDictionary
+        - int _lastSceneIndex
+        - void Awake()
+        - void Update()
+        - void StopSceneBoundSounds()
+        + SoundObject Play(AudioName, Vector3, Action)
+        + void Stop(AudioName)
+        + void StopAll()
+    }
+
+    class Sound {
+        + AudioName name
+        + AudioClip clip
+        + float volume
+        + float pitch
+        + float spatialBlend
+        + bool loop
+        + bool stopWhenMovingToNextScene
+        + bool pauseOnGamePause
+    }
+
+    class SoundObject {
+        + AudioSource audioSource
+        - SoundPool _soundPool
+        - bool _active
+        - Action _callback
+        - bool _isPauseable
+        + void OnEnable()
+        + void OnDisable()
+        - void OnGamePaused()
+        - void OnGameResume()
+        + void Update()
+        + void Play(Sound, Vector3, SoundPool, Action)
+        + void StopSound()
+        + void Reset()
+    }
+
+    class SoundPool {
+        // Inherits from SPCMonoPool<SoundObject>
+    }
+
+    enum AudioName {
+        GameStartMusic
+        GamePlayMusic
+        GameLossMusicScene
+        GameWinMusicScene
+        PlayerShotMusic
+        EnemySuccessfulShotMusic
+        GameOverMusic
+        GameWinMusic
+    }
+}
+
+package "Core Input System" {
+    class InputSystemBuffer {
+        + InputSystem_Actions InputSystem
+        + void Awake()
+        + void OnApplicationQuit()
+    }
+
+    class InputSystem_Actions {
+        // Auto-generated input actions
+        + Player Player
+        + void Enable()
+        + void Disable()
+    }
+}
+
+package "Core Managers" {
+    class GameManager {
+        - GameplayScore _gameplayScore
+        - HighScoreManager _highScoreManager
+        + SceneLoader sceneLoader
+        - GameCheat _gameCheat
+        + HighScoreManager HighScoreManager
+        + void OnEnable()
+        + void OnDisable()
+        + void Start()
+        - void OnGameStarted()
+        - void OnGameLoss()
+        - void OnGameFinished()
+        + void LateUpdate()
+    }
+
+    class GameEvents {
+        + static event Action OnGameLoss
+        + static event Action<Transform> OnEnemyAdded
+        + static event Action<Transform> OnEnemyRemoved
+        + static event Action<Vector3> OnEnemyHit
+        + static event Action OnGameStarted
+        + static event Action OnGameFinished
+        + static event Action OnGamePaused
+        + static event Action OnGameResumed
+        + static event Action<Vector3> OnPlayerHit
+        + static event Action<long> OnUpdateScore
+        + static event Action OnEndSceneStarted
+        + static void UpdateScore(long)
+        + static void GameStarted()
+        + static void PlayerHit(Vector3)
+        + static void GameFinished()
+        + static void GamePaused()
+        + static void GameResumed()
+        + static void EndSceneStarted()
+        + static void EnemyHit(Vector3)
+        + static void EnemyAdded(Transform)
+        + static void EnemyRemoved(Transform)
+        + static void GameLoss()
+    }
+
+    class GameCheat {
+        - InputSystem_Actions _inputSystem
+        + GameCheat()
+    }
+}
+
+package "Core Scenes" {
+    class SceneLoader {
+        - MonoBehaviour _monoCourotineRunner
+        + SceneLoader(MonoBehaviour)
+        + void LoadSceneWithCallback(int, Action)
+        - IEnumerator LoadSceneCoroutine(int, Action)
+    }
+
+    class StartSceneManager {
+        - StartScreenTextRenderer startScreenTextRenderer
+        - NameInputUI nameInputUI
+        - InputSystem_Actions inputSystem
+        + void Start()
+        + void OnEnable()
+        - void ActivateGame(string)
+        - void HandleTextInput(InputAction.CallbackContext)
+    }
+
+    class StartScreenTextRenderer {
+        - GameObject logo
+        - float logoMoveTime
+        - Vector3 endPositionForLogo
+        + override void FadeAway(Action)
+    }
+
+    class NameInputUI {
+        + static string PlayerPrefsName
+        - TextMeshProUGUI _nameDisplayText
+        - Transform _gridContainer
+        - GameObject _gridButtonPrefab
+        - Color _highlightColor
+        - Color _defaultColor
+        - int _maxNameLength
+        - float _moveCooldown
+        - NameInputGrid _nameInputGrid
+        - Dictionary<Vector2Int, Image> _gridButtons
+        - string _currentName
+        - Image _currentSelectionImage
+        + event Action<string> OnSubmitName
+        + void Awake()
+        + void OnEnable()
+        + void OnDisable()
+        + void Start()
+        - void GenerateGrid()
+        - void HandleSelectionChanged(Vector2Int)
+        - void HandleCharacterSelected(char)
+        - void HandleBackspace()
+        - void UpdateNameDisplay()
+        - void HandleSubmit()
+    }
+
+    class NameInputGrid {
+        + event Action<Vector2Int> OnSelectionChanged
+        + event Action<char> OnCharacterSelected
+        + event Action OnSubmit
+        + event Action OnBackspace
+        + string[] CharacterGrid
+        - string[] _characterGrid
+        - float _moveCooldown
+        - InputSystem_Actions _inputActions
+        - Vector2Int _currentGridPosition
+        - float _lastMoveTime
+        + NameInputGrid(float)
+        + void Enable()
+        + void Disable()
+        + void InvokeInitialSelection()
+        - void OnAttack(InputAction.CallbackContext)
+        - void OnMove(InputAction.CallbackContext)
+        - void MoveUp()
+        - void MoveDown()
+        - void MoveLeft()
+        - void MoveRight()
+    }
+
+    class SceneTextUI {
+        - float _fadeTime
+        - TextMeshProUGUI _text
+        - TweenerCore<Color, Color, ColorOptions> tween
+        + void Start()
+        + virtual void FadeAway(Action)
+        - Sequence SequenceFadeText(Action)
+    }
+
+    class MoveSceneTextRenderer {
+        - InputSystem_Actions _inputSystem
+        + void OnEnable()
+        + void OnDisable()
+        - void FadeAway(InputAction.CallbackContext)
+    }
+}
+
+package "Attributes" {
+    class InspectorButtonAttribute {
+        // Attribute for inspector buttons
+    }
+
+    class ReadOnlyAttribute {
+        // Attribute for read-only fields
+    }
+
+    class InspectorButtonEditor {
+        + override void OnInspectorGUI()
+    }
+
+    class ClearPlayerPrefs {
+        + static void ClearAllPlayerPrefs()
+    }
+
+    class ReadOnlyDrawer {
+        + override void OnGUI(Rect, SerializedProperty, GUIContent)
+    }
+}
+
+package "GamePlay Entities Base" {
+    interface IHitable {
+        + void GotHit(Vector3, WeaponType)
+    }
+
+    interface IHealthUI {
+        + void AssignEvent(SPCHealth)
+    }
+
+    class SPCHealth {
+        + Action<float, float> OnDamageAction
+        + Action<float, float> OnHealAction
+        + Action<float, float> OnLifeStatsChangedAction
+        - Action OnDeathAction
+        + float maxHealth
+        + float currentHealth
+        - Dictionary<float, List<SPCHealthAction>> OnHPReached
+        - GameLogger logger
+        - HealthDependencies _deps
+        + SPCHealth(HealthDependencies)
+        - void InitializeHealthSystem(HealthDependencies)
+        - void AssignHealthUI(HealthDependencies)
+        + void ReduceLife(int)
+        + void AddLife(float)
+        + float GetHP()
+        + void AddHPAction(float, SPCHealthAction)
+        + void InitializeHealth(int)
+        + float GetPercentage()
+        + void UpdateLife(float)
+        - void ApplyDamage(int)
+        - void LogCurrentHealth()
+        - void TriggerDamageEvents(int)
+        - void CheckDeath()
+        - void TryInvokeReachedAction()
+        - void InvokeHealthActions(float)
+        - void CleanupEmptyHealthActions(float)
+    }
+
+    class SPCHealthAction {
+        - Action OnHealthReachedAction
+        + bool IsOnce
+        + SPCHealthAction(Action, bool)
+        + void Invoke()
+        + bool Equals(SPCHealthAction)
+        + override bool Equals(object)
+        + override int GetHashCode()
+    }
+
+    class HealthDependencies {
+        + GameLogger logger
+        + IHealthUI healthUI
+        + Dictionary<float, List<SPCHealthAction>> OnHPReached
+        + Action OnDeathAction
+        + float maxHP
+        + float currentHP
+        + List<Action<float, float>> OnDamageActions
+        + HealthDependencies(GameLogger, IHealthUI, Dictionary<float, List<SPCHealthAction>>, Action, float, float, List<Action<float, float>>)
+    }
+
+    class SPCAttack {
+        + abstract bool Attack(Action onFinished)
+        + abstract void Cleanup()
+    }
+
+    class SPCMovement {
+        + abstract void UpdateMovement()
+        + abstract void Cleanup()
+    }
+
+    class SPCAttacker {
+        + abstract void Attack()
+        + abstract void CleanUp()
+    }
+
+    class SPCStatsUpgrader {
+        + abstract void ResetStats()
+    }
+
+    class HealthBarUI {
+        - Slider healthSlider
+        - TextMeshProUGUI healthText
+        - SPCHealth _health
+        + void AssignEvent(SPCHealth)
+        - void UpdateHealthBar(float, float)
+        - void UpdateHealthText(float, float)
+    }
+}
+
+package "GamePlay Player System" {
+    class PlayerController {
+        - static int Flame
+        - Rigidbody2D rb2D
+        - SPCMovement _movement
+        - Collider2D entityCollider
+        - Animator animator
+        - GameObject flame
+        - SpriteRenderer spriteRenderer
+        - Transform spaceshipTransform
+        - PlayerStats stats
+        - GameLogger playerLogger
+        - Transform targetTransform
+        - BulletMonoPool playerPool
+        - List<Transform> transformTargets
+        - SPCAttacker _attacker
+        - SPCHealth _health
+        - HealthBarUI healthBarUI
+        - PlayerUpgradeChooseRenderer upgradeRenderer
+        - Coroutine _flashCoroutine
+        - TargetsHandler _targetsHandler
+        - SPCStatsUpgrader _statsUpgrader
+        - bool _isPaused
+        + void Awake()
+        + void OnEnable()
+        + void OnDisable()
+        + void Start()
+        + void Update()
+        + void GotHit(Vector3, WeaponType)
+        - void HandleFlame()
+        - void FlashCourtine(float, float)
+        - IEnumerator FlashRed()
+        - void InitializeMovement()
+        - void InitializeAttacker()
+        - void InitializeHealth()
+        - void InitializeStatsUpgrader()
+        - void PlayHitSound()
+        - void TriggerHitEvents(Vector3)
+        - void ApplyDamage(WeaponType)
+        - void DisableFlameAnimation()
+        - void EnableFlameAnimation()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+
+    class PlayerMovement {
+        - Rigidbody2D _rb
+        - PlayerStats _stats
+        - GameLogger _playerLogger
+        - Transform _spaceshipTransform
+        - List<Transform> _targets
+        - Vector2 _currentVelocity
+        - Vector2 _targetVelocity
+        - bool _isMoving
+        + bool IsMoving
+        + PlayerMovement(PlayerMovementDependencies)
+        + void UpdateMovement()
+        + void Cleanup()
+        - void HandleInput()
+        - void ApplyMovement()
+        - void UpdateRotation()
+        - void UpdateFlameEffect()
+    }
+
+    class PlayerAttacker {
+        - Transform _mainTarget
+        - Dictionary<WeaponType, BulletMonoPool> _pools
+        - List<Transform> _targets
+        - GameLogger _logger
+        - MonoBehaviour _attackerMono
+        - float _lastAttackTime
+        - bool _isPaused
+        + PlayerAttacker(AttackerDependencies)
+        + void Attack()
+        + void CleanUp()
+        - void HandleAttackInput()
+        - void FireBullet()
+        - Transform GetClosestTarget()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+
+    class PlayerStats {
+        + float Health
+        + float Speed
+        + float AttackSpeed
+        + float Damage
+    }
+
+    class PlayerStatsUpgrader {
+        - PlayerStats _stats
+        - float _originalHealth
+        - float _originalSpeed
+        - float _originalAttackSpeed
+        - float _originalDamage
+        + PlayerStatsUpgrader(PlayerStats)
+        + void UpgradeHealth()
+        + void UpgradeSpeed()
+        + void UpgradeAttackSpeed()
+        + void UpgradeDamage()
+        + void ResetStats()
+    }
+
+    class PlayerUpgradeChooseRenderer {
+        - PlayerStatsUpgrader _statsUpgrader
+        - GameObject _upgradePanel
+        - TextMeshProUGUI _healthText
+        - TextMeshProUGUI _speedText
+        - TextMeshProUGUI _attackSpeedText
+        - TextMeshProUGUI _damageText
+        + void Start()
+        + void OnEnable()
+        + void OnDisable()
+        - void UpdateUpgradeDisplay()
+        - void HandleUpgradeButton(UpgradeType)
+        - void ShowUpgradePanel()
+        - void HideUpgradePanel()
+    }
+}
+
+package "GamePlay Enemy System" {
+    abstract class SpcBaseEnemy {
+        # SPCHealth _health
+        # SPCAttacker _attacker
+        # GameLogger enemyLogger
+        # HealthBarUI healthBarUI
+        # Transform targetTransform
+        # List<Transform> transformTargets
+        # BulletMonoPool bulletPool
+        # GameObject explosionPrefab
+        # Transform _explosionsFather
+        # Collider2D collider
+        + void GotHit(Vector3, WeaponType)
+    }
+
+    class BossController {
+        - BossStats _stats
+        - DestroyerStats _destroyerStats
+        - BoxCollider2D arenaCollider
+        - BulletMonoPool destroyerPool
+        - Transform dummyParentTransform
+        - Transform laserTransform
+        - BulletMonoPool bigBulletPool
+        - GameObject laserPrefab
+        - SpriteRenderer faceSpriteRenderer
+        - Sprite normalFaceSprite
+        - Sprite rageFaceSprite
+        - SPCStatsUpgrader _statsUpgrader
+        - bool _isPaused
+        + void Start()
+        - void OnBossUpgraded()
+        + void OnDisable()
+        + void Update()
+        - void InitializeHealth()
+        - Action CreateDeathAction()
+        - void InitializeAttacker()
+        - AttackerDependencies CreateAttackerDependencies()
+        - Dictionary<WeaponType, BulletMonoPool> CreateProjectilePools()
+        - BossAttackerDependencies CreateBossAttackerDependencies()
+        - BossFaceChanger CreateFaceChanger()
+        - void InitializeStatsUpgrader()
+    }
+
+    class BossAttacker {
+        - BossStats _stats
+        - List<SPCAttack> _attacks
+        - BossAttackerDependencies _deps
+        - float _lastAttackTime
+        - bool _isPaused
+        + BossAttacker(BossStats, AttackerDependencies, BossAttackerDependencies)
+        + void Attack()
+        + void CleanUp()
+        - void SelectAttack()
+        - void ExecuteAttack()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+
+    class BossStats {
+        + float Health
+        + float AttackInterval
+        + float BulletSpeed
+        + float LaserStretchTime
+        + float LaserMoveSpeed
+        + float UpgradePunchIntensity
+        + float UpgradePunchTime
+    }
+
+    class BossStatsUpgrader {
+        - BossStats _stats
+        - DestroyerStats _destroyerStats
+        - float _originalHealth
+        - float _originalAttackInterval
+        - float _originalBulletSpeed
+        + BossStatsUpgrader(BossStatsUpgraderDependencies)
+        + void UpgradeHealth()
+        + void UpgradeAttackSpeed()
+        + void UpgradeBulletSpeed()
+        + void ResetStats()
+    }
+
+    class BossFaceChanger {
+        - SpriteRenderer _bossSpriteRenderer
+        - Sprite _normalFaceSprite
+        - Sprite _angryFaceSprite
+        + BossFaceChanger(BossFaceChangerDependencies)
+        + void ChangeToNormal()
+        + void ChangeToAngry()
+    }
+
+    class DestroyerController {
+        - DestroyerStats _stats
+        - SPCHealth _health
+        - DestroyerAttacker _attacker
+        - DestroyerMovement _movement
+        + void Start()
+        - void InitializeHealth()
+        - void InitializeAttacker()
+        - void InitializeMovement()
+    }
+
+    class DestroyerStats {
+        + float Health
+        + float Speed
+        + float AttackSpeed
+        + float Damage
+    }
+
+    class DestroyerMovement {
+        - Rigidbody2D _rb
+        - DestroyerStats _stats
+        - GameLogger _logger
+        - Transform _target
+        - Vector2 _currentVelocity
+        - bool _isPaused
+        + DestroyerMovement(DestroyerMovementDependencies)
+        + void UpdateMovement()
+        + void Cleanup()
+        - void HandleMovement()
+        - void UpdateRotation()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+
+    class DestroyerAttacker {
+        - DestroyerStats _stats
+        - Transform _target
+        - BulletMonoPool _pool
+        - GameLogger _logger
+        - MonoBehaviour _attackerMono
+        - float _lastAttackTime
+        - bool _isPaused
+        + DestroyerAttacker(DestroyerAttackerDependencies)
+        + void Attack()
+        + void CleanUp()
+        - void FireBullet()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+}
+
+package "GamePlay Boss Attacks" {
+    class BossBulletAttack {
+        - BossStats _stats
+        - AttackerDependencies _deps
+        - bool _isAttacking
+        - bool _isPaused
+        - Action _onAttackFinished
+        - Coroutine _attackCoroutine
+        + BossBulletAttack(BossStats, AttackerDependencies)
+        + override bool Attack(Action onFinished)
+        + override void Cleanup()
+        - void FireBullet()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+
+    class BossBigBulletAttack {
+        - BossStats _stats
+        - AttackerDependencies _deps
+        - bool _isAttacking
+        - bool _isPaused
+        - Action _onAttackFinished
+        - Coroutine _attackCoroutine
+        + BossBigBulletAttack(BossStats, AttackerDependencies)
+        + override bool Attack(Action onFinished)
+        + override void Cleanup()
+        - void FireBigBullet()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+
+    class BossLaserAttack {
+        - BossStats _stats
+        - BossLaserAttackDependencies _deps
+        - bool _isAttacking
+        - bool _isPaused
+        - Action _onAttackFinished
+        - Coroutine _laserCoroutine
+        + BossLaserAttack(BossStats, BossLaserAttackDependencies)
+        + override bool Attack(Action onFinished)
+        + override void Cleanup()
+        - void SubscribeToGameEvents()
+        - (float, Vector2, float, Vector2) CalculateAttackDirections()
+        - IEnumerator DualLaserAttack((float, Vector2, float, Vector2))
+        - IEnumerator LaserRoutine(float, Vector2, Action)
+        - LaserContainer CreateLaserContainer(Vector2, Vector2)
+        - IEnumerator StretchLaserPhase(LaserContainer, Vector2, Vector2)
+        - IEnumerator MoveLaserPhase(LaserContainer, Vector2)
+        - bool IsLaserInArena(LaserContainer)
+        - void CleanupLaser(LaserContainer)
+        - Vector2 CalculateEndPosition(float, BoxCollider2D)
+        - Vector2 GetMoveDirection(float)
+        - void CompleteAttack()
+        - void UnsubscribeFromGameEvents()
+        - void StopLaserCoroutine()
+    }
+
+    class BossRageAttack {
+        - BossStats _stats
+        - AttackerDependencies _deps
+        - bool _isAttacking
+        - bool _isPaused
+        - Action _onAttackFinished
+        - Coroutine _rageCoroutine
+        + BossRageAttack(BossStats, AttackerDependencies)
+        + override bool Attack(Action onFinished)
+        + override void Cleanup()
+        - void RageMode()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+
+    class BossSpawnDestroyersAttack {
+        - BossStats _stats
+        - BossAttackerDependencies _deps
+        - bool _isAttacking
+        - bool _isPaused
+        - Action _onAttackFinished
+        - Coroutine _spawnCoroutine
+        + BossSpawnDestroyersAttack(BossStats, BossAttackerDependencies)
+        + override bool Attack(Action onFinished)
+        + override void Cleanup()
+        - void SpawnDestroyers()
+        - void OnGamePaused()
+        - void OnGameResumed()
+    }
+}
+
+package "GamePlay Weapon System" {
+    abstract class SPCBaseWeapon {
+        # GameLogger weaponLogger
+        # WeaponType _weaponType
+        # bool _hitSuccess
+        # bool _isPaused
+        # IHitable _target
+        # Transform _hitTransform
+        + virtual void OnEnable()
+        + virtual void OnDisable()
+        + virtual void OnTriggerEnter2D(Collider2D)
+        + virtual void OnTriggerExit2D(Collider2D)
+        # virtual void OnGameResumed()
+        # virtual void OnGamePaused()
+    }
+
+    class Bullet {
+        - Rigidbody2D rb2D
+        - BulletMonoPool _pool
+        - bool _active
+        - Vector2 _currentDirection
+        - Transform _target
+        - float _speed
+        - Vector2 _savedVelocity
+        + virtual void Activate(BulletInitData)
+        + override void OnTriggerEnter2D(Collider2D)
+        + virtual void Reset()
+        - override void OnGamePaused()
+        - override void OnGameResumed()
+    }
+
+    class TrackingBullet {
+        - float _smoothFactor
+        - float _turnSpeed
+        + override void Activate(BulletInitData)
+        - void FixedUpdate()
+        - void OnDrawGizmos()
+    }
+
+    class Laser {
+        - float _laserTimeHurt
+        - float _lastHitTime
+        - LaserContainer _laserContainer
+        + void UpdateBoxCollider()
+        + void Update()
+        - void UpdateLaserPositions()
+        + override void OnTriggerEnter2D(Collider2D)
+        + void OnTriggerStay2D(Collider2D)
+        + static LaserContainer CreateLaser(GameObject, Transform, GameObject, GameObject)
+    }
+
+    class LaserContainer {
+        + Laser Laser
+        + BoxCollider2D BoxCollider
+        + LineRenderer Lr
+        + Transform FromT, ToT
+        + Vector3 FromLocalPos, ToLocalPos
+    }
+
+    class BulletMonoPool {
+        // Inherits from SPCMonoPool<Bullet>
+    }
+
+    class BulletInitData {
+        + WeaponType weaponType
+        + Transform target
+        + Vector2 startPosition
+        + float speed
+        + float buffer
+        + float? smoothFactor
+        + float? turnSpeed
+        + BulletMonoPool pool
+        + BulletInitData(WeaponType, Transform, Vector2, float, float, BulletMonoPool, float?, float?)
+    }
+
+    class ParticleSystemDestroy {
+        + void Start()
+    }
+
+    enum WeaponType {
+        BossBullet
+        BossBigBullet
+        PlayerBullet
+        EnemyBody
+        DestroyerBullet
+        Laser
+    }
+}
+
+package "GamePlay Score System" {
+    class GameplayScore {
+        - long _score
+        + long Score
+        + GameplayCombinator Combinator
+        + GameplayScore()
+        + void ResetScore()
+        + long AddScore(long)
+        + void UpdateCombinator()
+    }
+
+    class GameplayCombinator {
+        - GameplayScore _score
+        - float _comboMultiplier
+        - float _comboTimer
+        - float _maxComboTime
+        - float _comboIncrement
+        - float _maxComboMultiplier
+        + GameplayCombinator(GameplayScore)
+        + void UpdateCombinator()
+        + void AddCombo()
+        + void ResetCombo()
+        + float GetComboMultiplier()
+    }
+
+    class HighScoreManager {
+        - List<HighScoreEntry> _highScores
+        - int _maxHighScores
+        - string _playerPrefsKey
+        + HighScoreManager()
+        + bool TryAddHighScore(long, string)
+        + List<HighScoreEntry> GetHighScores()
+        + void SaveHighScores()
+        + void LoadHighScores()
+        - void SortHighScores()
+    }
+
+    class HighScoreEntry {
+        + string PlayerName
+        + long Score
+        + System.DateTime Date
+        + HighScoreEntry(string, long)
+    }
+
+    class GameplayScoreRenderer {
+        - GameplayScore _gameplayScore
+        - TextMeshProUGUI _scoreText
+        - TextMeshProUGUI _comboText
+        + void Start()
+        + void OnEnable()
+        + void OnDisable()
+        - void UpdateScoreDisplay(long)
+        - void UpdateComboDisplay(float)
+    }
+
+    class HighScoreRenderer {
+        - HighScoreManager _highScoreManager
+        - GameObject _highScoreEntryPrefab
+        - Transform _highScoreContainer
+        - List<HighScoreEntryUI> _entryUIs
+        + void Start()
+        + void OnEnable()
+        + void OnDisable()
+        - void RefreshHighScoreDisplay()
+        - void CreateHighScoreEntry(HighScoreEntry, int)
+        - void ClearHighScoreEntries()
+    }
+
+    class HighScoreEntryUI {
+        - TextMeshProUGUI _rankText
+        - TextMeshProUGUI _nameText
+        - TextMeshProUGUI _scoreText
+        - TextMeshProUGUI _dateText
+        + void SetEntry(HighScoreEntry, int)
+        - void FormatScore(long)
+        - void FormatDate(System.DateTime)
+    }
+
+    class PointsAboveObjectsRenderer {
+        - GameObject _pointsPrefab
+        - Transform _pointsParent
+        - float _displayDuration
+        - float _moveSpeed
+        - float _fadeSpeed
+        + void Start()
+        + void OnEnable()
+        + void OnDisable()
+        - void ShowPoints(Vector3, long)
+        - IEnumerator AnimatePoints(GameObject, Vector3, long)
+    }
+}
+
+package "GamePlay Utils" {
+    class UsedAlgorithms {
+        + static Transform GetClosestTarget(List<Transform>, Transform)
+        + static Transform GetClosestTarget(List<Transform>, Vector3)
+        + static Transform GetClosestTargetInRange(List<Transform>, Transform, float)
+        + static List<Transform> SortTargetsByDistance(List<Transform>, Vector3)
+    }
+
+    class GameLogger {
+        - bool _active
+        - string _logPrefix
+        - bool _includeTimestamps
+        + bool Active
+        + string LogPrefix
+        + void Log(string)
+        + void LogWarning(string)
+        + void LogError(string)
+        + void Log(string, GameObject)
+        + void LogWarning(string, GameObject)
+        + void LogError(string, GameObject)
+        - string FormatMessage(string)
+        + void ToggleLogging()
+        + void EnableLogging()
+        + void DisableLogging()
+    }
+}
+
+' Relationships
+SPCBaseMono <|-- SpcMonoSingleton
+SPCBaseMono <|-- SPCMonoPool
+SPCBaseMono <|-- AudioManager
+SPCBaseMono <|-- SoundObject
+SPCBaseMono <|-- InputSystemBuffer
+SPCBaseMono <|-- GameManager
+SPCBaseMono <|-- SceneTextUI
+SPCBaseMono <|-- StartScreenTextRenderer
+SPCBaseMono <|-- MoveSceneTextRenderer
+SPCBaseMono <|-- NameInputUI
+SPCBaseMono <|-- PlayerController
+SPCBaseMono <|-- SpcBaseEnemy
+SPCBaseMono <|-- BossController
+SPCBaseMono <|-- DestroyerController
+SPCBaseMono <|-- SPCBaseWeapon
+SPCBaseMono <|-- Bullet
+SPCBaseMono <|-- Laser
+SPCBaseMono <|-- BulletMonoPool
+SPCBaseMono <|-- ParticleSystemDestroy
+SPCBaseMono <|-- GameplayScoreRenderer
+SPCBaseMono <|-- HighScoreRenderer
+SPCBaseMono <|-- HighScoreEntryUI
+SPCBaseMono <|-- PointsAboveObjectsRenderer
+SPCBaseMono <|-- GameLogger
+SPCBaseMono <|-- HealthBarUI
+
+IPoolable <|.. SoundObject
+IPoolable <|.. Bullet
+
+SpcMonoSingleton <|-- AudioManager
+SpcMonoSingleton <|-- InputSystemBuffer
+SpcMonoSingleton <|-- GameManager
+
+SPCMonoPool <|-- SoundPool
+SPCMonoPool <|-- BulletMonoPool
+
+SceneTextUI <|-- StartScreenTextRenderer
+SceneTextUI <|-- MoveSceneTextRenderer
+
+SpcBaseEnemy <|-- BossController
+SpcBaseEnemy <|-- DestroyerController
+
+SPCBaseWeapon <|-- Bullet
+SPCBaseWeapon <|-- Laser
+Bullet <|-- TrackingBullet
+
+SPCAttack <|-- BossBulletAttack
+SPCAttack <|-- BossBigBulletAttack
+SPCAttack <|-- BossLaserAttack
+SPCAttack <|-- BossRageAttack
+SPCAttack <|-- BossSpawnDestroyersAttack
+
+IHitable <|.. PlayerController
+IHitable <|.. BossController
+IHitable <|.. DestroyerController
+
+IHealthUI <|.. HealthBarUI
+
+' Dependencies
+GameManager --> GameEvents : subscribes to
+GameManager --> AudioManager : uses
+GameManager --> GameplayScore : manages
+GameManager --> HighScoreManager : manages
+GameManager --> SceneLoader : uses
+GameManager --> GameCheat : uses
+
+PlayerController --> PlayerMovement : contains
+PlayerController --> PlayerAttacker : contains
+PlayerController --> PlayerStats : uses
+PlayerController --> PlayerStatsUpgrader : contains
+PlayerController --> SPCHealth : contains
+PlayerController --> HealthBarUI : uses
+PlayerController --> PlayerUpgradeChooseRenderer : uses
+PlayerController --> GameEvents : subscribes to
+
+PlayerAttacker --> BulletMonoPool : uses
+PlayerAttacker --> UsedAlgorithms : uses
+PlayerAttacker --> GameEvents : subscribes to
+
+BossController --> BossAttacker : contains
+BossController --> BossStats : uses
+BossController --> BossStatsUpgrader : contains
+BossController --> BossFaceChanger : contains
+BossController --> GameEvents : subscribes to
+
+BossAttacker --> SPCAttack : manages
+BossAttacker --> BossStats : uses
+BossAttacker --> GameEvents : subscribes to
+
+DestroyerController --> DestroyerAttacker : contains
+DestroyerController --> DestroyerMovement : contains
+DestroyerController --> DestroyerStats : uses
+
+Bullet --> BulletMonoPool : returns to
+TrackingBullet --> BulletMonoPool : returns to
+
+GameplayScore --> GameplayCombinator : contains
+GameplayScore --> GameEvents : notifies
+
+HighScoreManager --> HighScoreEntry : manages
+HighScoreRenderer --> HighScoreEntryUI : creates
+
+StartSceneManager --> StartScreenTextRenderer : uses
+StartSceneManager --> NameInputUI : uses
+StartSceneManager --> NameInputGrid : uses
+StartSceneManager --> GameManager : uses
+StartSceneManager --> AudioManager : uses
+
+NameInputUI --> NameInputGrid : uses
+NameInputUI --> GameEvents : notifies
+
+AudioManager --> SoundPool : uses
+AudioManager --> SoundObject : manages
+SoundObject --> SoundPool : returns to
+
+InputSystemBuffer --> InputSystem_Actions : manages
+GameCheat --> InputSystem_Actions : uses
+
+note right of GameManager
+  Central game state manager
+  Handles scene transitions
+  Manages high scores
+  Controls audio playback
+end note
+
+note right of PlayerController
+  Main player entity
+  Manages movement, attacks,
+  health, and upgrades
+  Auto-targets nearest enemies
+end note
+
+note right of BossController
+  Hostile planet boss
+  Multiple attack phases
+  Dynamic difficulty scaling
+  Face expression changes
+end note
+
+note right of BossAttacker
+  Manages boss attack patterns
+  Phase-based attack selection
+  Coordinates multiple attacks
+  Handles attack timing
+end note
+
+note right of GameplayScore
+  Score tracking system
+  Combo multiplier system
+  High score persistence
+  Real-time score updates
+end note
+
+note right of AudioManager
+  Centralized audio system
+  Sound pooling for performance
+  Scene-based sound management
+  Pause/resume functionality
+end note
+
+@enduml 
