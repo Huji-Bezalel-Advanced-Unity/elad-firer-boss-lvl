@@ -176,9 +176,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 192011b9a7d34f698add150dc45ecd0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponLogger: {fileID: 3275248111546813488}
+  _weaponType: 0
   rb2D: {fileID: 5000000}
-  bulletLogger: {fileID: 3275248111546813488}
-  shootEffect: {fileID: 100002, guid: 565cdc2ed7b030a41accd8f00ae59a50, type: 3}
 --- !u!114 &3275248111546813488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,4 +191,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c4de3e9c7384909bf30be3e64ed8e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 1
+  _active: 0

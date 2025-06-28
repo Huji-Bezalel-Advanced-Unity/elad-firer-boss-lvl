@@ -811,6 +811,64 @@ MonoBehaviour:
     pitch: 1
     spatialBlend: 0
     loop: 1
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 1
+  - name: 1
+    clip: {fileID: 8300000, guid: 18e8a6318d0bb43ef8c7f44d7dd2b3ff, type: 3}
+    volume: 0.875
+    pitch: 1
+    spatialBlend: 0
+    loop: 1
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 0
+  - name: 4
+    clip: {fileID: 8300000, guid: 3bf4d03e9a2e548a79c0f077c255dc5b, type: 3}
+    volume: 0.226
+    pitch: 1
+    spatialBlend: 0
+    loop: 0
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 1
+  - name: 6
+    clip: {fileID: 8300000, guid: 2226e5351206541d9bc07858cc968df0, type: 3}
+    volume: 0.183
+    pitch: 1
+    spatialBlend: 0
+    loop: 0
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 1
+  - name: 2
+    clip: {fileID: 8300000, guid: e2ae2ae755d3e4dbf84774269bee7c46, type: 3}
+    volume: 0.813
+    pitch: 1
+    spatialBlend: 0
+    loop: 0
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 1
+  - name: 3
+    clip: {fileID: 8300000, guid: e2ae2ae755d3e4dbf84774269bee7c46, type: 3}
+    volume: 0.813
+    pitch: 1
+    spatialBlend: 0
+    loop: 0
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 1
+  - name: 7
+    clip: {fileID: 8300000, guid: 71c04e1cc45bb42b1a099e5c9eab0f80, type: 3}
+    volume: 0.813
+    pitch: 1
+    spatialBlend: 0
+    loop: 0
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 1
+  - name: 5
+    clip: {fileID: 8300000, guid: 6736678337da943cbba6f9f4b393791d, type: 3}
+    volume: 0.813
+    pitch: 1
+    spatialBlend: 0
+    loop: 0
+    stopWhenMovingToNextScene: 1
+    pauseOnGamePause: 1
 --- !u!4 &1362443539
 Transform:
   m_ObjectHideFlags: 0

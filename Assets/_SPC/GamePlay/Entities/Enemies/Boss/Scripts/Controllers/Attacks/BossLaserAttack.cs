@@ -9,6 +9,9 @@ using Random = UnityEngine.Random;
 
 namespace _SPC.GamePlay.Entities.Enemies.Boss
 {
+    /// <summary>
+    /// Holds dependencies for the BossLaserAttack, including arena, laser prefab, and transforms.
+    /// </summary>
     public struct BossLaserAttackDependencies
     {
         public Transform EntityTransform;
@@ -19,6 +22,9 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         public Transform LaserTransform;
     }
 
+    /// <summary>
+    /// Handles the boss's dual laser attack that fires from opposite corners and moves along arena edges.
+    /// </summary>
     public class BossLaserAttack : SPCAttack
     {
         private readonly BossStats _stats;
@@ -28,15 +34,19 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         private Action _onAttackFinished;
         private Coroutine _laserCoroutine;
 
+        /// <summary>
+        /// Initializes the BossLaserAttack with stats and dependencies.
+        /// </summary>
         public BossLaserAttack(BossStats stats, BossLaserAttackDependencies deps)
         {
             _stats = stats;
             _deps = deps;
-            
-            GameEvents.OnGamePaused += () => _isPaused = true;
-            GameEvents.OnGameResumed += () => _isPaused = false;
+            SubscribeToGameEvents();
         }
 
+        /// <summary>
+        /// Executes the dual laser attack from opposite corners.
+        /// </summary>
         public override bool Attack(Action onFinished = null)
         {
             if (_isAttacking) return false;
@@ -44,6 +54,35 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             _isAttacking = true;
             _onAttackFinished = onFinished;
             
+            var attackDirections = CalculateAttackDirections();
+            _laserCoroutine = _deps.AttackerMono.StartCoroutine(DualLaserAttack(attackDirections));
+            
+            return true;
+        }
+
+        /// <summary>
+        /// Cleans up event subscriptions and stops any ongoing laser coroutine.
+        /// </summary>
+        public void Cleanup()
+        {
+            UnsubscribeFromGameEvents();
+            StopLaserCoroutine();
+        }
+
+        /// <summary>
+        /// Subscribes to game pause/resume events.
+        /// </summary>
+        private void SubscribeToGameEvents()
+        {
+            GameEvents.OnGamePaused += () => _isPaused = true;
+            GameEvents.OnGameResumed += () => _isPaused = false;
+        }
+
+        /// <summary>
+        /// Calculates the attack directions for the dual laser attack.
+        /// </summary>
+        private (float angleA, Vector2 dirA, float angleB, Vector2 dirB) CalculateAttackDirections()
+        {
             float[] cornerAngles = { 0f, 90f, 180f, 270f };
             float startAngle = cornerAngles[Random.Range(0, cornerAngles.Length)];
             float secondAngle = (startAngle + 180f) % 360f;
@@ -51,74 +90,122 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             Vector2 dirA = GetMoveDirection(startAngle);
             Vector2 dirB = -dirA;
 
-            _laserCoroutine = _deps.AttackerMono.StartCoroutine(DualLaserAttack(startAngle, dirA, secondAngle, dirB));
-            return true;
+            return (startAngle, dirA, secondAngle, dirB);
         }
 
-        private IEnumerator DualLaserAttack(float angleA, Vector2 dirA, float angleB, Vector2 dirB)
+        /// <summary>
+        /// Executes the dual laser attack with two lasers firing simultaneously.
+        /// </summary>
+        private IEnumerator DualLaserAttack((float angleA, Vector2 dirA, float angleB, Vector2 dirB) directions)
         {
             bool finishedA = false, finishedB = false;
-            _deps.AttackerMono.StartCoroutine(LaserRoutine(angleA, dirA, () => finishedA = true));
-            _deps.AttackerMono.StartCoroutine(LaserRoutine(angleB, dirB, () => finishedB = true));
             
-            while (!finishedA || !finishedB) yield return null;
-            _isAttacking = false;
-            _onAttackFinished?.Invoke();
-            _onAttackFinished = null;
+            _deps.AttackerMono.StartCoroutine(LaserRoutine(directions.angleA, directions.dirA, () => finishedA = true));
+            _deps.AttackerMono.StartCoroutine(LaserRoutine(directions.angleB, directions.dirB, () => finishedB = true));
+            
+            yield return new WaitUntil(() => finishedA && finishedB);
+            
+            CompleteAttack();
         }
 
+        /// <summary>
+        /// Handles the individual laser routine for stretching and moving.
+        /// </summary>
         private IEnumerator LaserRoutine(float startAngle, Vector2 moveDirection, Action onLaserFinished)
         {
-            // Calculate boss center
             Vector2 bossCenter = _deps.EntityTransform.position;
             Vector2 endPosition = CalculateEndPosition(startAngle, _deps.ArenaCollider);
 
-            // Create from and to game objects
+            var laserContainer = CreateLaserContainer(bossCenter, endPosition);
+            
+            yield return StretchLaserPhase(laserContainer, bossCenter, endPosition);
+            yield return MoveLaserPhase(laserContainer, moveDirection);
+            
+            CleanupLaser(laserContainer);
+            onLaserFinished?.Invoke();
+        }
+
+        /// <summary>
+        /// Creates the laser container with from/to game objects and laser component.
+        /// </summary>
+        private LaserContainer CreateLaserContainer(Vector2 bossCenter, Vector2 endPosition)
+        {
             GameObject fromGo = new GameObject("LaserFrom");
             GameObject toGo = new GameObject("LaserTo");
             fromGo.transform.position = bossCenter;
             toGo.transform.position = bossCenter;
 
-            // Create laser
             var laserContainer = Laser.CreateLaser(_deps.LaserPrefab, _deps.LaserTransform, fromGo, toGo);
+            return laserContainer;
+        }
 
-            // Stretch phase
+        /// <summary>
+        /// Handles the laser stretching phase.
+        /// </summary>
+        private IEnumerator StretchLaserPhase(LaserContainer laserContainer, Vector2 bossCenter, Vector2 endPosition)
+        {
             float stretchDuration = _stats.laserStretchTime;
             float elapsed = 0f;
+            
             while (elapsed < stretchDuration)
             {
                 if (_isPaused) { yield return null; continue; }
+                
                 float progress = elapsed / stretchDuration;
                 Vector2 currentEndPos = Vector2.Lerp(bossCenter, endPosition, progress);
                 laserContainer.ToT.position = currentEndPos;
                 laserContainer.Laser.UpdateBoxCollider();
+                
                 elapsed += Time.deltaTime;
                 yield return null;
             }
+            
             laserContainer.Laser.UpdateBoxCollider();
+        }
 
-            // Store the laser vector (offset from fromGo to toGo)
-            Vector2 laserVector = endPosition - bossCenter;
-
-            // Move phase
+        /// <summary>
+        /// Handles the laser movement phase along the arena edge.
+        /// </summary>
+        private IEnumerator MoveLaserPhase(LaserContainer laserContainer, Vector2 moveDirection)
+        {
+            Vector2 laserVector = laserContainer.ToT.position - laserContainer.FromT.position;
             float moveSpeed = _stats.laserMoveSpeed;
-            while (_deps.ArenaCollider.OverlapPoint(laserContainer.FromT.position) && _deps.ArenaCollider.OverlapPoint(laserContainer.ToT.position))
+            
+            while (IsLaserInArena(laserContainer))
             {
                 if (_isPaused) { yield return null; continue; }
+                
                 Vector2 delta = moveDirection.normalized * moveSpeed * Time.deltaTime;
                 laserContainer.FromT.position += (Vector3)delta;
                 laserContainer.ToT.position = laserContainer.FromT.position + (Vector3)laserVector;
                 laserContainer.Laser.UpdateBoxCollider();
+                
                 yield return null;
             }
-
-            // Cleanup
-            Object.Destroy(fromGo);
-            Object.Destroy(toGo);
-            Object.Destroy(laserContainer.Laser.gameObject);
-            onLaserFinished?.Invoke();
         }
 
+        /// <summary>
+        /// Checks if the laser is still within the arena bounds.
+        /// </summary>
+        private bool IsLaserInArena(LaserContainer laserContainer)
+        {
+            return _deps.ArenaCollider.OverlapPoint(laserContainer.FromT.position) && 
+                   _deps.ArenaCollider.OverlapPoint(laserContainer.ToT.position);
+        }
+
+        /// <summary>
+        /// Cleans up the laser game objects.
+        /// </summary>
+        private void CleanupLaser(LaserContainer laserContainer)
+        {
+            Object.Destroy(laserContainer.FromT.gameObject);
+            Object.Destroy(laserContainer.ToT.gameObject);
+            Object.Destroy(laserContainer.Laser.gameObject);
+        }
+
+        /// <summary>
+        /// Calculates the end position for the laser based on the start angle and arena bounds.
+        /// </summary>
         private Vector2 CalculateEndPosition(float angle, BoxCollider2D collider)
         {
             var bounds = collider.bounds;
@@ -137,6 +224,9 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             }
         }
 
+        /// <summary>
+        /// Gets the movement direction for the laser based on the start angle.
+        /// </summary>
         private Vector2 GetMoveDirection(float startAngle)
         {
             if (startAngle == 0F || Mathf.Approximately(startAngle, 180f))
@@ -149,11 +239,30 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             }
         }
 
-        public void Cleanup()
+        /// <summary>
+        /// Completes the attack by resetting state and invoking the callback.
+        /// </summary>
+        private void CompleteAttack()
+        {
+            _isAttacking = false;
+            _onAttackFinished?.Invoke();
+            _onAttackFinished = null;
+        }
+
+        /// <summary>
+        /// Unsubscribes from game events.
+        /// </summary>
+        private void UnsubscribeFromGameEvents()
         {
             GameEvents.OnGamePaused -= () => _isPaused = true;
             GameEvents.OnGameResumed -= () => _isPaused = false;
-            
+        }
+
+        /// <summary>
+        /// Stops the laser coroutine if it's running.
+        /// </summary>
+        private void StopLaserCoroutine()
+        {
             if (_laserCoroutine != null)
             {
                 _deps.AttackerMono.StopCoroutine(_laserCoroutine);

@@ -21,10 +21,9 @@ MonoBehaviour:
   distanceBetweenEnemiesAccuracy: 20
   numberOfEnemiesToSpawn: 3
   destroyerSpawnTime: 1
-  phase1SpecialAttackInterval: 6.5
-  phase2SpecialAttackInterval: 5.5
-  phase3SpecialAttackInterval: 4.5
-  rageChargeDistance: 5
+  phase1SpecialAttackInterval: 4
+  phase2SpecialAttackInterval: 3
+  phase3SpecialAttackInterval: 2
   rageChargeTime: 0.5
   rageHoldTime: 0.2
   rageReturnTime: 0.8
@@ -38,7 +37,7 @@ MonoBehaviour:
   laserStretchTime: 1.5
   laserMoveSpeed: 15.9
   scoreThresholdUpgrade: 1500
-  scoreThresholdMultiplier: 1.5
+  scoreThresholdMultiplier: 2.5
   upgradePunchIntensity: 0.5
   upgradePunchTime: 0.5
-  Health: 3000
+  Health: 4500

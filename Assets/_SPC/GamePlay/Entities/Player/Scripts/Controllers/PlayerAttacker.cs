@@ -8,66 +8,152 @@ using UnityEngine.InputSystem;
 
 namespace _SPC.GamePlay.Entities.Player
 {
-    public sealed class PlayerAttacker: SPCAttacker
+    /// <summary>
+    /// Handles player attack logic, including input processing and projectile spawning.
+    /// </summary>
+    public sealed class PlayerAttacker : SPCAttacker
     {
         private readonly InputSystem_Actions _inputSystem;
         private bool _attack;
-        private PlayerStats Stats;
+        private readonly PlayerStats _stats;
 
-
+        /// <summary>
+        /// Initializes the player attacker with stats and dependencies.
+        /// </summary>
+        /// <param name="stats">Player statistics for attack configuration.</param>
+        /// <param name="dependencies">Dependencies required for the attacker.</param>
         public PlayerAttacker(PlayerStats stats, AttackerDependencies dependencies) : base(dependencies) 
         {
             _inputSystem = InputSystemBuffer.Instance.InputSystem;
             _inputSystem.Player.Attack.performed += OnAttackPerformed;
-            Stats = stats;
+            _stats = stats;
         }
 
-        private void OnAttackPerformed(InputAction.CallbackContext obj)
-        {
-            _attack = true;
-        }
-
+        /// <summary>
+        /// Executes the attack logic when input is received.
+        /// </summary>
         public override void Attack()
         {
             if (!_attack) return;
-            AudioManager.Instance.Play(AudioName.PlayerShotMusic, EntityTransform.position);
-            for (int i = 0; i < Stats.NumberOfShots; i++)
-            {
-                OneBulletShot(i);
-            }
             
-            _attack = false;
+            PlayAttackSound();
+            FireMultipleShots();
+            ResetAttackFlag();
         }
 
+        /// <summary>
+        /// Cleans up input subscriptions when the attacker is destroyed.
+        /// </summary>
         public override void CleanUp()
         {
             _inputSystem.Player.Attack.performed -= OnAttackPerformed;
         }
 
-        private void OneBulletShot(int shotIndex)
+        /// <summary>
+        /// Handles attack input from the player.
+        /// </summary>
+        /// <param name="obj">Input action callback context.</param>
+        private void OnAttackPerformed(InputAction.CallbackContext obj)
         {
-            var target = UsedAlgorithms.GetClosestTarget(TargetTransforms, EntityTransform);
-            if (target != null)
+            _attack = true;
+        }
+
+        /// <summary>
+        /// Fires multiple projectiles based on the number of shots configured.
+        /// </summary>
+        private void FireMultipleShots()
+        {
+            for (int i = 0; i < _stats.NumberOfShots; i++)
             {
-                var proj = ProjectilePools[WeaponType.PlayerBullet].Get();
-
-                Vector2 fireDirection = (target.position - EntityTransform.position).normalized;
-                Vector2 perpendicular = new Vector2(-fireDirection.y, fireDirection.x);
-                float totalWidth = (Stats.NumberOfShots - 1) * Stats.ShotSpacing;
-                float offset = (Stats.NumberOfShots > 1) ? (shotIndex * Stats.ShotSpacing) - (totalWidth / 2f) : 0;
-                Vector2 spawnPosition = (Vector2)EntityTransform.position + perpendicular * offset;
-
-                proj.Activate(new BulletInitData(
-                    WeaponType.PlayerBullet,
-                    target,
-                    spawnPosition,
-                    Stats.ProjectileSpeed,
-                    Stats.ProjectileBuffer,
-                    ProjectilePools[WeaponType.PlayerBullet]
-                ));
+                FireSingleShot(i);
             }
         }
-        
-        
+
+        /// <summary>
+        /// Fires a single projectile at the specified shot index.
+        /// </summary>
+        /// <param name="shotIndex">Index of the shot for spacing calculations.</param>
+        private void FireSingleShot(int shotIndex)
+        {
+            var target = GetClosestTarget();
+            if (target == null) return;
+
+            var projectile = GetProjectileFromPool();
+            if (projectile == null) return;
+
+            var spawnPosition = CalculateSpawnPosition(shotIndex);
+            ActivateProjectile(projectile, target, spawnPosition);
+        }
+
+        /// <summary>
+        /// Gets the closest target from the available targets.
+        /// </summary>
+        /// <returns>The closest target transform, or null if no targets available.</returns>
+        private Transform GetClosestTarget()
+        {
+            return UsedAlgorithms.GetClosestTarget(TargetTransforms, EntityTransform);
+        }
+
+        /// <summary>
+        /// Gets a projectile from the pool.
+        /// </summary>
+        /// <returns>The projectile GameObject, or null if pool is empty.</returns>
+        private Bullet GetProjectileFromPool()
+        {
+            return ProjectilePools[WeaponType.PlayerBullet].Get();
+        }
+
+        /// <summary>
+        /// Calculates the spawn position for a projectile based on shot index and spacing.
+        /// </summary>
+        /// <param name="shotIndex">Index of the shot for spacing calculations.</param>
+        /// <returns>The calculated spawn position.</returns>
+        private Vector2 CalculateSpawnPosition(int shotIndex)
+        {
+            var target = GetClosestTarget();
+            if (target == null) return EntityTransform.position;
+
+            Vector2 fireDirection = (target.position - EntityTransform.position).normalized;
+            Vector2 perpendicular = new Vector2(-fireDirection.y, fireDirection.x);
+            
+            float totalWidth = (_stats.NumberOfShots - 1) * _stats.ShotSpacing;
+            float offset = (_stats.NumberOfShots > 1) ? (shotIndex * _stats.ShotSpacing) - (totalWidth / 2f) : 0;
+            
+            return (Vector2)EntityTransform.position + perpendicular * offset;
+        }
+
+        /// <summary>
+        /// Activates a projectile with the specified target and spawn position.
+        /// </summary>
+        /// <param name="projectile">The projectile to activate.</param>
+        /// <param name="target">The target for the projectile.</param>
+        /// <param name="spawnPosition">The spawn position for the projectile.</param>
+        private void ActivateProjectile(Bullet projectile, Transform target, Vector2 spawnPosition)
+        {
+            projectile.Activate(new BulletInitData(
+                WeaponType.PlayerBullet,
+                target,
+                spawnPosition,
+                _stats.ProjectileSpeed,
+                _stats.ProjectileBuffer,
+                ProjectilePools[WeaponType.PlayerBullet]
+            ));
+        }
+
+        /// <summary>
+        /// Plays the attack sound effect.
+        /// </summary>
+        private void PlayAttackSound()
+        {
+            AudioManager.Instance.Play(AudioName.PlayerShotMusic, EntityTransform.position);
+        }
+
+        /// <summary>
+        /// Resets the attack flag after firing.
+        /// </summary>
+        private void ResetAttackFlag()
+        {
+            _attack = false;
+        }
     }
 }

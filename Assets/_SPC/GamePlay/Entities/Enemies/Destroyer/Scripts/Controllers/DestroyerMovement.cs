@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace _SPC.GamePlay.Entities.Enemies.Destroyer
 {
+    /// <summary>
+    /// Holds dependencies for the DestroyerMovement, including transforms, stats, and arena bounds.
+    /// </summary>
     public struct DestroyerMovementDependencies
     {
         public Transform EntityTransform;
@@ -15,6 +18,9 @@ namespace _SPC.GamePlay.Entities.Enemies.Destroyer
         public List<Transform> TransformTargets;
     }
 
+    /// <summary>
+    /// Handles the destroyer's movement logic including wandering and target tracking.
+    /// </summary>
     public class DestroyerMovement: SPCMovement
     {
         private readonly Transform _entityTransform;
@@ -23,6 +29,9 @@ namespace _SPC.GamePlay.Entities.Enemies.Destroyer
         private readonly Transform _spaceshipTransform;
         private readonly List<Transform> _transformTargets;
 
+        /// <summary>
+        /// Initializes the DestroyerMovement with dependencies and subscribes to game events.
+        /// </summary>
         public DestroyerMovement(DestroyerMovementDependencies deps)
         {
             _entityTransform = deps.EntityTransform;
@@ -32,20 +41,12 @@ namespace _SPC.GamePlay.Entities.Enemies.Destroyer
             _transformTargets = deps.TransformTargets;
             IsMoving = false;
             
-            GameEvents.OnGamePaused += OnGamePaused;
-            GameEvents.OnGameResumed += OnGameResumed;
+            SubscribeToGameEvents();
         }
 
-        private void OnGamePaused()
-        {
-            DOTween.Pause(_entityTransform);
-        }
-
-        private void OnGameResumed()
-        {
-            DOTween.Play(_entityTransform);
-        }
-
+        /// <summary>
+        /// Updates the destroyer's movement and rotation logic.
+        /// </summary>
         public override void UpdateMovement()
         {
             RotateTowardsNearestTarget();
@@ -56,40 +57,163 @@ namespace _SPC.GamePlay.Entities.Enemies.Destroyer
             MoveToNewPoint();
         }
 
+        /// <summary>
+        /// Cleans up event subscriptions and DOTween animations.
+        /// </summary>
+        public override void Cleanup()
+        {
+            UnsubscribeFromGameEvents();
+            KillDOTweenAnimations();
+        }
+
+        /// <summary>
+        /// Handles game pause events by pausing DOTween animations.
+        /// </summary>
+        private void OnGamePaused()
+        {
+            DOTween.Pause(_entityTransform);
+        }
+
+        /// <summary>
+        /// Handles game resume events by resuming DOTween animations.
+        /// </summary>
+        private void OnGameResumed()
+        {
+            DOTween.Play(_entityTransform);
+        }
+
+        /// <summary>
+        /// Subscribes to game pause/resume events.
+        /// </summary>
+        private void SubscribeToGameEvents()
+        {
+            GameEvents.OnGamePaused += OnGamePaused;
+            GameEvents.OnGameResumed += OnGameResumed;
+        }
+
+        /// <summary>
+        /// Unsubscribes from game events.
+        /// </summary>
+        private void UnsubscribeFromGameEvents()
+        {
+            GameEvents.OnGamePaused -= OnGamePaused;
+            GameEvents.OnGameResumed -= OnGameResumed;
+        }
+
+        /// <summary>
+        /// Kills all DOTween animations for this entity.
+        /// </summary>
+        private void KillDOTweenAnimations()
+        {
+            DOTween.Kill(_entityTransform);
+        }
+
+        /// <summary>
+        /// Moves the destroyer to a random point within the arena bounds.
+        /// </summary>
         private void MoveToNewPoint()
         {
             var bounds = _arenaBounds.bounds;
-            Vector2 randomPoint = new Vector2(
+            Vector2 randomPoint = GenerateRandomPoint(bounds);
+            float duration = CalculateMovementDuration(randomPoint);
+
+            CreateMovementSequence(randomPoint, duration);
+        }
+
+        /// <summary>
+        /// Generates a random point within the arena bounds.
+        /// </summary>
+        private Vector2 GenerateRandomPoint(Bounds bounds)
+        {
+            return new Vector2(
                 Random.Range(bounds.min.x, bounds.max.x),
                 Random.Range(bounds.min.y, bounds.max.y)
             );
+        }
 
-            float duration = Vector2.Distance(_entityTransform.position, randomPoint) / _stats.MovementSpeed;
+        /// <summary>
+        /// Calculates the movement duration based on distance and speed.
+        /// </summary>
+        private float CalculateMovementDuration(Vector2 targetPoint)
+        {
+            return Vector2.Distance(_entityTransform.position, targetPoint) / _stats.MovementSpeed;
+        }
 
+        /// <summary>
+        /// Creates the movement sequence with movement and delay.
+        /// </summary>
+        private void CreateMovementSequence(Vector2 targetPoint, float duration)
+        {
             var sequence = DOTween.Sequence();
-            sequence.Append(_entityTransform.DOMove(randomPoint, duration).SetEase(Ease.Linear));
-            sequence.AppendInterval(Random.Range(_stats.minWanderDelay, _stats.maxWanderDelay));
+            sequence.Append(_entityTransform.DOMove(targetPoint, duration).SetEase(Ease.Linear));
+            sequence.AppendInterval(GetRandomWanderDelay());
             sequence.OnComplete(() => IsMoving = false);
             sequence.SetTarget(_entityTransform);
         }
 
+        /// <summary>
+        /// Gets a random wander delay between min and max values.
+        /// </summary>
+        private float GetRandomWanderDelay()
+        {
+            return Random.Range(_stats.minWanderDelay, _stats.maxWanderDelay);
+        }
+
+        /// <summary>
+        /// Rotates the spaceship towards the nearest target.
+        /// </summary>
         private void RotateTowardsNearestTarget()
         {
-            if (_transformTargets == null || _transformTargets.Count == 0) return;
-            Transform closest = UsedAlgorithms.GetClosestTarget(_transformTargets, _spaceshipTransform);
+            if (!HasValidTargets()) return;
+            
+            Transform closest = FindClosestTarget();
             if (closest == null) return;
 
-            Vector3 dir = (closest.position - _spaceshipTransform.position).normalized;
-            if (dir.sqrMagnitude < 0.0001f) return;
-
-            _spaceshipTransform.up = -dir;
+            Vector3 direction = CalculateDirectionToTarget(closest);
+            if (IsValidDirection(direction))
+            {
+                RotateSpaceship(direction);
+            }
         }
-        
-        public override void Cleanup()
+
+        /// <summary>
+        /// Checks if there are valid targets to rotate towards.
+        /// </summary>
+        private bool HasValidTargets()
         {
-            GameEvents.OnGamePaused -= OnGamePaused;
-            GameEvents.OnGameResumed -= OnGameResumed;
-            DOTween.Kill(_entityTransform);
+            return _transformTargets != null && _transformTargets.Count > 0;
+        }
+
+        /// <summary>
+        /// Finds the closest target from the available targets.
+        /// </summary>
+        private Transform FindClosestTarget()
+        {
+            return UsedAlgorithms.GetClosestTarget(_transformTargets, _spaceshipTransform);
+        }
+
+        /// <summary>
+        /// Calculates the direction vector to the target.
+        /// </summary>
+        private Vector3 CalculateDirectionToTarget(Transform target)
+        {
+            return (target.position - _spaceshipTransform.position).normalized;
+        }
+
+        /// <summary>
+        /// Checks if the direction vector is valid (not too small).
+        /// </summary>
+        private bool IsValidDirection(Vector3 direction)
+        {
+            return direction.sqrMagnitude >= 0.0001f;
+        }
+
+        /// <summary>
+        /// Rotates the spaceship to face the given direction.
+        /// </summary>
+        private void RotateSpaceship(Vector3 direction)
+        {
+            _spaceshipTransform.up = -direction;
         }
     }
 } 

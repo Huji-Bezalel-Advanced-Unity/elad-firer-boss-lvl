@@ -135,8 +135,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798be781188042e983e3afdeb7d25e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponLogger: {fileID: 3444237044633793812}
+  _weaponType: 0
   rb2D: {fileID: 1082114258886882583}
-  bulletLogger: {fileID: 3444237044633793812}
 --- !u!50 &1082114258886882583
 Rigidbody2D:
   serializedVersion: 5
@@ -176,7 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c4de3e9c7384909bf30be3e64ed8e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 0
+  _active: 0
 --- !u!61 &5981605789392488316
 BoxCollider2D:
   m_ObjectHideFlags: 0

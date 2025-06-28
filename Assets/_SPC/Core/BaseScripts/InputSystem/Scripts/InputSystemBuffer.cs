@@ -2,11 +2,19 @@ using _SPC.Core.BaseScripts.Generics.MonoSingletone;
 
 namespace _SPC.Core.BaseScripts.InputSystem.Scripts
 {
-    public sealed class InputSystemBuffer: SpcMonoSingleton<InputSystemBuffer>
+    /// <summary>
+    /// Singleton buffer for the game's input system, providing global access to input actions.
+    /// </summary>
+    public sealed class InputSystemBuffer : SpcMonoSingleton<InputSystemBuffer>
     {
+        /// <summary>
+        /// Gets the input system actions instance.
+        /// </summary>
+        public InputSystem_Actions InputSystem { get; private set; }
         
-
-        // Private ctor prevents external instantiation
+        /// <summary>
+        /// Initializes the input system and enables it on awake.
+        /// </summary>
         protected override void Awake()
         {
             base.Awake();
@@ -14,8 +22,9 @@ namespace _SPC.Core.BaseScripts.InputSystem.Scripts
             InputSystem.Enable();
         }
         
-        public InputSystem_Actions InputSystem { get; private set; }
-        
+        /// <summary>
+        /// Disables the input system when the application quits.
+        /// </summary>
         void OnApplicationQuit()
         {
             Instance.InputSystem.Disable();

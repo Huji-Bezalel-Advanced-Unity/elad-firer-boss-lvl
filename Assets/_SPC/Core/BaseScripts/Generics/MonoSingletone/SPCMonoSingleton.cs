@@ -1,12 +1,19 @@
+using _SPC.Core.BaseScripts.BaseMono;
 using UnityEngine;
 
 namespace _SPC.Core.BaseScripts.Generics.MonoSingletone
 {
-    public class SpcMonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
+    /// <summary>
+    /// Generic singleton base class for SPCBaseMono, ensuring only one instance exists and persists across scenes.
+    /// </summary>
+    public class SpcMonoSingleton<T> : SPCBaseMono where T : SPCBaseMono
     {
         private static T _instance;
         private static bool _isInitialized;
 
+        /// <summary>
+        /// Gets the singleton instance of this class.
+        /// </summary>
         public static T Instance
         {
             get
@@ -36,6 +43,9 @@ namespace _SPC.Core.BaseScripts.Generics.MonoSingletone
             }
         }
 
+        /// <summary>
+        /// Ensures the singleton is initialized and persists across scenes.
+        /// </summary>
         private void ForceInitialize()
         {
             if (!_isInitialized)
@@ -45,6 +55,9 @@ namespace _SPC.Core.BaseScripts.Generics.MonoSingletone
             }
         }
 
+        /// <summary>
+        /// Handles singleton instantiation and duplicate destruction on Awake.
+        /// </summary>
         protected virtual void Awake()
         {
             if (_instance == null)
