@@ -42,10 +42,10 @@ A hostile, powerful planet is attempting to conquer your homeworld. You, the las
   * **Phase 2 (67% - 33% HP):** Introduces Laser attacks alongside Phase 1 abilities. Increased aggression with faster special attack intervals.
   * **Phase 3 (33% - 0% HP):** Maximum difficulty with all attacks including Rage attack. Fastest special attack intervals for intense final battle.
 * **Attack Types:**
-  * **Big Bullet Ball:** Large projectile towards the player.
+  * **Big Bullet FireBall:** Large projectile towards the player.
   * **Bullet Barrage:** Rapid small shots.
   * **Laser:** lava beam that streched and moves in map.
-  * **Raid Attack:** Direct dash toward the player.
+  * **Rage Attack:** Direct dash toward the player.
   * **Destroyer Spawns:** Summons smaller enemy ships.
 
 ### Player Mechanics
@@ -96,9 +96,9 @@ Assets/
 │  └─ UML/          # Project documentation and architecture diagrams
 ```
 
-* **ScriptableObjects:** Used for configuring stats (`BossStats`, `PlayerStats`, `DestroyerStats`).
+* **Core Design Approach:** This codebase uses C# scripts and abstract base classes to define and share common workflows via inheritance. It follows the Template Method pattern.
+* **Dependency Injection:** `BulletInitData` injects the bullet’s pool, target, and movement parameters into `Activate()`, decoupling the class from hard-coded dependencies. 
 * **Singletons:** `AudioManager`, `GameManager`, `HighScoreManager`.
-* **Object Pooling:** `MonoPoolGeneric` for bullets, sound objects, and other frequent spawns.
+* **Object Pooling:** `SPCMonoPool` for bullets, sound objects, and other frequent spawns.
 * **Event System:** `GameEvents` dispatches gameplay events (hit, damage, upgrade).
-
 

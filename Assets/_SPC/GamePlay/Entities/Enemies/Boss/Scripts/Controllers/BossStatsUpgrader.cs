@@ -100,8 +100,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         private void ApplyBossUpgrade() 
         {
             UpgradeType chosenUpgrade = ChooseUpgrade();
-            UpdateUpgradeCount(chosenUpgrade);
-            LogUpgrade(chosenUpgrade);
             ApplyUpgradeEffect(chosenUpgrade);
         }
         
@@ -110,7 +108,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
         /// </summary>
         public override void ResetStats()
         {
-            ClearUpgradeCounts();
             ResetBossStats();
             ResetDestroyerStats();
             UnsubscribeFromEvents();
@@ -212,26 +209,9 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             return _availableUpgrades[randomIndex];
         }
 
-        /// <summary>
-        /// Updates the count for the chosen upgrade type.
-        /// </summary>
-        private void UpdateUpgradeCount(UpgradeType upgradeType)
-        {
-            BossUpgradeCounts.TryAdd(upgradeType, 0);
-            BossUpgradeCounts[upgradeType]++;
-        }
+        
 
-        /// <summary>
-        /// Logs the chosen upgrade if logger is available.
-        /// </summary>
-        private void LogUpgrade(UpgradeType upgradeType)
-        {
-            if (_enemyLogger != null)
-            {
-                _enemyLogger.Log($"Boss chose upgrade: {upgradeType} (Total: {BossUpgradeCounts[upgradeType]})");
-            }
-        }
-
+        
         /// <summary>
         /// Applies the effect of the chosen upgrade type.
         /// </summary>
@@ -288,14 +268,7 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
             _destroyerStats.ProjectileSpawnRate *= 0.9f;
         }
 
-        /// <summary>
-        /// Clears all upgrade count dictionaries.
-        /// </summary>
-        private void ClearUpgradeCounts()
-        {
-            PlayerUpgradeCounts.Clear();
-            BossUpgradeCounts.Clear();
-        }
+       
 
         /// <summary>
         /// Resets boss stats to their initial values.

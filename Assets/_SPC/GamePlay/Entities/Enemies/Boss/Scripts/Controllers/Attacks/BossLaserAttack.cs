@@ -154,13 +154,11 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                 float progress = elapsed / stretchDuration;
                 Vector2 currentEndPos = Vector2.Lerp(bossCenter, endPosition, progress);
                 laserContainer.ToT.position = currentEndPos;
-                laserContainer.Laser.UpdateBoxCollider();
                 
                 elapsed += Time.deltaTime;
                 yield return null;
             }
             
-            laserContainer.Laser.UpdateBoxCollider();
         }
 
         /// <summary>
@@ -178,7 +176,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                 Vector2 delta = moveDirection.normalized * moveSpeed * Time.deltaTime;
                 laserContainer.FromT.position += (Vector3)delta;
                 laserContainer.ToT.position = laserContainer.FromT.position + (Vector3)laserVector;
-                laserContainer.Laser.UpdateBoxCollider();
                 
                 yield return null;
             }

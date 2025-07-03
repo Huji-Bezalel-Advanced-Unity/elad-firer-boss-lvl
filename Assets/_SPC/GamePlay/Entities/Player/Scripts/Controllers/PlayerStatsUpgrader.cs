@@ -12,6 +12,12 @@ namespace _SPC.GamePlay.Entities.Player
     /// </summary>
     public class PlayerStatsUpgrader : SPCStatsUpgrader
     {
+        
+        /// <summary>
+        /// Dictionary tracking the count of each player upgrade type.
+        /// </summary>
+        private Dictionary<PlayerStatsUpgrader.UpgradeType, int> PlayerUpgradeCounts = new Dictionary<PlayerStatsUpgrader.UpgradeType, int>();
+
         /// <summary>
         /// Available upgrade types for the player.
         /// </summary>

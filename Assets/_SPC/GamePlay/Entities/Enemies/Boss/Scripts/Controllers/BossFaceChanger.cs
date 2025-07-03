@@ -51,25 +51,6 @@ namespace _SPC.GamePlay.Entities.Enemies.Boss
                 _isAngry = false;
             }
         }
-
-        /// <summary>
-        /// Toggles the boss's face between normal and angry.
-        /// </summary>
-        public void ToggleFace()
-        {
-            if (_isAngry)
-            {
-                SetNormalFace();
-            }
-            else
-            {
-                SetAngryFace();
-            }
-        }
-
-        /// <summary>
-        /// Returns true if the boss is currently angry.
-        /// </summary>
-        public bool IsAngry => _isAngry;
+        
     }
 }

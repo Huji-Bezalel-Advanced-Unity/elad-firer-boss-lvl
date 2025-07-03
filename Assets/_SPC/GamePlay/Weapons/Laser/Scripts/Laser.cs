@@ -64,6 +64,7 @@ namespace _SPC.GamePlay.Weapons
         public void Update()
         {
             UpdateLaserPositions();
+            UpdateBoxCollider();
         }
         
         /// <summary>
